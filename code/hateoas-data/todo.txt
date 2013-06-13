@@ -1,0 +1,3 @@
+- add android client
+- add spring social login example that uses a SaaS provider like facebook to authenticate
+- rework UI to use the 511 bits

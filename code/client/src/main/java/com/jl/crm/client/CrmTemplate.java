@@ -129,7 +129,7 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 
 	private Customer customer(URI uri) {
 		ResponseEntity<CustomerResource> customerResourceResponseEntity = getRestTemplate().getForEntity(uri, CustomerResource.class);
-		CustomerResource customerResource = customerResourceResponseEntity.getBody();
+		Resource <Customer> customerResource = customerResourceResponseEntity.getBody();
 		return unwrapCustomer(customerResource);
 	}
 

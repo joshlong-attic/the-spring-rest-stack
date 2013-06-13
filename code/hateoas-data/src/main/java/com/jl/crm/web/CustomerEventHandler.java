@@ -15,7 +15,8 @@ public class CustomerEventHandler {
 	@HandleBeforeCreate
 	public void handleBeforeCreate(Customer customer) {
 		if (StringUtils.hasText(customer.getFirstName())
-		&& StringUtils.hasText(customer.getLastName()) && customer.getUser() != null){
+		&& StringUtils.hasText(customer.getLastName()) && 
+		customer.getUser() != null){
 			if (customer.getSignupDate() == null){
 				customer.setSignupDate(new java.util.Date());
 			}

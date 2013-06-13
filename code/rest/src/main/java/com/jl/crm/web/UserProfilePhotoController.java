@@ -24,7 +24,8 @@ class UserProfilePhotoController {
 	}
 
 	@RequestMapping (method = RequestMethod.POST)
-	HttpEntity<Void> writeUserProfilePhoto(@PathVariable Long user,  @RequestParam MultipartFile file) throws Throwable {
+	HttpEntity<Void> writeUserProfilePhoto(@PathVariable Long user,  
+			            @RequestParam MultipartFile file) throws Throwable {
 		byte bytesForProfilePhoto[] = FileCopyUtils.copyToByteArray(file.getInputStream());
 		this.crmService.writeUserProfilePhoto(user, MediaType.parseMediaType(file.getContentType()), bytesForProfilePhoto);
 		HttpHeaders httpHeaders = new HttpHeaders() ;
@@ -34,7 +35,7 @@ class UserProfilePhotoController {
 	                   .toUri();
 		httpHeaders.setLocation( uriOfPhoto );
 
-		return new ResponseEntity<Void>(httpHeaders, HttpStatus.ACCEPTED);
+		return new ResponseEntity<Void>(httpHeaders, HttpStatus.CREATED);
 	}
 
 	@RequestMapping (method = RequestMethod.GET)

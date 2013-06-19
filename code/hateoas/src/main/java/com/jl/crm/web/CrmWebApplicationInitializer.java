@@ -57,8 +57,7 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 	}
 }
 
-@Configuration         // NB: YOU COULD CREATE A META ANNOTATION: @HATEOAS?
-@EnableEntityLinks
+@Configuration // NB: you could easily create a meta-annotation which hides all of this for you: @HATEOAS?
 @ComponentScan
 @EnableWebMvc
 @EnableHypermediaSupport

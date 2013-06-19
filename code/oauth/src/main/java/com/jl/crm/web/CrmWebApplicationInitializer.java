@@ -6,7 +6,7 @@ import org.springframework.core.Conventions;
 import org.springframework.data.repository.support.DomainClassConverter;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.format.support.FormattingConversionService;
-import org.springframework.hateoas.config.EnableEntityLinks;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.vote.*;
@@ -19,14 +19,12 @@ import org.springframework.security.oauth2.provider.error.*;
 import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.vote.ScopeVoter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
-import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.context.*;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.*;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.*;
-import org.springframework.web.servlet.*;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.servlet.*;
@@ -34,65 +32,78 @@ import java.io.File;
 import java.util.*;
 
 
-@SuppressWarnings ("unused")
-public class CrmWebApplicationInitializer implements WebApplicationInitializer {
+/**
+ * This configuration class sets up Spring Data REST, Spring MVC, Spring Security and Spring Security OAuth, along with
+ * importing all of our existing service implementations.
+ *
+ * @author Josh Long
+ */
+public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
-	private final String patternAll = "/";
-	private final String springServletName = "spring";
 	private int maxUploadSizeInMb = 5 * 1024 * 1024; // 5 MB
+	private Map<Filter, String> servletFilterMapping = new LinkedHashMap<Filter, String>();
 
-	@Override
-	public void onStartup(ServletContext servletContext) throws ServletException {
-		Map<String, Filter> filterMap = new LinkedHashMap<String, Filter>();
-		filterMap.put("springSecurityFilterChain", new DelegatingFilterProxy());
+	public CrmWebApplicationInitializer() {
+		super();
 
-		// register the rest
-		List<? extends Filter> filters = Arrays.asList(new HiddenHttpMethodFilter(), new MultipartFilter(), new OpenEntityManagerInViewFilter());
+		// initialize what filters we want and what their registered names should be.
+		Map<Filter, String> stringFilterMap = new LinkedHashMap<Filter, String>();
+		stringFilterMap.put(new DelegatingFilterProxy(), "springSecurityFilterChain");
+		Filter[] filters = new Filter[]{new HiddenHttpMethodFilter(), new MultipartFilter(), new OpenEntityManagerInViewFilter()};
 		for (Filter f : filters) {
-			filterMap.put(Conventions.getVariableName(f), f);
+			stringFilterMap.put(f, Conventions.getVariableName(f));
 		}
-		for (String fn : filterMap.keySet()) {
-			registerFilter(servletContext, fn, filterMap.get(fn));
-		}
-
-
-		servletContext.addListener(new HttpSessionEventPublisher());
-
-		WebApplicationContext webApplicationContext
-				  = buildWebApplicationContext(servletContext, ServiceConfiguration.class, RepositoryRestMvcConfiguration.class, SecurityConfiguration.class, WebMvcConfiguration.class);
-
-		servletContext.addListener(new ContextLoaderListener(webApplicationContext));
-
-		DispatcherServlet dispatcherServlet = new DispatcherServlet();
-		dispatcherServlet.setContextClass(AnnotationConfigWebApplicationContext.class);
-		ServletRegistration.Dynamic spring = servletContext.addServlet(this.springServletName, dispatcherServlet);
-		spring.addMapping(patternAll);
-		spring.setAsyncSupported(true);
-		customizeRegistration(spring);
+		this.servletFilterMapping = stringFilterMap;
 	}
 
+	@Override
+	protected Class<?>[] getRootConfigClasses() {
+		return new Class<?>[]{ServiceConfiguration.class, SecurityConfiguration.class};
+	}
+
+	@Override
+	protected Class<?>[] getServletConfigClasses() {
+		return new Class<?>[]{RepositoryRestMvcConfiguration.class, WebMvcConfiguration.class};
+	}
+
+	@Override
+	protected void registerDispatcherServlet(ServletContext servletContext) {
+		servletContext.addListener(new HttpSessionEventPublisher());
+		super.registerDispatcherServlet(servletContext);
+	}
+
+	@Override
+	protected String[] getServletMappings() {
+		return new String[]{"/"};
+	}
+
+	@Override
+	protected Filter[] getServletFilters() {
+		Set<Filter> filters = servletFilterMapping.keySet();
+		return filters.toArray(new Filter[filters.size()]);
+	}
+
+	@Override
+	protected FilterRegistration.Dynamic registerServletFilter(ServletContext servletContext, Filter filter) {
+		String filterName = this.servletFilterMapping.get(filter);
+		FilterRegistration.Dynamic registration = servletContext.addFilter(filterName, filter);
+		registration.setAsyncSupported(isAsyncSupported());
+		registration.addMappingForServletNames(getDispatcherTypes(), false, getServletName());
+		return registration;
+	}
+
+	protected EnumSet<DispatcherType> getDispatcherTypes() {
+		return isAsyncSupported() ?
+				         EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ASYNC) :
+				         EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE);
+	}
+
+	@Override
 	protected void customizeRegistration(ServletRegistration.Dynamic registration) {
 		File uploadDirectory = ServiceConfiguration.CRM_STORAGE_UPLOADS_DIRECTORY;
 		MultipartConfigElement multipartConfigElement = new MultipartConfigElement(uploadDirectory.getAbsolutePath(), maxUploadSizeInMb, maxUploadSizeInMb * 2, maxUploadSizeInMb / 2);
 		registration.setMultipartConfig(multipartConfigElement);
 	}
-
-	protected void registerFilter(ServletContext servletContext, String name, Filter filter) {
-		FilterRegistration.Dynamic filterRegistration = servletContext.addFilter(name, filter);
-		filterRegistration.addMappingForUrlPatterns(null, true, this.patternAll);
-		filterRegistration.addMappingForServletNames(null, true, this.springServletName);
-		filterRegistration.setAsyncSupported(true);
-	}
-
-	protected WebApplicationContext buildWebApplicationContext(ServletContext servletContext, Class... configClasses) {
-		AnnotationConfigWebApplicationContext ac = new AnnotationConfigWebApplicationContext();
-		ac.setServletContext(servletContext);
-		ac.register(configClasses);
-		ac.refresh();
-		return ac;
-	}
-
-
 }
 
 @Configuration
@@ -157,8 +168,8 @@ class SecurityConfiguration {
 }
 
 @Configuration
-@EnableEntityLinks
 @ComponentScan
+@EnableHypermediaSupport
 @EnableWebMvc
 class WebMvcConfiguration extends WebMvcConfigurationSupport {
 	@Bean

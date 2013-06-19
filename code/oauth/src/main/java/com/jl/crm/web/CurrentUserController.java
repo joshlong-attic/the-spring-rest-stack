@@ -1,6 +1,7 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.*;
+import com.jl.crm.services.security.CrmUserDetailsService;
 import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
@@ -9,7 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 
-
+/**
+ * Convenience REST endpoint to answer the question: <EM>who's currently signed in for this session?</EM>.
+ * We look up the currently installed Spring Security {@link Authentication} and then adapt it to a
+ * {@link User}.
+ *
+ * @author Josh Long
+ */
 @Controller
 public class CurrentUserController {
 

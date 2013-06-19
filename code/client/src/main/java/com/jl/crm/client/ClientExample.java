@@ -24,36 +24,27 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
 
-/**
- * 
- * @author Josh Long
- */
+/** @author Josh Long */
 public class ClientExample implements InitializingBean {
-
-	private static Logger logger = Logger.getLogger( "ClientExample");
+	private static Logger logger = Logger.getLogger("ClientExample");
 	private CrmConnectionFactory crmConnectionFactory;
 	private Environment environment;
 	private Connection<CrmOperations> connection;
 
 	public static void main(String args[]) throws Throwable {
-
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
-
 		Map<String, Object> properties = new HashMap<String, Object>();
 		properties.put("sscrm.base-url", "http://localhost:8080/oauth");
 		properties.put("sscrm.client-id", "android-crm");
 		properties.put("sscrm.client-secret", "123456");
 		properties.put("sscrm.authorize-url", "/oauth/authorize");
 		properties.put("sscrm.access-token-url", "/oauth/token");
-		MapPropertySource mapPropertySource = new MapPropertySource( "oauth", properties);
-
+		MapPropertySource mapPropertySource = new MapPropertySource("oauth", properties);
 		applicationContext.getEnvironment().getPropertySources().addLast(mapPropertySource);
 		applicationContext.register(SocialClientConfiguration.class);
 		applicationContext.refresh();
-
 		ClientExample clientExample = applicationContext.getBean(ClientExample.class);
 		clientExample.workWithClient();
-
 	}
 
 	@Inject
@@ -62,78 +53,48 @@ public class ClientExample implements InitializingBean {
 	}
 
 	@Inject
-	public void setCrmConnectionFactory( CrmConnectionFactory crmConnectionFactory) {
+	public void setCrmConnectionFactory(CrmConnectionFactory crmConnectionFactory) {
 		this.crmConnectionFactory = crmConnectionFactory;
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-
-		String returnToUrl = environment.getProperty("sscrm.base-url")
-				+ "/crm/profile.html";
-		OAuth2Operations oAuth2Operations = crmConnectionFactory
-				.getOAuthOperations();
-		if (oAuth2Operations instanceof OAuth2Template) {
-			((OAuth2Template) oAuth2Operations)
-					.setUseParametersForClientAuthentication(false);
+		String returnToUrl = environment.getProperty("sscrm.base-url") + "/crm/profile.html";
+		OAuth2Operations oAuth2Operations = crmConnectionFactory.getOAuthOperations();
+		if (oAuth2Operations instanceof OAuth2Template){
+			((OAuth2Template) oAuth2Operations).setUseParametersForClientAuthentication(false);
 		}
 		OAuth2Parameters parameters = new OAuth2Parameters();
-		if (StringUtils.hasText(returnToUrl)) {
+		if (StringUtils.hasText(returnToUrl)){
 			parameters.setRedirectUri(returnToUrl);
 		}
 		parameters.setScope("read,write");
-
-		String authorizationUrl = oAuth2Operations.buildAuthenticateUrl(
-				GrantType.IMPLICIT_GRANT, parameters);
-
-		Runtime.getRuntime().exec(
-				new String[] { "/usr/bin/open", "-a",
-						"/Applications/Google Chrome.app", authorizationUrl });
-		String i = JOptionPane.showInputDialog(null,
-				"What's the 'access_token'?");
-		String accessToken = i != null && !i.trim().equals("") ? i.trim()
-				: null;
-		connection = crmConnectionFactory.createConnection(new AccessGrant(
-				accessToken));
-
+		String authorizationUrl = oAuth2Operations.buildAuthenticateUrl(GrantType.IMPLICIT_GRANT, parameters);
+		Runtime.getRuntime().exec(new String[]{"/usr/bin/open", "-a", "/Applications/Google Chrome.app", authorizationUrl});
+		String i = JOptionPane.showInputDialog(null, "What's the 'access_token'?");
+		String accessToken = i != null && !i.trim().equals("") ? i.trim() : null;
+		connection = crmConnectionFactory.createConnection(new AccessGrant(accessToken));
 	}
 
-	public void workWithClient() throws Throwable {
-
-		// obtain the current user profile
+	public void workWithClient() throws Throwable { /* obtain the current user profile */
 		UserProfile userProfile = connection.fetchUserProfile();
 		logger.info("obtained connection: " + userProfile.getUsername() + ".");
-
-		CrmOperations customerServiceOperations = connection.getApi();
-
-		// obtain our own User
+		CrmOperations customerServiceOperations = connection.getApi(); /* obtain our own User */
 		User self = customerServiceOperations.currentUser();
-		logger.info(ToStringBuilder.reflectionToString(self));
-
-		// obtain the current customer
-		Customer customer = customerServiceOperations.createCustomer("josh",
-				"long", new java.util.Date());
-		logger.info(customer.toString());
-
-		// loading the photo
-		ProfilePhoto profilePhoto = customerServiceOperations
-				.getUserProfilePhoto();
-		logger.info("profile photo mime type: "
-				+ profilePhoto.getMediaType().toString());
-
-		File photoOutputFile = new File(new File(SystemUtils.getUserHome(),
-				"Desktop"), "profile.jpg");
-		InputStream byteArrayInputStream = new ByteArrayInputStream(
-				profilePhoto.getBytes());
+		logger.info(ToStringBuilder.reflectionToString(self)); /* obtain the current customer */
+		Customer customer = customerServiceOperations.createCustomer("josh", "long", new java.util.Date());
+		logger.info(customer.toString()); /* loading the photo */
+		ProfilePhoto profilePhoto = customerServiceOperations.getUserProfilePhoto();
+		logger.info("profile photo mime type: " + profilePhoto.getMediaType().toString());
+		File photoOutputFile = new File(new File(SystemUtils.getUserHome(), "Desktop"), "profile.jpg");
+		InputStream byteArrayInputStream = new ByteArrayInputStream(profilePhoto.getBytes());
 		OutputStream outputStream = new FileOutputStream(photoOutputFile);
 		IOUtils.copy(byteArrayInputStream, outputStream);
-
 	}
 }
 
 @Configuration
 class SocialClientConfiguration {
-
 	private Log log = LogFactory.getLog(getClass());
 
 	@Bean
@@ -145,61 +106,36 @@ class SocialClientConfiguration {
 	public DataSource dataSource() {
 		SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
 		simpleDriverDataSource.setDriverClass(org.h2.Driver.class);
-		simpleDriverDataSource
-				.setUrl("jdbc:h2:tcp://localhost/~/spring-social-crm");
+		simpleDriverDataSource.setUrl("jdbc:h2:tcp://localhost/~/spring-social-crm");
 		simpleDriverDataSource.setUsername("sa");
 		simpleDriverDataSource.setPassword("");
 		return simpleDriverDataSource;
 	}
 
-	// this is the recipe to construct an instance of the CrmServiceProvider API
-	// that we can use outside of
-	// Spring's Java configuration (and assuming no Environment abstraction) as
-	// we won't have that on Android.
-	private CrmServiceProvider crmServiceProvider(String clientId,
-			String clientSecret, String baseUrl, String authorizeUrl,
-			String accessTokenUrl) {
-		log.debug(String
-				.format("baseUrl=%s, clientSecret=%s, consumerSecret=%s, authorizeUrl=%s, accessTokenUrl=%s",
-						baseUrl, clientId, clientSecret, authorizeUrl,
-						accessTokenUrl));
+	private CrmServiceProvider createCrmServiceProvider(String clientId, String clientSecret, String baseUrl, String authorizeUrl, String accessTokenUrl) {
+		log.debug(String.format("baseUrl=%s, clientSecret=%s, consumerSecret=%s, authorizeUrl=%s, accessTokenUrl=%s", baseUrl, clientId, clientSecret, authorizeUrl, accessTokenUrl));
 		final String http = "http://";
 		assert baseUrl != null && baseUrl.length() > 0 : "the baseUrl can't be null!";
-		if (!authorizeUrl.toLowerCase().startsWith(http)) {
+		if (!authorizeUrl.toLowerCase().startsWith(http)){
 			authorizeUrl = baseUrl + authorizeUrl;
 		}
-		if (!accessTokenUrl.toLowerCase().startsWith(http)) {
+		if (!accessTokenUrl.toLowerCase().startsWith(http)){
 			accessTokenUrl = baseUrl + accessTokenUrl;
 		}
-		return new CrmServiceProvider(baseUrl, clientId, clientSecret,
-				authorizeUrl, accessTokenUrl);
+		return new CrmServiceProvider(baseUrl, clientId, clientSecret, authorizeUrl, accessTokenUrl);
 	}
 
 	@Bean
-	public CrmServiceProvider crmServiceProvider(Environment environment) {
-
+	public CrmServiceProvider crmServiceProvider(Environment e) {
 		final String propertyNameRoot = "sscrm";
-
-		String clientId = environment.getProperty(propertyNameRoot
-				+ ".client-id"), clientSecret = environment
-				.getProperty(propertyNameRoot + ".client-secret");
-
-		String baseUrl = environment
-				.getProperty(propertyNameRoot + ".base-url"), authorizeUrl = environment
-				.getProperty(propertyNameRoot + ".authorize-url"), accessTokenUrl = environment
-				.getProperty(propertyNameRoot + ".access-token-url");
-
-		return this.crmServiceProvider(clientId, clientSecret, baseUrl,
-				authorizeUrl, accessTokenUrl);
+		String clientId = e.getProperty(propertyNameRoot + ".client-id"), clientSecret = e.getProperty(propertyNameRoot + ".client-secret");
+		String baseUrl = e.getProperty(propertyNameRoot + ".base-url"), authorizeUrl = e.getProperty(propertyNameRoot + ".authorize-url"), accessTokenUrl = e.getProperty(propertyNameRoot + ".access-token-url");
+		return this.createCrmServiceProvider(clientId, clientSecret, baseUrl, authorizeUrl, accessTokenUrl);
 	}
 
-	// this will get replaced with a SQL Lite compatible implementation on
-	// Android
 	@Bean
-	public JdbcUsersConnectionRepository jdbcUsersConnectionRepository(
-			DataSource dataSource, ConnectionFactoryLocator locator) {
-		return new JdbcUsersConnectionRepository(dataSource, locator,
-				Encryptors.noOpText());
+	public JdbcUsersConnectionRepository jdbcUsersConnectionRepository(DataSource dataSource, ConnectionFactoryLocator locator) {
+		return new JdbcUsersConnectionRepository(dataSource, locator, Encryptors.noOpText());
 	}
 
 	@Bean
@@ -208,53 +144,38 @@ class SocialClientConfiguration {
 	}
 
 	@Bean
-	public CrmConnectionFactory crmConnectionFactory(
-			CrmServiceProvider crmServiceProvider, CrmApiAdapter crmApiAdapter) {
+	public CrmConnectionFactory crmConnectionFactory(CrmServiceProvider crmServiceProvider, CrmApiAdapter crmApiAdapter) {
 		return new CrmConnectionFactory(crmServiceProvider, crmApiAdapter);
 	}
 
 	@Bean
-	@Scope(proxyMode = ScopedProxyMode.INTERFACES)
-	public ConnectionFactoryLocator connectionFactoryLocator(
-			CrmConnectionFactory crmConnectionFactory) {
+	@Scope (proxyMode = ScopedProxyMode.INTERFACES)
+	public ConnectionFactoryLocator connectionFactoryLocator(CrmConnectionFactory crmConnectionFactory) {
 		ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
 		registry.addConnectionFactory(crmConnectionFactory);
 		return registry;
 	}
 
 	@Bean
-	@Scope(proxyMode = ScopedProxyMode.INTERFACES)
-	public UsersConnectionRepository usersConnectionRepository(
-			DataSource dataSource,
-			ConnectionFactoryLocator connectionFactoryLocator) {
-		return new JdbcUsersConnectionRepository(dataSource,
-				connectionFactoryLocator, Encryptors.noOpText());
+	@Scope (proxyMode = ScopedProxyMode.INTERFACES)
+	public UsersConnectionRepository usersConnectionRepository(DataSource dataSource, ConnectionFactoryLocator connectionFactoryLocator) {
+		return new JdbcUsersConnectionRepository(dataSource, connectionFactoryLocator, Encryptors.noOpText());
 	}
 
 	@Bean
-	@Scope(value = "prototype", proxyMode = ScopedProxyMode.INTERFACES)
-	public ConnectionRepository connectionRepository(
-			UsersConnectionRepository usersConnectionRepository) {
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
-		if (authentication == null) {
-			throw new IllegalStateException(
-					"Unable to get a "
-							+ ConnectionRepository.class.getName()
-							+ ": no user signed in via Spring Security. Please fix this!");
+	@Scope (value = "prototype", proxyMode = ScopedProxyMode.INTERFACES)
+	public ConnectionRepository connectionRepository(UsersConnectionRepository usersConnectionRepository) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null){
+			throw new IllegalStateException("Unable to get a " + ConnectionRepository.class.getName() + ": no user signed in via Spring Security. Please fix this!");
 		}
-		return usersConnectionRepository
-				.createConnectionRepository(authentication.getName());
+		return usersConnectionRepository.createConnectionRepository(authentication.getName());
 	}
 
 	@Bean
-	@Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
-	public CrmOperations customerServiceOperations(
-			ConnectionRepository connectionRepository) {
-		Connection<CrmOperations> customerServiceOperations = connectionRepository
-				.findPrimaryConnection(CrmOperations.class);
-		return customerServiceOperations != null ? customerServiceOperations
-				.getApi() : null;
+	@Scope (value = "request", proxyMode = ScopedProxyMode.INTERFACES)
+	public CrmOperations customerServiceOperations(ConnectionRepository connectionRepository) {
+		Connection<CrmOperations> customerServiceOperations = connectionRepository.findPrimaryConnection(CrmOperations.class);
+		return customerServiceOperations != null ? customerServiceOperations.getApi() : null;
 	}
-
 }

@@ -1,4 +1,4 @@
-package com.jl.crm.web;
+package com.jl.crm.services.security;
 
 import com.jl.crm.services.CrmService;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,7 +25,7 @@ public class CrmUserDetailsService implements UserDetailsService {
 		com.jl.crm.services.User user = crmService.findUserByUsername(username);
 		return new CrmUserDetails(user);
 	}
-	
+
 	public static class CrmUserDetails implements UserDetails {
 		// scopes
 		public static final String SCOPE_READ = "read";

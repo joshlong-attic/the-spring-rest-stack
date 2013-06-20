@@ -20,7 +20,10 @@ import org.springframework.util.StringUtils;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import javax.swing.*;
+
+import java.awt.Desktop;
 import java.io.*;
+import java.net.URI;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -70,7 +73,7 @@ public class ClientExample implements InitializingBean {
 		}
 		parameters.setScope("read,write");
 		String authorizationUrl = oAuth2Operations.buildAuthenticateUrl(GrantType.IMPLICIT_GRANT, parameters);
-		Runtime.getRuntime().exec(new String[]{"/usr/bin/open", "-a", "/Applications/Google Chrome.app", authorizationUrl});
+		Desktop.getDesktop().browse(new URI(authorizationUrl));
 		String i = JOptionPane.showInputDialog(null, "What's the 'access_token'?");
 		String accessToken = i != null && !i.trim().equals("") ? i.trim() : null;
 		connection = crmConnectionFactory.createConnection(new AccessGrant(accessToken));

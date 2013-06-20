@@ -22,6 +22,7 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.filter.*;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.*;
+import org.springframework.web.servlet.FrameworkServlet;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
@@ -48,7 +49,9 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 
 		// initialize what filters we want and what their registered names should be.
 		Map<Filter, String> stringFilterMap = new LinkedHashMap<Filter, String>();
-		stringFilterMap.put(new DelegatingFilterProxy(), "springSecurityFilterChain");
+		DelegatingFilterProxy springSecurityFilterChain = new DelegatingFilterProxy();
+		springSecurityFilterChain.setContextAttribute(FrameworkServlet.SERVLET_CONTEXT_PREFIX + this.getServletName());
+		stringFilterMap.put(springSecurityFilterChain, "springSecurityFilterChain");
 		Filter[] filters = new Filter[]{new HiddenHttpMethodFilter(), new MultipartFilter(), new OpenEntityManagerInViewFilter()};
 		for (Filter f : filters) {
 			stringFilterMap.put(f, Conventions.getVariableName(f));
@@ -58,12 +61,12 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		return new Class<?>[]{ServiceConfiguration.class, SecurityConfiguration.class};
+		return new Class<?>[]{ServiceConfiguration.class};
 	}
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return new Class<?>[]{RepositoryRestMvcConfiguration.class, WebMvcConfiguration.class};
+		return new Class<?>[]{RepositoryRestMvcConfiguration.class, WebMvcConfiguration.class, SecurityConfiguration.class};
 	}
 
 	@Override

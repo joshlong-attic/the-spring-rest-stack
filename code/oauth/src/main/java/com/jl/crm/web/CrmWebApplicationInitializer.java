@@ -1,6 +1,8 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.ServiceConfiguration;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.Conventions;
 import org.springframework.data.repository.support.DomainClassConverter;
@@ -8,16 +10,16 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguratio
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
-import org.springframework.security.access.AccessDecisionVoter;
-import org.springframework.security.access.vote.*;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.HttpConfiguration;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.encrypt.*;
 import org.springframework.security.crypto.password.*;
+import org.springframework.security.oauth2.config.annotation.authentication.InMemoryClientDetailsServiceBuilder;
+import org.springframework.security.oauth2.config.annotation.web.OAuth2ServerConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.OAuth2ServerConfigurerAdapter;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter;
-import org.springframework.security.oauth2.provider.error.*;
-import org.springframework.security.oauth2.provider.token.*;
-import org.springframework.security.oauth2.provider.vote.ScopeVoter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.filter.*;
 import org.springframework.web.multipart.MultipartResolver;
@@ -110,24 +112,50 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 }
 
 @Configuration
-@ImportResource ("classpath:/oauth-security.xml")
-class SecurityConfiguration {
+@EnableWebSecurity
+class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 	private String applicationName = "crm";
+	
+	@Autowired
+	private UserDetailsService userDetailsService;
 
+	@Override
 	@Bean
-	public OAuth2AuthenticationEntryPoint oauthAuthenticationEntryPoint() {
-		OAuth2AuthenticationEntryPoint oAuth2AuthenticationEntryPoint = new OAuth2AuthenticationEntryPoint();
-		oAuth2AuthenticationEntryPoint.setRealmName(this.applicationName);
-		return oAuth2AuthenticationEntryPoint;
+	public ClientDetailsService clientDetails() {
+		return new InMemoryClientDetailsServiceBuilder()
+			.withClient("android-crm")
+			.resourceIds(applicationName)
+			.scopes("read","write")
+			.authorities("ROLE_USER")
+			.secret("123456")
+			.authorizedGrantTypes("authorization_code","implicit","password")
+			.and()
+		.build();
 	}
 
-	@Bean
-	public UnanimousBased accessDecisionManager() {
-		List<AccessDecisionVoter> decisionVoters = new ArrayList<AccessDecisionVoter>();
-		decisionVoters.add(new ScopeVoter());
-		decisionVoters.add(new RoleVoter());
-		decisionVoters.add(new AuthenticatedVoter());
-		return new UnanimousBased(decisionVoters);
+	@Override
+	protected void registerAuthentication(AuthenticationManagerBuilder auth)
+			throws Exception {
+		auth
+			.userDetailsService(userDetailsService);
+	}
+
+	@Override
+	protected void configure(HttpConfiguration http) throws Exception {
+		http
+			.authorizeUrls()
+				.antMatchers("/favicon.ico").permitAll()
+				.anyRequest().hasRole("USER")
+				.and()
+			.formLogin()
+				.loginPage("/crm/signin.html")
+				.defaultSuccessUrl("/crm/welcome.html")
+				.failureUrl("/crm/signin.html?error=true")
+				.permitAll()
+				.and()
+			.apply(new OAuth2ServerConfigurer())
+				.resourceId(applicationName)
+				.clientDetails(clientDetails());
 	}
 
 	@Bean
@@ -139,35 +167,6 @@ class SecurityConfiguration {
 	public TextEncryptor textEncryptor() {
 		return Encryptors.noOpText();
 	}
-
-	@Bean
-	public InMemoryTokenStore tokenStore() {
-		return new InMemoryTokenStore();
-	}
-
-	@Bean
-	public DefaultTokenServices tokenServices(InMemoryTokenStore tokenStore, ClientDetailsService jpaUserCredentialsService) {
-		DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-		defaultTokenServices.setTokenStore(tokenStore);
-		defaultTokenServices.setSupportRefreshToken(true);
-		defaultTokenServices.setClientDetailsService(jpaUserCredentialsService);
-		return defaultTokenServices;
-	}
-
-	@Bean
-	public OAuth2AccessDeniedHandler oauthAccessDeniedHandler() {
-		return new OAuth2AccessDeniedHandler();
-	}
-
-	@Bean
-	public ClientCredentialsTokenEndpointFilter clientCredentialsTokenEndpointFilter(AuthenticationManager authenticationManager, OAuth2AuthenticationEntryPoint entryPoint) {
-		ClientCredentialsTokenEndpointFilter endpointFilter = new ClientCredentialsTokenEndpointFilter();
-		endpointFilter.setAuthenticationManager(authenticationManager);
-		endpointFilter.setAuthenticationEntryPoint(entryPoint);
-		return endpointFilter;
-	}
-
-
 }
 
 @Configuration

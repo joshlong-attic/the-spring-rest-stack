@@ -53,7 +53,6 @@ public class ServiceConfiguration {
 		LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
 		emf.setPackagesToScan(User.class.getPackage().getName());
 		emf.setDataSource(dataSource);
-		emf.setJpaPropertyMap(Collections.singletonMap("hibernate.hbm2ddl.auto", "create-update"));
 		emf.setJpaDialect(dialect);
 		emf.setJpaVendorAdapter(adapter);
 		return emf;

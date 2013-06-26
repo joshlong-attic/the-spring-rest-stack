@@ -19,7 +19,7 @@ public class CrmServiceProvider extends AbstractOAuth2ServiceProvider<CrmOperati
 
 	protected String safeBaseUrl(String baseUrl) {
 		if (baseUrl.endsWith("/")){
-			return "" + baseUrl.subSequence(0, baseUrl.lastIndexOf("/") - 1);
+			return "" + baseUrl.subSequence(0, baseUrl.lastIndexOf("/")  );
 		}
 		return baseUrl;
 	}

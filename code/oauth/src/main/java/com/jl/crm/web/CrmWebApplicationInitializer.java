@@ -1,7 +1,6 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.ServiceConfiguration;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.Conventions;
@@ -11,21 +10,18 @@ import org.springframework.format.support.FormattingConversionService;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.security.config.annotation.authentication.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.HttpConfiguration;
+import org.springframework.security.config.annotation.web.*;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.encrypt.*;
 import org.springframework.security.crypto.password.*;
 import org.springframework.security.oauth2.config.annotation.authentication.InMemoryClientDetailsServiceBuilder;
-import org.springframework.security.oauth2.config.annotation.web.OAuth2ServerConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.OAuth2ServerConfigurerAdapter;
+import org.springframework.security.oauth2.config.annotation.web.*;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.filter.*;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.*;
-import org.springframework.web.servlet.FrameworkServlet;
-import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.*;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -115,7 +111,6 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @EnableWebSecurity
 class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 	private String applicationName = "crm";
-	
 	@Autowired
 	private UserDetailsService userDetailsService;
 
@@ -123,39 +118,37 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 	@Bean
 	public ClientDetailsService clientDetails() {
 		return new InMemoryClientDetailsServiceBuilder()
-			.withClient("android-crm")
-			.resourceIds(applicationName)
-			.scopes("read","write")
-			.authorities("ROLE_USER")
-			.secret("123456")
-			.authorizedGrantTypes("authorization_code","implicit","password")
-			.and()
-		.build();
+				         .withClient("android-crm")
+				         .resourceIds(applicationName)
+				         .scopes("read", "write")
+				         .authorities("ROLE_USER")
+				         .secret("123456")
+				         .authorizedGrantTypes("authorization_code", "implicit", "password")
+				         .and()
+				         .build();
 	}
 
 	@Override
-	protected void registerAuthentication(AuthenticationManagerBuilder auth)
-			throws Exception {
-		auth
-			.userDetailsService(userDetailsService);
+	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService);
 	}
 
 	@Override
 	protected void configure(HttpConfiguration http) throws Exception {
 		http
-			.authorizeUrls()
-				.antMatchers("/favicon.ico").permitAll()
-				.anyRequest().hasRole("USER")
-				.and()
-			.formLogin()
-				.loginPage("/crm/signin.html")
-				.defaultSuccessUrl("/crm/welcome.html")
-				.failureUrl("/crm/signin.html?error=true")
-				.permitAll()
-				.and()
-			.apply(new OAuth2ServerConfigurer())
-				.resourceId(applicationName)
-				.clientDetails(clientDetails());
+				  .authorizeUrls()
+				  .antMatchers("/favicon.ico").permitAll()
+				  .anyRequest().hasRole("USER")
+				  .and()
+				  .formLogin()
+				  .loginPage("/crm/signin.html")
+				  .defaultSuccessUrl("/crm/welcome.html")
+				  .failureUrl("/crm/signin.html?error=true")
+				  .permitAll()
+				  .and()
+				  .apply(new OAuth2ServerConfigurer())
+				  .resourceId(applicationName)
+				  .clientDetails(clientDetails());
 	}
 
 	@Bean

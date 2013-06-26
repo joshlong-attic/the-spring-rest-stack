@@ -2,11 +2,8 @@ package com.jl.crm.web;
 
 import com.jl.crm.services.ServiceConfiguration;
 import org.springframework.context.annotation.*;
-import org.springframework.data.repository.support.DomainClassConverter;
-import org.springframework.format.support.FormattingConversionService;
-import org.springframework.hateoas.config.*;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.*;
@@ -15,7 +12,6 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 import javax.servlet.*;
 import java.io.File;
-import java.util.List;
 
 /**
  * initializes the web application. This is a programmatic equivalent to {@literal web.xml}. {@link
@@ -57,26 +53,15 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 	}
 }
 
-@Configuration // NB: you could easily create a meta-annotation which hides all of this for you: @HATEOAS?
+@Configuration
 @ComponentScan
 @EnableWebMvc
 @EnableHypermediaSupport
 class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
-
-	@Bean
-	public DomainClassConverter<FormattingConversionService> domainClassConverter() {
-		return new DomainClassConverter<FormattingConversionService>(mvcConversionService());
-	}
-
 	@Override
 	public void configureContentNegotiation(ContentNegotiationConfigurer c) {
 		c.defaultContentType(MediaType.APPLICATION_JSON);
-	}
-
-	@Override
-	protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-		addDefaultHttpMessageConverters(converters);
 	}
 
 	@Bean

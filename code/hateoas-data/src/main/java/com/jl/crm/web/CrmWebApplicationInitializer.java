@@ -2,19 +2,14 @@ package com.jl.crm.web;
 
 import com.jl.crm.services.ServiceConfiguration;
 import org.springframework.context.annotation.*;
-import org.springframework.data.repository.support.DomainClassConverter;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
-import org.springframework.format.support.FormattingConversionService;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
-import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.*;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.servlet.*;
 import java.io.File;
@@ -40,7 +35,7 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 
 	@Override
 	protected Filter[] getServletFilters() {
-		return new Filter[]{new HiddenHttpMethodFilter(), new MultipartFilter(), new OpenEntityManagerInViewFilter()};
+		return new Filter[]{new HiddenHttpMethodFilter(), new MultipartFilter()/*, new OpenEntityManagerInViewFilter()*/};
 	}
 
 	@Override
@@ -66,10 +61,6 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @EnableWebMvc
 @EnableHypermediaSupport
 class WebMvcConfiguration extends WebMvcConfigurationSupport {
-	@Bean
-	public DomainClassConverter<?> domainClassConverter() {
-		return new DomainClassConverter<FormattingConversionService>(mvcConversionService());
-	}
 
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
@@ -79,13 +70,5 @@ class WebMvcConfiguration extends WebMvcConfigurationSupport {
 	@Bean
 	public MultipartResolver multipartResolver() {
 		return new StandardServletMultipartResolver();
-	}
-
-	@Bean
-	public ViewResolver internalResourceViewResolver() {
-		InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
-		internalResourceViewResolver.setPrefix("/WEB-INF/crm/");
-		internalResourceViewResolver.setSuffix(".jsp");
-		return internalResourceViewResolver;
 	}
 }

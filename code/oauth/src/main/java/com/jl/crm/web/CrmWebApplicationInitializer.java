@@ -36,6 +36,7 @@ import java.util.*;
  * importing all of our existing service implementations.
  *
  * @author Josh Long
+ * @author Rob Winch
  */
 public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 

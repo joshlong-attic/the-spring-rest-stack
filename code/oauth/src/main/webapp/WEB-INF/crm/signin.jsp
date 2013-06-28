@@ -1,3 +1,7 @@
+<%@ taglib prefix="authz" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
 <html>
 <head>
     <title>
@@ -9,25 +13,34 @@
 
 <div>${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message}
 </div>
-<p>
-    Please enter your username and password to log into the application.
-</p>
+<authz:authorize ifAllGranted="ROLE_USER">
 
-<form method="post" action="${pageContext.request.contextPath}/login">
-    <DIV>
-        <label style="width: 100px; display: inline-block;" class="control-label" for="username"> User Name: </label>
-        <input id="username" name="username" type="text"/>
+    <A href="${pageContext.request.contextPath}/signout">Sign Out</A>
 
-    </DIV>
+</authz:authorize>
 
-    <DIV>
-        <label style="width: 100px; display: inline-block" class="control-label" for="password"> Password: </label>
-        <input class="input-xlarge" id="password" name="password" type="password"/>
+<authz:authorize ifNotGranted="ROLE_USER">
 
-    </DIV>
-    <input type="submit"/>
+    <p>
+        Please enter your username and password to log into the application.
+    </p>
+    <form method="post" action="${pageContext.request.contextPath}/signin">
+        <DIV>
+            <label style="width: 100px; display: inline-block;" class="control-label" for="username"> User Name: </label>
+            <input id="username" name="username" type="text"/>
 
-</form>
+        </DIV>
+
+        <DIV>
+            <label style="width: 100px; display: inline-block" class="control-label" for="password"> Password: </label>
+            <input class="input-xlarge" id="password" name="password" type="password"/>
+
+        </DIV>
+        <input type="submit"/>
+
+    </form>
+</authz:authorize>
+
 </body>
 
 </html>

@@ -73,34 +73,54 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @EnableWebSecurity
 class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 
-	private final RequestMatcher checkIfItsAnOAuthRequest = new RequestMatcher() {
-		private final LocalOAuth2AuthenticationProcessingFilter localOAuth2AuthenticationProcessingFilter =
-				  new LocalOAuth2AuthenticationProcessingFilter();
+	/** Request matcher that checks whether a request is to be handled by the Spring Security OAuth machinery. */
 
-		@Override
-		public boolean matches(HttpServletRequest request) {
-			return localOAuth2AuthenticationProcessingFilter.parseHeaderToken(request) != null
-			       || localOAuth2AuthenticationProcessingFilter.parseToken(request) != null;
-
-		}
-
-		final class LocalOAuth2AuthenticationProcessingFilter extends OAuth2AuthenticationProcessingFilter {
-			@Override
-			public String parseToken(HttpServletRequest request) {
-				return super.parseToken(request);
-			}
-
-			@Override
-			public String parseHeaderToken(HttpServletRequest request) {
-				return super.parseHeaderToken(request);
-			}
-		}
-	};
-
+	private String signInUrl = "/signin" ;
+	private String signoutUrl =  "/signout";
 	private String applicationName = "crm";
+	private String signInFormUrl = "/" +applicationName + "" + signInUrl + ".html"; // => /crm/signin.html
 
 	@Autowired
 	private UserDetailsService userDetailsService;
+
+	/**
+	 * We want to do the right thing when a request comes in for '/': if it's a browser, send the client to the
+	 * '/crm/signin.html' page. If it's a client, send the client to the Oauth entry point.
+	 */
+	@Bean
+	public AuthenticationEntryPoint overridingAuthenticationEntryPoint() throws Exception {
+		RequestMatcher checkIfItsAnOAuthRequest = new RequestMatcher() {
+
+			/* this happens to be thread safe in our use case, no guarantees for other methods */
+			private final LocalOAuth2AuthenticationProcessingFilter localOAuth2AuthenticationProcessingFilter =
+					  new LocalOAuth2AuthenticationProcessingFilter();
+
+			@Override
+			public boolean matches(HttpServletRequest request) {
+				return localOAuth2AuthenticationProcessingFilter.isOAuthRequest(request);
+			}
+
+			/* we need to subclass the OAuth2AuthenticationProcessingFilter because we need access to protected methods. */
+			final class LocalOAuth2AuthenticationProcessingFilter extends OAuth2AuthenticationProcessingFilter {
+				/* we only need to answer this one question, using methods that are protected */
+				public boolean isOAuthRequest(HttpServletRequest request) {
+					return parseHeaderToken(request) != null
+					       || parseToken(request) != null;
+				}
+			}
+		};
+
+		LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> linkedHashMap = new LinkedHashMap<>();
+		linkedHashMap.put(checkIfItsAnOAuthRequest, new OAuth2AuthenticationEntryPoint());
+
+		LoginUrlAuthenticationEntryPoint signInFormAuthenticationEntryPoint = new LoginUrlAuthenticationEntryPoint(this.signInFormUrl);
+		signInFormAuthenticationEntryPoint.afterPropertiesSet();
+
+		DelegatingAuthenticationEntryPoint delegatingAuthenticationEntryPoint = new DelegatingAuthenticationEntryPoint(linkedHashMap);
+		delegatingAuthenticationEntryPoint.setDefaultEntryPoint(signInFormAuthenticationEntryPoint);
+
+		return delegatingAuthenticationEntryPoint;
+	}
 
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth)
@@ -118,42 +138,16 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 				  .userDetailsService(userDetailsService);
 	}
 
-	@Bean
-	public AuthenticationEntryPoint overridingAuthenticationEntryPoint()  throws Exception {
-		LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> linkedHashMap = new LinkedHashMap<>();
-		linkedHashMap.put( this.checkIfItsAnOAuthRequest, new OAuth2AuthenticationEntryPoint());
-
-		LoginUrlAuthenticationEntryPoint signInFormAuthenticationEntryPoint = new LoginUrlAuthenticationEntryPoint( this.signInForm );
-		  signInFormAuthenticationEntryPoint.afterPropertiesSet();
-
-		DelegatingAuthenticationEntryPoint delegatingAuthenticationEntryPoint = new DelegatingAuthenticationEntryPoint(linkedHashMap);
-		delegatingAuthenticationEntryPoint.setDefaultEntryPoint(signInFormAuthenticationEntryPoint);
-
-		return delegatingAuthenticationEntryPoint;
-	}
-
-	private final String signInForm = "/crm/signin.html" ;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http
-
-				  .authorizeUrls()
-				  .antMatchers("/favicon.ico").permitAll()
-				  .anyRequest().hasRole("USER")
-				  .and()
-				  .exceptionHandling()
-				  .authenticationEntryPoint(overridingAuthenticationEntryPoint())
-				  .and()
-				  .formLogin()
-				  .loginPage( this.signInForm)
-				  .defaultSuccessUrl("/")
-				  .failureUrl( this.signInForm+"?error=true")
-				  .permitAll()
-				  .and()
-				  .apply(new OAuth2ServerConfigurer())
-				  .resourceId(applicationName)
-		;
+			http
+				  .authorizeUrls().antMatchers("/favicon.ico").permitAll().anyRequest().hasRole("USER")
+				  .and().exceptionHandling().authenticationEntryPoint(overridingAuthenticationEntryPoint())
+				  .and().formLogin().loginUrl(this.signInUrl).loginPage(this.signInFormUrl).defaultSuccessUrl("/").failureUrl(this.signInFormUrl + "?error=true").permitAll()
+				  .and().logout().logoutUrl( this.signoutUrl ).logoutSuccessUrl( this.signInFormUrl).permitAll()
+				  .and().apply(new OAuth2ServerConfigurer()).resourceId(this.applicationName)
+			;
 	}
 
 	@Bean

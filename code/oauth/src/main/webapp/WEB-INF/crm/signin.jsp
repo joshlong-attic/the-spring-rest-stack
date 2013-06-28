@@ -14,14 +14,17 @@
 </p>
 
 <form method="post" action="${pageContext.request.contextPath}/login">
-    <label class="control-label" for="j_username"> User Name: </label>
-    <input id="username" name="username" type="text"/>
-    <br/>
+    <DIV>
+        <label style="width: 100px; display: inline-block;" class="control-label" for="username"> User Name: </label>
+        <input id="username" name="username" type="text"/>
 
-    <label class="control-label" for="password"> Password: </label>
-    <input class="input-xlarge" id="password" name="password" type="password"/>
-    <br/>
+    </DIV>
 
+    <DIV>
+        <label style="width: 100px; display: inline-block" class="control-label" for="password"> Password: </label>
+        <input class="input-xlarge" id="password" name="password" type="password"/>
+
+    </DIV>
     <input type="submit"/>
 
 </form>

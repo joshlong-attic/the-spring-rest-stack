@@ -16,6 +16,11 @@ import org.springframework.security.crypto.password.*;
 import org.springframework.security.oauth2.config.annotation.authentication.configurers.InMemoryClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.OAuth2ServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.OAuth2ServerConfigurer;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter;
+import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.*;
+import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
@@ -24,7 +29,9 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.LinkedHashMap;
 
 
 /**
@@ -65,14 +72,40 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
+
+	private final RequestMatcher checkIfItsAnOAuthRequest = new RequestMatcher() {
+		private final LocalOAuth2AuthenticationProcessingFilter localOAuth2AuthenticationProcessingFilter =
+				  new LocalOAuth2AuthenticationProcessingFilter();
+
+		@Override
+		public boolean matches(HttpServletRequest request) {
+			return localOAuth2AuthenticationProcessingFilter.parseHeaderToken(request) != null
+			       || localOAuth2AuthenticationProcessingFilter.parseToken(request) != null;
+
+		}
+
+		final class LocalOAuth2AuthenticationProcessingFilter extends OAuth2AuthenticationProcessingFilter {
+			@Override
+			public String parseToken(HttpServletRequest request) {
+				return super.parseToken(request);
+			}
+
+			@Override
+			public String parseHeaderToken(HttpServletRequest request) {
+				return super.parseHeaderToken(request);
+			}
+		}
+	};
+
 	private String applicationName = "crm";
+
 	@Autowired
 	private UserDetailsService userDetailsService;
 
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth)
 			  throws Exception {
-				auth
+		auth
 				  .apply(new InMemoryClientDetailsServiceConfigurer())
 				  .withClient("android-crm")
 				  .resourceIds(applicationName)
@@ -85,21 +118,42 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 				  .userDetailsService(userDetailsService);
 	}
 
+	@Bean
+	public AuthenticationEntryPoint overridingAuthenticationEntryPoint()  throws Exception {
+		LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> linkedHashMap = new LinkedHashMap<>();
+		linkedHashMap.put( this.checkIfItsAnOAuthRequest, new OAuth2AuthenticationEntryPoint());
+
+		LoginUrlAuthenticationEntryPoint signInFormAuthenticationEntryPoint = new LoginUrlAuthenticationEntryPoint( this.signInForm );
+		  signInFormAuthenticationEntryPoint.afterPropertiesSet();
+
+		DelegatingAuthenticationEntryPoint delegatingAuthenticationEntryPoint = new DelegatingAuthenticationEntryPoint(linkedHashMap);
+		delegatingAuthenticationEntryPoint.setDefaultEntryPoint(signInFormAuthenticationEntryPoint);
+
+		return delegatingAuthenticationEntryPoint;
+	}
+
+	private final String signInForm = "/crm/signin.html" ;
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+
 				  .authorizeUrls()
 				  .antMatchers("/favicon.ico").permitAll()
 				  .anyRequest().hasRole("USER")
 				  .and()
+				  .exceptionHandling()
+				  .authenticationEntryPoint(overridingAuthenticationEntryPoint())
+				  .and()
 				  .formLogin()
-				  .loginPage("/crm/signin.html")
-				  .defaultSuccessUrl("/crm/welcome.html")
-				  .failureUrl("/crm/signin.html?error=true")
+				  .loginPage( this.signInForm)
+				  .defaultSuccessUrl("/")
+				  .failureUrl( this.signInForm+"?error=true")
 				  .permitAll()
 				  .and()
 				  .apply(new OAuth2ServerConfigurer())
-				  .resourceId(applicationName);
+				  .resourceId(applicationName)
+		;
 	}
 
 	@Bean

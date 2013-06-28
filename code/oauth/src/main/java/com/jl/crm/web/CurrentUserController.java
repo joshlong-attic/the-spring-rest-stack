@@ -30,7 +30,7 @@ public class CurrentUserController {
 		User self = this.crmService.findById(userId);
 		Link userLink = this.userLinks.getSelfLink(self);
 		UserResource userResource = new UserResource(self, userLink);
-		return new ResponseEntity<Resource<User>>(userResource, HttpStatus.ACCEPTED);
+		return new ResponseEntity<Resource<User>>(userResource , HttpStatus.OK);
 	}
 
 	@Inject

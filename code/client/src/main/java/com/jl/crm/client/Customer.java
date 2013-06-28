@@ -9,7 +9,8 @@ import java.util.Date;
 @JsonIgnoreProperties (ignoreUnknown = true)
 public class Customer {
 	private Link selfLink;
-	private String firstName, lastName;
+	private String firstName;
+	private String lastName;
 	private Date signupDate;
 	private User user;
 
@@ -17,7 +18,7 @@ public class Customer {
 	}
 
 	public Customer(User user, String firstName, String lastName) {
-		this(user, null, firstName, lastName, null );
+		this(user, null, firstName, lastName, null);
 	}
 
 	public Customer(User user, Link selfLink, String firstName, String lastName, Date signupDate) {
@@ -26,6 +27,15 @@ public class Customer {
 		this.signupDate = signupDate;
 		this.firstName = firstName;
 		this.lastName = lastName;
+	}
+
+	@Override
+	public String toString() {
+		return "Customer{" +
+		       "firstName='" + firstName + '\'' +
+		       ", lastName='" + lastName + '\'' +
+		       ", signupDate=" + signupDate +
+		       '}';
 	}
 
 	public Link getId() {
@@ -44,9 +54,10 @@ public class Customer {
 		return Long.parseLong(href.substring(href.lastIndexOf("/") + 1));
 	}
 
-	public User getUser(){
-		return this.user ;
+	public User getUser() {
+		return this.user;
 	}
+
 	public Date getSignupDate() {
 		return this.signupDate;
 	}

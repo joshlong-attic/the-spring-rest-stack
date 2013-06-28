@@ -1,7 +1,6 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.ServiceConfiguration;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.data.repository.support.DomainClassConverter;
@@ -18,7 +17,7 @@ import org.springframework.security.oauth2.config.annotation.authentication.conf
 import org.springframework.security.oauth2.config.annotation.web.configuration.OAuth2ServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.OAuth2ServerConfigurer;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.support.*;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
@@ -26,18 +25,15 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.servlet.*;
 import java.io.File;
-import java.util.*;
 
 
 /**
- * In conjunction with {@link CrmSecurityApplicationInitializer}, this
- * configuration class sets up Spring Data REST, Spring MVC, Spring Security and
- * Spring Security OAuth, along with importing all of our existing service
+ * In conjunction with {@link CrmSecurityApplicationInitializer}, this configuration class sets up Spring Data REST,
+ * Spring MVC, Spring Security and Spring Security OAuth, along with importing all of our existing service
  * implementations.
- * 
- * @see CrmSecurityApplicationInitializer
- * 
+ *
  * @author Josh Long
+ * @see CrmSecurityApplicationInitializer
  */
 public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
@@ -58,12 +54,6 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 		return new String[]{"/"};
 	}
 
-	protected EnumSet<DispatcherType> getDispatcherTypes() {
-		return isAsyncSupported() ?
-				         EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ASYNC) :
-				         EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE);
-	}
-
 	@Override
 	protected void customizeRegistration(ServletRegistration.Dynamic registration) {
 		File uploadDirectory = ServiceConfiguration.CRM_STORAGE_UPLOADS_DIRECTORY;
@@ -76,41 +66,40 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @EnableWebSecurity
 class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 	private String applicationName = "crm";
-	
 	@Autowired
 	private UserDetailsService userDetailsService;
 
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth)
-			throws Exception {
-		auth
-			.apply(new InMemoryClientDetailsServiceConfigurer())
-				.withClient("android-crm")
-					.resourceIds(applicationName)
-					.scopes("read","write")
-					.authorities("ROLE_USER")
-					.secret("123456")
-					.authorizedGrantTypes("authorization_code","implicit","password")
-					.and()
-				.and()
-			.userDetailsService(userDetailsService);
+			  throws Exception {
+				auth
+				  .apply(new InMemoryClientDetailsServiceConfigurer())
+				  .withClient("android-crm")
+				  .resourceIds(applicationName)
+				  .scopes("read", "write")
+				  .authorities("ROLE_USER")
+				  .secret("123456")
+				  .authorizedGrantTypes("authorization_code", "implicit", "password")
+				  .and()
+				  .and()
+				  .userDetailsService(userDetailsService);
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-			.authorizeUrls()
-				.antMatchers("/favicon.ico").permitAll()
-				.anyRequest().hasRole("USER")
-				.and()
-			.formLogin()
-				.loginPage("/crm/signin.html")
-				.defaultSuccessUrl("/crm/welcome.html")
-				.failureUrl("/crm/signin.html?error=true")
-				.permitAll()
-				.and()
-			.apply(new OAuth2ServerConfigurer())
-				.resourceId(applicationName);
+				  .authorizeUrls()
+				  .antMatchers("/favicon.ico").permitAll()
+				  .anyRequest().hasRole("USER")
+				  .and()
+				  .formLogin()
+				  .loginPage("/crm/signin.html")
+				  .defaultSuccessUrl("/crm/welcome.html")
+				  .failureUrl("/crm/signin.html?error=true")
+				  .permitAll()
+				  .and()
+				  .apply(new OAuth2ServerConfigurer())
+				  .resourceId(applicationName);
 	}
 
 	@Bean

@@ -8,7 +8,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>services</module>
-        <module>client</module>
+        <module>social</module>
+        <module>android</module>		
         <module>rest</module>
         <module>hateoas</module>
         <module>hateoas-data</module>

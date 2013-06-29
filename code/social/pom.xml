@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
         <artifactId>core</artifactId>
     </parent>
-    <artifactId>client</artifactId>
+    <artifactId>social</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>

@@ -27,7 +27,11 @@ import java.net.URI;
 import java.util.*;
 import java.util.logging.Logger;
 
-/** @author Josh Long */
+/** 
+ * Exercises the OAuth 2 API with our Spring Social-powered client. 
+ *  
+ * @author Josh Long 
+ */
 public class ClientExample implements InitializingBean {
 	private static Logger logger = Logger.getLogger("ClientExample");
 	private CrmConnectionFactory crmConnectionFactory;

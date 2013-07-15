@@ -32,8 +32,9 @@ import java.io.File;
  * Spring MVC, Spring Security and Spring Security OAuth, along with importing all of our existing service
  * implementations.
  *
- * @author Josh Long
  * @see CrmSecurityApplicationInitializer
+ * @author Josh Long
+ * @author Rob Winch
  */
 public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 

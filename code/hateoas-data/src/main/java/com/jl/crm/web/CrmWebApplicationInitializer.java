@@ -64,10 +64,10 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @EnableWebMvc
 @EnableHypermediaSupport
 class WebMvcConfiguration extends WebMvcConfigurationSupport {
-	@Bean
-	public DomainClassConverter<?> domainClassConverter(FormattingConversionService formattingConversionService) {
-		return new DomainClassConverter<FormattingConversionService>(formattingConversionService);
-	}
+//	@Bean
+//	public DomainClassConverter<?> domainClassConverter(FormattingConversionService formattingConversionService) {
+//		return new DomainClassConverter<FormattingConversionService>(formattingConversionService);
+//	}
 
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {

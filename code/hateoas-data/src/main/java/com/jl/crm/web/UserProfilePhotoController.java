@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import java.net.URI;
 
 @Controller
-@RequestMapping (value = "/users/{user}/photo")
+@RequestMapping (value = "/users/{userId}/photo")
 public class UserProfilePhotoController {
 
 	private CrmService crmService;
@@ -29,10 +29,11 @@ public class UserProfilePhotoController {
 	}
 
 	@RequestMapping (method = RequestMethod.POST)
-	HttpEntity<Void> writeUserProfilePhoto(@PathVariable User user, @RequestParam MultipartFile file) throws Throwable {
-		if (user == null){
+	HttpEntity<Void> writeUserProfilePhoto(@PathVariable Long userId, @RequestParam MultipartFile file) throws Throwable {
+		if (userId == null){
 			throw new UserProfilePhotoWriteException(null, new RuntimeException("you need to specify a valid user ID#"));
 		}
+		User user = this.crmService.findById(userId);
 		byte bytesForProfilePhoto[] = FileCopyUtils.copyToByteArray(file.getInputStream());
 		this.crmService.writeUserProfilePhoto(user.getId(), MediaType.parseMediaType(file.getContentType()), bytesForProfilePhoto);
 
@@ -48,8 +49,9 @@ public class UserProfilePhotoController {
 	}
 
 	@RequestMapping (method = RequestMethod.GET)
-	HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable User user) throws Throwable {
+	HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long userId) throws Throwable {
 		CrmService.ProfilePhoto profilePhoto;
+		User user = this.crmService.findById(userId);
 		if (null != user && (profilePhoto = this.crmService.readUserProfilePhoto(user.getId())) != null){
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setContentType(profilePhoto.getMediaType());
@@ -58,7 +60,6 @@ public class UserProfilePhotoController {
 		else {
 			throw new UserProfilePhotoReadException(-1, new RuntimeException("couldn't find the user"));
 		}
-
 	}
 
 

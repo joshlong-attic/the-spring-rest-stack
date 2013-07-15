@@ -30,9 +30,9 @@ class UserProfilePhotoController {
 		this.crmService.writeUserProfilePhoto(user, MediaType.parseMediaType(file.getContentType()), bytesForProfilePhoto);
 		HttpHeaders httpHeaders = new HttpHeaders() ;
 		URI uriOfPhoto = ServletUriComponentsBuilder.fromCurrentContextPath()
-	                   .pathSegment(ApiUrls.ROOT_URL_USERS_USER_PHOTO.substring(1))
-							 .buildAndExpand(Collections.singletonMap("user", user))
-	                   .toUri();
+	                    .pathSegment(ApiUrls.ROOT_URL_USERS_USER_PHOTO.substring(1))
+						.buildAndExpand(Collections.singletonMap("user", user))
+	                    .toUri();
 		httpHeaders.setLocation( uriOfPhoto );
 
 		return new ResponseEntity<Void>(httpHeaders, HttpStatus.CREATED);

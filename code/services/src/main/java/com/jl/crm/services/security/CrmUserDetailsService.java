@@ -26,6 +26,7 @@ public class CrmUserDetailsService implements UserDetailsService {
 		return new CrmUserDetails(user);
 	}
 
+	@SuppressWarnings("serial")
 	public static class CrmUserDetails implements UserDetails {
 		// scopes
 		public static final String SCOPE_READ = "read";

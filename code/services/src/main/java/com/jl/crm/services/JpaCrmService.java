@@ -29,13 +29,7 @@ public class JpaCrmService implements CrmService {
 	@Inject public void setUserRepository (UserRepository userRepository ){
 	 this.userRepository = userRepository;
 	}
-	/*
-	@Inject
-	public JpaCrmService(UserRepository userRepository, CustomerRepository customerRepository) {
-		this.userRepository = userRepository;
-		this.customerRepository = customerRepository;
-	}
-*/
+
 	@Override
 	public CrmService.ProfilePhoto readUserProfilePhoto(long userId) {
 		InputStream fileInputSteam = null;

@@ -3,8 +3,7 @@ package com.jl.crm.web;
 import com.jl.crm.services.ServiceConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
-import org.springframework.data.repository.support.DomainClassConverter;
-import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
+ import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -29,13 +28,13 @@ import java.io.File;
 
 /**
  * In conjunction with {@link CrmSecurityApplicationInitializer}, this configuration class sets up Spring Data REST,
+ * In conjunction with {@link CrmWebApplicationInitializer}, this configuration class sets up Spring Data REST,
  * Spring MVC, Spring Security and Spring Security OAuth, along with importing all of our existing service
  * implementations.
  *
  * @see CrmSecurityApplicationInitializer
  * @author Josh Long
- * @author Rob Winch
- */
+  */
 public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	private int maxUploadSizeInMb = 5 * 1024 * 1024; // 5 MB
@@ -73,8 +72,8 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth)
 			  throws Exception {
-				auth
-				  .apply(new InMemoryClientDetailsServiceConfigurer())
+ 				auth
+ 				  .apply(new InMemoryClientDetailsServiceConfigurer())
 				  .withClient("android-crm")
 				  .resourceIds(applicationName)
 				  .scopes("read", "write")
@@ -119,10 +118,7 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 @EnableHypermediaSupport
 @EnableWebMvc
 class WebMvcConfiguration extends WebMvcConfigurationSupport {
-	@Bean
-	public DomainClassConverter<?> domainClassConverter() {
-		return new DomainClassConverter<FormattingConversionService>(mvcConversionService());
-	}
+
 
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {

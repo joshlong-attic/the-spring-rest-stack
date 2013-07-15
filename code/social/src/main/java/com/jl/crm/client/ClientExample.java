@@ -37,7 +37,7 @@ public class ClientExample implements InitializingBean {
 	public static void main(String args[]) throws Throwable {
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
 		Map<String, Object> properties = new HashMap<String, Object>();
-		properties.put("sscrm.base-url", "http://localhost:8080/"); // nb if youre running this from Eclipse, user /oauth/oauth
+		properties.put("sscrm.base-url", "http://localhost:8080/oauth/"); // nb if youre running this from Eclipse, user /oauth/oauth
 		properties.put("sscrm.client-id", "android-crm");
 		properties.put("sscrm.client-secret", "123456");
 		properties.put("sscrm.authorize-url", "/oauth/authorize");

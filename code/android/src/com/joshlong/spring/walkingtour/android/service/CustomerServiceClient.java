@@ -3,8 +3,7 @@ package com.joshlong.spring.walkingtour.android.service;
 import android.util.Log;
 import com.joshlong.spring.walkingtour.android.async.*;
 import com.joshlong.spring.walkingtour.android.model.Customer;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.http.*;
+ import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -65,7 +64,7 @@ public class CustomerServiceClient implements CustomerService {
     @Override
     public void search(String searchQuery, AsyncCallback<List<Customer>> asyncCallback) {
         if (searchQuery.length() < 3) {
-            LogFactory.getLog(getClass()).debug(String.format("it's recommended that you don't permit searches with < 3 characters, like %s", searchQuery + ""));
+      //      LogFactory.getLog(getClass()).debug(String.format("it's recommended that you don't permit searches with < 3 characters, like %s", searchQuery + ""));
         }
         String url = urlForPath("customers");
         String uriWithVariables = UriComponentsBuilder.fromUriString(url)

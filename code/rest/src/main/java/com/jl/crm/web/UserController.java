@@ -25,8 +25,7 @@ class UserController {
 		this.crmService = crmService;
 	}
 	
-	// 	/users/{user}
-	@RequestMapping (method = RequestMethod.DELETE, value = ApiUrls.URL_USERS_USER)
+ 	@RequestMapping (method = RequestMethod.DELETE, value = ApiUrls.URL_USERS_USER)
 	@ResponseBody
 	User deleteUser(@PathVariable Long user) {
 		return crmService.removeUser(user);

@@ -14,7 +14,6 @@ import org.springframework.orm.jpa.*;
 import org.springframework.orm.jpa.vendor.*;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
@@ -66,8 +65,8 @@ public class ServiceConfiguration {
 }
 
 @Configuration
-@Profile ("production")
-class ProductionDataSourceConfiguration {
+@Profile ({  "production"})
+ class ProductionDataSourceConfiguration {
 	@Bean
 	public HibernateJpaVendorAdapter hibernateJpaVendorAdapter() {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
@@ -96,11 +95,13 @@ class EmbeddedDataSourceConfiguration {
 
 	@PostConstruct
 	public void setupTestProfileImages() throws Exception {
-		File profilePhotoForUser5 = new File(ServiceConfiguration.CRM_STORAGE_PROFILES_DIRECTORY, "5");
+		long userId = 5;
+		File profilePhotoForUser5 = new File(ServiceConfiguration.CRM_STORAGE_PROFILES_DIRECTORY, Long.toString(userId));
 		if (!profilePhotoForUser5.exists()){
 			// copy the profile photo back
-			ClassPathResource classPathResource = new ClassPathResource("/sample-photos/spring-dog-2.png");
-			Assert.isTrue(classPathResource.exists());
+			String pathForProfilePhoto = "/sample-photos/spring-dog-2.png";
+			ClassPathResource classPathResource = new ClassPathResource(pathForProfilePhoto);
+			assert classPathResource.exists() : "the resource " + pathForProfilePhoto + " does not exist";
 			OutputStream outputStream = new FileOutputStream(profilePhotoForUser5);
 			InputStream inputStream = classPathResource.getInputStream();
 			try {
@@ -110,7 +111,7 @@ class EmbeddedDataSourceConfiguration {
 				IOUtils.closeQuietly(inputStream);
 				IOUtils.closeQuietly(outputStream);
 			}
-			log.debug("created file " + profilePhotoForUser5.getAbsolutePath() + " since the application is running .");
+			log.debug("setup photo " + profilePhotoForUser5.getAbsolutePath() + " for the sample user #" + Long.toString(userId) + "'s profile photo.");
 		}
 
 		if (!profilePhotoForUser5.exists()){
@@ -135,18 +136,16 @@ class EmbeddedDataSourceConfiguration {
 	@Bean
 	public DataSource dataSource() {
 
-		String applicationName = ServiceConfiguration.CRM_NAME;
-
-		EmbeddedDatabaseFactory embeddedDatabaseFactory = new EmbeddedDatabaseFactory();
-		embeddedDatabaseFactory.setDatabaseName(applicationName);
-		embeddedDatabaseFactory.setDatabaseType(EmbeddedDatabaseType.H2);
-
-		ClassPathResource classPathResource = new ClassPathResource("/" + applicationName + "-schema-h2.sql");
+		ClassPathResource classPathResource = new ClassPathResource("/crm-schema-h2.sql");
 
 		ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
 		resourceDatabasePopulator.addScript(classPathResource);
-		embeddedDatabaseFactory.setDatabasePopulator(resourceDatabasePopulator);
 
-		return embeddedDatabaseFactory.getDatabase();
+		EmbeddedDatabaseFactoryBean embeddedDatabaseFactoryBean = new EmbeddedDatabaseFactoryBean();
+		embeddedDatabaseFactoryBean.setDatabasePopulator(resourceDatabasePopulator);
+		embeddedDatabaseFactoryBean.setDatabaseName(ServiceConfiguration.CRM_NAME);
+		embeddedDatabaseFactoryBean.setDatabaseType(EmbeddedDatabaseType.H2);
+		embeddedDatabaseFactoryBean.afterPropertiesSet();
+		return embeddedDatabaseFactoryBean.getObject();
 	}
 }

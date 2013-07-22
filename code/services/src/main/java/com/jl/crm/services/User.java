@@ -22,7 +22,7 @@ import java.util.*;
 public class User implements Identifiable<Long>, Serializable {
 
 	@Id
-	@GeneratedValue (strategy = GenerationType.AUTO)
+	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	@Column (name = "id", unique = true, nullable = false)
 	private Long id;
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
@@ -69,7 +69,7 @@ public class User implements Identifiable<Long>, Serializable {
 	}
 
 	public User(Long id, String u, String f, String l) {
-		this(u,null ,f,l);
+		this(u, null, f, l);
 		this.id = id;
 	}
 

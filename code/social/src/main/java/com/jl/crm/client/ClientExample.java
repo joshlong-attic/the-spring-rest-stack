@@ -7,7 +7,9 @@ import org.apache.commons.logging.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.*;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.embedded.*;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -20,20 +22,18 @@ import org.springframework.util.StringUtils;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import javax.swing.*;
-
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.util.*;
-import java.util.logging.Logger;
 
-/** 
- * Exercises the OAuth 2 API with our Spring Social-powered client. 
- *  
- * @author Josh Long 
+/**
+ * Exercises the OAuth 2 API with our Spring Social-powered client.
+ *
+ * @author Josh Long
  */
 public class ClientExample implements InitializingBean {
-	private static Logger logger = Logger.getLogger("ClientExample");
+	private static Log logger = LogFactory.getLog(ClientExample.class.getName());
 	private CrmConnectionFactory crmConnectionFactory;
 	private Environment environment;
 	private Connection<CrmOperations> connection;
@@ -41,7 +41,7 @@ public class ClientExample implements InitializingBean {
 	public static void main(String args[]) throws Throwable {
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
 		Map<String, Object> properties = new HashMap<String, Object>();
-		properties.put("sscrm.base-url", "http://localhost:8080/oauth/"); // nb if youre running this from Eclipse, user /oauth/oauth
+		properties.put("sscrm.base-url", "http://localhost:8080/"); // nb if youre running this from Eclipse, user /oauth/oauth
 		properties.put("sscrm.client-id", "android-crm");
 		properties.put("sscrm.client-secret", "123456");
 		properties.put("sscrm.authorize-url", "/oauth/authorize");
@@ -66,7 +66,7 @@ public class ClientExample implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		String returnToUrl = environment.getProperty("sscrm.base-url") + "/crm/profile.html";
+		String returnToUrl = environment.getProperty("sscrm.base-url") + "/";
 		OAuth2Operations oAuth2Operations = crmConnectionFactory.getOAuthOperations();
 		if (oAuth2Operations instanceof OAuth2Template){
 			((OAuth2Template) oAuth2Operations).setUseParametersForClientAuthentication(false);
@@ -89,7 +89,7 @@ public class ClientExample implements InitializingBean {
 		CrmOperations customerServiceOperations = connection.getApi(); /* obtain our own User */
 		User self = customerServiceOperations.currentUser();
 		logger.info(ToStringBuilder.reflectionToString(self)); /* obtain the current customer */
-		Customer customer = customerServiceOperations.createCustomer("josh", "long", new java.util.Date());
+		Customer customer = customerServiceOperations.createCustomer("Nic", "Cage", new java.util.Date());
 		logger.info(customer.toString()); /* loading the photo */
 		ProfilePhoto profilePhoto = customerServiceOperations.getUserProfilePhoto();
 		logger.info("profile photo mime type: " + profilePhoto.getMediaType().toString());
@@ -102,6 +102,7 @@ public class ClientExample implements InitializingBean {
 
 @Configuration
 class SocialClientConfiguration {
+	public static final String CRM_SOCIAL_NAME = "crm-social";
 	private Log log = LogFactory.getLog(getClass());
 
 	@Bean
@@ -111,12 +112,19 @@ class SocialClientConfiguration {
 
 	@Bean
 	public DataSource dataSource() {
-		SimpleDriverDataSource simpleDriverDataSource = new SimpleDriverDataSource();
-		simpleDriverDataSource.setDriverClass(org.h2.Driver.class);
-		simpleDriverDataSource.setUrl("jdbc:h2:tcp://localhost/~/spring-social-crm");
-		simpleDriverDataSource.setUsername("sa");
-		simpleDriverDataSource.setPassword("");
-		return simpleDriverDataSource;
+
+		ClassPathResource classPathResource = new ClassPathResource("/crm-social-schema-h2.sql");
+
+		ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
+		resourceDatabasePopulator.addScript(classPathResource);
+
+		EmbeddedDatabaseFactoryBean embeddedDatabaseFactoryBean = new EmbeddedDatabaseFactoryBean();
+		embeddedDatabaseFactoryBean.setDatabasePopulator(resourceDatabasePopulator);
+		embeddedDatabaseFactoryBean.setDatabaseName(CRM_SOCIAL_NAME);
+		embeddedDatabaseFactoryBean.setDatabaseType(EmbeddedDatabaseType.H2);
+		embeddedDatabaseFactoryBean.afterPropertiesSet();
+		return embeddedDatabaseFactoryBean.getObject();
+
 	}
 
 	private CrmServiceProvider createCrmServiceProvider(String clientId, String clientSecret, String baseUrl, String authorizeUrl, String accessTokenUrl) {

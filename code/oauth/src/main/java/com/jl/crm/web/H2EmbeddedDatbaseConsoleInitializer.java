@@ -14,6 +14,12 @@ import javax.servlet.*;
  * @author Josh Long
  */
 public class H2EmbeddedDatbaseConsoleInitializer implements WebApplicationInitializer {
+	/**
+	 * We use this variable both in installing the H2 database administration console, as well as
+	 * as excluding this from Spring Security's protection.
+	 */
+	public static final String H2_DATABASE_CONSOLE_MAPPING = "/h2/*";
+
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		WebServlet webServlet = new WebServlet();
@@ -21,7 +27,7 @@ public class H2EmbeddedDatbaseConsoleInitializer implements WebApplicationInitia
 		ServletRegistration.Dynamic dynamic = servletContext.addServlet("h2", webServlet);
 		dynamic.setInitParameter("trace", "true");
 		dynamic.setAsyncSupported(true);
-		dynamic.addMapping("/h2/*");
+		dynamic.addMapping(H2_DATABASE_CONSOLE_MAPPING);
 		dynamic.setLoadOnStartup(1);
 	}
 

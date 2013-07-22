@@ -19,8 +19,8 @@ import java.util.Date;
 public class Customer implements Identifiable<Long>, Serializable {
 
 	@Id
-	@GeneratedValue (strategy = GenerationType.AUTO)
-	@Column (name = "id", unique = true, nullable = false)
+	@GeneratedValue (strategy = GenerationType.SEQUENCE)
+	@Column (name = "id", unique = true, nullable = false )
 	private Long id;
 	@JsonIgnore
 	@ManyToOne (fetch = FetchType.LAZY)

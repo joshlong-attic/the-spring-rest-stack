@@ -63,8 +63,7 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
-	private String applicationName = "crm";
-
+	private String applicationName = ServiceConfiguration.CRM_NAME;
 	@Inject
 	private UserDetailsService userDetailsService;
 
@@ -98,25 +97,21 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 
 		http.logout().logoutUrl("/signout").deleteCookies("JSESSIONID");
 
+
+		// nb: the H2 administration console should *not* be left exposed.
+		// comment out the mapping path below so that it requires an authentication to see it.
+		String[] filesToLetThroughUnAuthorized =
+				  {
+							 H2EmbeddedDatbaseConsoleInitializer.H2_DATABASE_CONSOLE_MAPPING,
+							 "/favicon.ico",
+							 "/resources/"
+				  };
 		http.authorizeUrls()
-				  .antMatchers("/favicon.ico", "/resources/").permitAll()
+				  .antMatchers(filesToLetThroughUnAuthorized).permitAll()
 				  .anyRequest().authenticated();
 
 		http.apply(new OAuth2ServerConfigurer()).resourceId(applicationName);
-//
-//		http
-//				  .authorizeUrls()
-//				  .antMatchers("/favicon.ico").permitAll()
-//				  .anyRequest().hasRole("USER")
-//				  .and()
-//				  .formLogin()
-//				  .loginPage("/crm/signin.html")
-//				  .defaultSuccessUrl("/crm/welcome.html")
-//				  .failureUrl("/crm/signin.html?error=true")
-//				  .permitAll()
-//				  .and()
-//				  .apply(new OAuth2ServerConfigurer())
-//				  .resourceId(applicationName);
+
 	}
 
 	@Bean
@@ -147,7 +142,7 @@ class WebMvcConfiguration extends WebMvcConfigurationSupport {
 		return new StandardServletMultipartResolver();
 	}
 
-	// setup support for rendering .jsp pages
+	/** This application renders Spring Security UI pages to support logging into, and out of, the application. */
 	@Bean
 	public ViewResolver internalResourceViewResolver() {
 		InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();

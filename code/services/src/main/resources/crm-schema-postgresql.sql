@@ -29,12 +29,12 @@ CREATE TABLE customer
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-INSERT INTO public.user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (3, 'Clark', 'Kent', 'uberman', '2013-06-02 15:33:51', 'clarkkent', true, false, null);
-INSERT INTO public.user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (3, 'Lois', 'Lane', 'thebetterhalf', '2013-06-02 15:33:51', 'loislane', true, false, null);
-INSERT INTO public.user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (2, 'Bruce', 'Wayne', 'alfred', '2013-06-02 15:33:51', 'brucewayne', true, false, null);
+INSERT INTO public.user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (1, 'Clark', 'Kent', 'uberman', '2013-06-02 15:33:51', 'clarkkent', true, false, null);
+INSERT INTO public.user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (2, 'Lois', 'Lane', 'thebetterhalf', '2013-06-02 15:33:51', 'loislane', true, false, null);
+INSERT INTO public.user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (3, 'Bruce', 'Wayne', 'alfred', '2013-06-02 15:33:51', 'brucewayne', true, false, null);
 INSERT INTO public.user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (4, 'Tony', 'Stark', 'pepper', '2013-06-02 15:33:51', 'tonystark', true, false, null);
-INSERT INTO public.user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (2, 'Josh', 'Long', 'cowbell', '2013-06-02 15:33:51', 'joshlong', true, true, null);
-INSERT INTO public.user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (2, 'George', 'Jetson', 'sprockets', '2013-07-18 20:52:28', 'georgelee', true, false, null);
+INSERT INTO public.user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (5, 'Josh', 'Long', 'cowbell', '2013-06-02 15:33:51', 'joshlong', true, true, null);
+INSERT INTO public.user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (6, 'George', 'Jetson', 'sprockets', '2013-07-18 20:52:28', 'georgelee', true, false, null);
 
 INSERT INTO public.customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (1, 'arjen', 'poutsma', '2013-06-12 22:37:22', 3);
 INSERT INTO public.customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (2, 'mark', 'pollack', '2013-06-12 22:37:22', 4);

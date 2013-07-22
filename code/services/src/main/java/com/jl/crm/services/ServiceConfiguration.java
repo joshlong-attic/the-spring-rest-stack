@@ -1,6 +1,8 @@
 package com.jl.crm.services;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.logging.*;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
@@ -12,11 +14,12 @@ import org.springframework.orm.jpa.*;
 import org.springframework.orm.jpa.vendor.*;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.io.File;
+import java.io.*;
 import java.sql.Driver;
 
 @EnableJpaRepositories
@@ -27,14 +30,17 @@ import java.sql.Driver;
 public class ServiceConfiguration {
 
 	public static final String CRM_NAME = "crm";
+	/** The root directory to which all uploads for the application are uploaded. */
 	public static final File CRM_STORAGE_DIRECTORY = new File(SystemUtils.getUserHome(), CRM_NAME);
+	/** things are first uploaded by the application server to this directory. it's a sort of staging directory */
 	public static final File CRM_STORAGE_UPLOADS_DIRECTORY = new File(CRM_STORAGE_DIRECTORY, "uploads");
+	/** when a profile photo is uploaded, the resultant, completely uploaded image is stored in this directory */
 	public static final File CRM_STORAGE_PROFILES_DIRECTORY = new File(CRM_STORAGE_DIRECTORY, "profiles");
 
 	@PostConstruct
 	public void setupStorage() throws Throwable {
 
-		File[] files = {CRM_STORAGE_DIRECTORY, CRM_STORAGE_PROFILES_DIRECTORY, CRM_STORAGE_UPLOADS_DIRECTORY};
+		File[] files = {CRM_STORAGE_DIRECTORY, CRM_STORAGE_UPLOADS_DIRECTORY, CRM_STORAGE_PROFILES_DIRECTORY};
 		for (File f : files) {
 			if (!f.exists() && !f.mkdirs()){
 				throw new RuntimeException("you must create the profile " +
@@ -83,8 +89,36 @@ class ProductionDataSourceConfiguration {
 }
 
 @Configuration
-@Profile ("default")
+@Profile ({"default", "test"})
 class EmbeddedDataSourceConfiguration {
+
+	private Log log = LogFactory.getLog(getClass());
+
+	@PostConstruct
+	public void setupTestProfileImages() throws Exception {
+		File profilePhotoForUser5 = new File(ServiceConfiguration.CRM_STORAGE_PROFILES_DIRECTORY, "5");
+		if (!profilePhotoForUser5.exists()){
+			// copy the profile photo back
+			ClassPathResource classPathResource = new ClassPathResource("/sample-photos/spring-dog-2.png");
+			Assert.isTrue(classPathResource.exists());
+			OutputStream outputStream = new FileOutputStream(profilePhotoForUser5);
+			InputStream inputStream = classPathResource.getInputStream();
+			try {
+				IOUtils.copy(inputStream, outputStream);
+			}
+			finally {
+				IOUtils.closeQuietly(inputStream);
+				IOUtils.closeQuietly(outputStream);
+			}
+			log.debug("created file " + profilePhotoForUser5.getAbsolutePath() + " since the application is running .");
+		}
+
+		if (!profilePhotoForUser5.exists()){
+			throw new RuntimeException("couldn't setup profile photos at " + profilePhotoForUser5.getAbsolutePath() + ".");
+		}
+
+	}
+
 	@Bean
 	public HibernateJpaVendorAdapter hibernateJpaVendorAdapter() {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();

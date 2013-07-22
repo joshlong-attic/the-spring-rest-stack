@@ -86,24 +86,7 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
- /*
-		String signin = "/signin", signup = "/signup", signout = "/signout";
-		String asterisk = "/**";
 
-
-		http.rememberMe().useSecureCookie(false).userDetailsService(this.userDetailsService()) ;
-		// .rememberMeServices(  );
-
-		http.formLogin()
-				  .loginPage(signin).loginProcessingUrl(signin + "/authenticate").usernameParameter("j_username").passwordParameter("j_password").permitAll(true);
-
-		http.logout()
-				  .logoutUrl(signout).deleteCookies("JSESSIONID");
-
-		http.authorizeUrls()
-				  .antMatchers("/favicon.ico", "/resources" + asterisk, signin + asterisk, signout + asterisk, signup + asterisk).permitAll()
-				  .anyRequest().authenticated();
-*/
 		http.formLogin()
 				  .loginPage("/crm/signin.html")
 				  .loginProcessingUrl("/signin")

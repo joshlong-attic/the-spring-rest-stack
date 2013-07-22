@@ -34,7 +34,7 @@ public class UserProfilePhotoController {
 			throw new UserProfilePhotoWriteException(null, new RuntimeException("you need to specify a valid user ID#"));
 		}
 		User user = this.crmService.findById(userId);
-		byte bytesForProfilePhoto[] = FileCopyUtils.copyToByteArray(file.getInputStream());
+		byte[] bytesForProfilePhoto = FileCopyUtils.copyToByteArray(file.getInputStream());
 		this.crmService.writeUserProfilePhoto(user.getId(), MediaType.parseMediaType(file.getContentType()), bytesForProfilePhoto);
 
 		Link photoLink = this.userLinks.getPhotoLink(user);

@@ -1,8 +1,6 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.*;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
@@ -20,14 +18,13 @@ public class UserProfilePhotoController {
 	private CrmService crmService;
 	private UserLinks userLinks;
 
-
 	@Inject
-	public void setCrmService(CrmService crmService) {
+	void setCrmService(CrmService crmService) {
 		this.crmService = crmService;
 	}
 
 	@Inject
-	public void setUserLinks(UserLinks userLinks) {
+	void setUserLinks(UserLinks userLinks) {
 		this.userLinks = userLinks;
 	}
 
@@ -37,7 +34,7 @@ public class UserProfilePhotoController {
 			throw new UserProfilePhotoWriteException(null, new RuntimeException("you need to specify a valid user ID#"));
 		}
 		User user = this.crmService.findById(userId);
-		byte bytesForProfilePhoto[] = FileCopyUtils.copyToByteArray(file.getInputStream());
+		byte[] bytesForProfilePhoto = FileCopyUtils.copyToByteArray(file.getInputStream());
 		this.crmService.writeUserProfilePhoto(user.getId(), MediaType.parseMediaType(file.getContentType()), bytesForProfilePhoto);
 
 		Link photoLink = this.userLinks.getPhotoLink(user);

@@ -9,7 +9,7 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.*;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.*;
@@ -36,7 +36,7 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 
 	@Override
 	protected Filter[] getServletFilters() {
-		return new Filter[]{new HiddenHttpMethodFilter(), new MultipartFilter() , new OpenEntityManagerInViewFilter() };
+		return new Filter[]{new HiddenHttpMethodFilter(), new MultipartFilter(), new OpenEntityManagerInViewFilter()};
 	}
 
 	@Override
@@ -59,9 +59,7 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @ComponentScan
 @EnableWebMvc
 @EnableHypermediaSupport
-class WebMvcConfiguration   {
-
-
+class WebMvcConfiguration {
 	@Bean
 	public MultipartResolver multipartResolver() {
 		return new StandardServletMultipartResolver();

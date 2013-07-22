@@ -1,7 +1,6 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.ServiceConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
@@ -21,6 +20,7 @@ import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import javax.inject.Inject;
 import javax.servlet.*;
 import java.io.File;
 
@@ -64,20 +64,21 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @EnableWebSecurity
 class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 	private String applicationName = "crm";
-	@Autowired
+
+	@Inject
 	private UserDetailsService userDetailsService;
 
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth)
 			  throws Exception {
-		auth
-				  .apply(new InMemoryClientDetailsServiceConfigurer())
+
+		auth.apply(new InMemoryClientDetailsServiceConfigurer())
 				  .withClient("android-crm")
-				  	.resourceIds(applicationName)
-				  	.scopes("read", "write")
-				  	.authorities("ROLE_USER")
-				  	.secret("123456")
+				  .resourceIds(applicationName)
+				  .scopes("read", "write")
+				  .authorities("ROLE_USER")
 				  .authorizedGrantTypes("authorization_code", "implicit", "password")
+				  .secret("123456")
 				  .and()
 				  .and()
 				  .userDetailsService(userDetailsService);

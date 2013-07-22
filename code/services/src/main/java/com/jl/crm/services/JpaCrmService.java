@@ -19,15 +19,17 @@ import java.util.*;
 @Service
 @Transactional
 public class JpaCrmService implements CrmService {
-	private   CustomerRepository customerRepository;
-	private   UserRepository userRepository;
+	private CustomerRepository customerRepository;
+	private UserRepository userRepository;
 
-	@Inject public void setCustomerRepository(CustomerRepository customerRepository ){
+	@Inject
+	public void setCustomerRepository(CustomerRepository customerRepository) {
 		this.customerRepository = customerRepository;
 	}
 
-	@Inject public void setUserRepository (UserRepository userRepository ){
-	 this.userRepository = userRepository;
+	@Inject
+	public void setUserRepository(UserRepository userRepository) {
+		this.userRepository = userRepository;
 	}
 
 	@Override

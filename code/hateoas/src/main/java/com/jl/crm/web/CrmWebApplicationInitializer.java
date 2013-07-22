@@ -3,7 +3,6 @@ package com.jl.crm.web;
 import com.jl.crm.services.ServiceConfiguration;
 import org.springframework.context.annotation.*;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
-import org.springframework.http.MediaType;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.*;
@@ -57,12 +56,8 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @ComponentScan
 @EnableWebMvc
 @EnableHypermediaSupport
-class WebMvcConfiguration extends WebMvcConfigurationSupport {
+class WebMvcConfiguration   {
 
-	@Override
-	public void configureContentNegotiation(ContentNegotiationConfigurer c) {
-		c.defaultContentType(MediaType.APPLICATION_JSON);
-	}
 
 	@Bean
 	public MultipartResolver multipartResolver() {

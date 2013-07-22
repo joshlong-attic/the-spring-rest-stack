@@ -5,7 +5,7 @@ import org.springframework.context.annotation.*;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.*;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.*;
@@ -54,7 +54,8 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @Configuration
 @ComponentScan
 @EnableWebMvc
-class WebMvcConfiguration {
+class WebMvcConfiguration   {
+
 
 	@Bean
 	public MultipartResolver multipartResolver() {

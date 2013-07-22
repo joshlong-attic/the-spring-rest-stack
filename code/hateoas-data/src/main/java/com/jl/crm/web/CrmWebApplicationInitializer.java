@@ -4,6 +4,7 @@ import com.jl.crm.services.ServiceConfiguration;
 import org.springframework.context.annotation.*;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
+import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.multipart.MultipartResolver;
@@ -35,7 +36,7 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 
 	@Override
 	protected Filter[] getServletFilters() {
-		return new Filter[]{new HiddenHttpMethodFilter(), new MultipartFilter()/*, new OpenEntityManagerInViewFilter()*/};
+		return new Filter[]{new HiddenHttpMethodFilter(), new MultipartFilter() , new OpenEntityManagerInViewFilter() };
 	}
 
 	@Override
@@ -58,12 +59,8 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @ComponentScan
 @EnableWebMvc
 @EnableHypermediaSupport
-class WebMvcConfiguration extends WebMvcConfigurationSupport {
+class WebMvcConfiguration   {
 
-	@Override
-	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-		configurer.enable();
-	}
 
 	@Bean
 	public MultipartResolver multipartResolver() {

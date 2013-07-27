@@ -106,7 +106,7 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 							 "/favicon.ico",
 							 "/resources/"
 				  };
-		http.authorizeUrls()
+		http.authorizeRequests()
 				  .antMatchers(filesToLetThroughUnAuthorized).permitAll()
 				  .anyRequest().authenticated();
 

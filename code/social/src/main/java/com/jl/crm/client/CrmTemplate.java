@@ -105,7 +105,7 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 		URI uri = this.uriFrom("/users/" + dbId + "/customers");
 		ResponseEntity<CustomerList> resources = this.getRestTemplate().getForEntity(uri, CustomerList.class);
 		Resources<Resource<Customer>> customerResources = resources.getBody();
-		Collection<Customer> customerCollection = new ArrayList<>();
+		Collection<Customer> customerCollection = new ArrayList<Customer>();
 		for (Resource<Customer> customerResource : customerResources) {
 			customerCollection.add(unwrapCustomer(customerResource));
 		}

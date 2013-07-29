@@ -64,6 +64,7 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @EnableWebSecurity
 class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 	private String applicationName = ServiceConfiguration.CRM_NAME;
+
 	@Inject
 	private UserDetailsService userDetailsService;
 
@@ -104,6 +105,7 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 				  {
 							 H2EmbeddedDatbaseConsoleInitializer.H2_DATABASE_CONSOLE_MAPPING,
 							 "/favicon.ico",
+							 "/oauth/authorize",
 							 "/resources/"
 				  };
 

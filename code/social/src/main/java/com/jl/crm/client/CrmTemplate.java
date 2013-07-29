@@ -1,14 +1,11 @@
 package com.jl.crm.client;
 
-import org.apache.commons.lang.SystemUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
 import org.springframework.social.support.ClientHttpRequestFactorySelector;
 import org.springframework.util.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
@@ -21,10 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Josh Long
  */
-public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperations, InitializingBean {
+public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperations {
 
 	private final Map<String, Object> emptyMap = new ConcurrentHashMap<String, Object>();
-	private final File rootFile = SystemUtils.getJavaIoTmpDir();
+	private final File rootFile = new File(System.getProperty("java.io.tmpdir"));
 	private URI apiBaseUri;
 
 	public CrmTemplate(String accessToken, String apiUrl) {
@@ -35,7 +32,7 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 			setRequestFactory(ClientHttpRequestFactorySelector.bufferRequests(getRestTemplate().getRequestFactory()));
 		}
 		catch (Exception e) {
-			throw new RuntimeException("could not initialize the " + getClass().getName(), e);
+			throw new RuntimeException("could not initialize the " + CrmTemplate.class.getName(), e);
 		}
 	}
 
@@ -51,14 +48,8 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 
 	private static User unwrapUser(Resource<User> tResource) {
 		User user = tResource.getContent();
-		user.setId(tResource.getId());
+		user.setId(tResource.getId().getHref());
 		return user;
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(this.apiBaseUri, missingDependency("apiBaseUri"));
-		Assert.notNull(this.getRestTemplate(), missingDependency(RestTemplate.class.getName()));
 	}
 
 	@Override
@@ -114,7 +105,7 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 		URI uri = this.uriFrom("/users/" + dbId + "/customers");
 		ResponseEntity<CustomerList> resources = this.getRestTemplate().getForEntity(uri, CustomerList.class);
 		Resources<Resource<Customer>> customerResources = resources.getBody();
-		Collection<Customer> customerCollection = new ArrayList<>();
+		Collection<Customer> customerCollection = new ArrayList<Customer>();
 		for (Resource<Customer> customerResource : customerResources) {
 			customerCollection.add(unwrapCustomer(customerResource));
 		}
@@ -129,7 +120,7 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 
 	private Customer customer(URI uri) {
 		ResponseEntity<CustomerResource> customerResourceResponseEntity = getRestTemplate().getForEntity(uri, CustomerResource.class);
-		Resource <Customer> customerResource = customerResourceResponseEntity.getBody();
+		Resource<Customer> customerResource = customerResourceResponseEntity.getBody();
 		return unwrapCustomer(customerResource);
 	}
 
@@ -198,12 +189,12 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 		return uriFrom("/customers/" + customerId);
 	}
 
-	static class CustomerList extends Resources<Resource<Customer>> {
+	public static class CustomerList extends Resources<Resource<Customer>> {
 	}
 
-	static class UserResource extends Resource<User> {
+	public static class UserResource extends Resource<User> {
 	}
 
-	static class CustomerResource extends Resource<Customer> {
+	public static class CustomerResource extends Resource<Customer> {
 	}
 }

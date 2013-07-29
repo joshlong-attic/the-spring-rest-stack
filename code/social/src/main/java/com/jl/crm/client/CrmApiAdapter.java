@@ -1,13 +1,11 @@
 package com.jl.crm.client;
 
-import org.apache.commons.logging.*;
 import org.springframework.social.connect.*;
 
 /***
  * @author Josh Long
  */
 public class CrmApiAdapter implements ApiAdapter<CrmOperations> {
-	private Log log = LogFactory.getLog(getClass());
 
 	@Override
 	public boolean test(CrmOperations customerServiceOperations) {
@@ -35,7 +33,7 @@ public class CrmApiAdapter implements ApiAdapter<CrmOperations> {
 
 	@Override
 	public void updateStatus(CrmOperations customerServiceOperations, String message) {
-		log.info(String.format("calling updateStatus(CustomerServiceOperations customerServiceOperations, " +
+		 System.out.println (String.format("calling updateStatus(CustomerServiceOperations customerServiceOperations, " +
 		                       "String message) with the status '%s', but this method is a no-op!", message));
 	}
 }

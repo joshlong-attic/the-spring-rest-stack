@@ -1,7 +1,6 @@
 package com.jl.crm.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 
@@ -9,7 +8,7 @@ import java.util.Date;
 
 @JsonIgnoreProperties (ignoreUnknown = true)
 public class User {
-	private Link selfLink ;
+	private String selfLink ;
 	private String firstName, lastName, username;
 	private String profilePhotoMediaType;
 	private boolean profilePhotoImported;
@@ -18,10 +17,6 @@ public class User {
 	User() {
 	}
 
-
-	public User( Link selfLink, String firstName, String lastName, String username, String profilePhotoMediaType, boolean hasProfilePhoto, Date signupDate) {
-		this.selfLink = selfLink;
-	}
 
 	public User( String firstName, String lastName, String username, String profilePhotoMediaType, boolean hasProfilePhoto, Date signupDate) {
 
@@ -35,14 +30,12 @@ public class User {
 
 
 
-	public Link getId() {
-		return this.selfLink;
-	}
 	public Long getDatabaseId(){
-		String href = this.selfLink.getHref();
+		String href = this.selfLink ;
 		return Long.parseLong(href.substring(href.lastIndexOf("/")+1) );
 	}
-	void setId(Link l) {
+
+	public void setId( String  l) {
 		this.selfLink = l;
 	}
 

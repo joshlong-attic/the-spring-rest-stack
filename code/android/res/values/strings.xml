@@ -4,5 +4,6 @@
     <string name="fetching">Fetching data...</string>
     <string name="app_name">Spring CRM</string>
     <string name="your_changes_have_been_saved">Your changes have been saved!</string>
+    <string name="oauth_access_token_callback_uri">x-com-jl-crm-android://crm-oauth-response</string>
     <string name="base_uri">http://10.0.2.2:8080/</string>
 </resources>

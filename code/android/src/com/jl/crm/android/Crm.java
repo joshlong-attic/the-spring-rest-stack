@@ -26,7 +26,7 @@ public class Crm extends Application {
 	}
 
 	protected List<Object> getModules() {
-		return Arrays.<Object>asList(new CrmModule(this));
+		return Arrays.<Object>asList(/*new CrmModule(this)*/);
 	}
 
 	public ObjectGraph getObjectGraph() {

@@ -10,41 +10,71 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
 
+    <!--
 
-    <application
-        android:name="com.joshlong.spring.walkingtour.android.Crm"
-        android:label="@string/app_name">
+        <application
+            android:name="com.joshlong.spring.walkingtour.android.Crm"
+            android:label="@string/app_name">
+
+          &lt;!&ndash;  <activity
+                android:name=".view.activities.CustomerListActivity"
+                android:label="@string/app_name">
+                <intent-filter>
+                    <action android:name="android.intent.action.MAIN" />
+                    <category android:name="android.intent.category.LAUNCHER" />
+                </intent-filter>
+            </activity>
+
+            <activity
+                android:label="@string/app_name"
+                android:name=".view.activities.CustomerDetailActivity">
+
+            </activity>
+    &ndash;&gt;
+        &lt;!&ndash;    <activity
+                android:name=".TwitterWebOAuthActivity"
+                android:excludeFromRecents="true"
+                android:noHistory="true" >
+                <intent-filter>
+                    <action android:name="android.intent.action.VIEW" />
+
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+
+                    <data
+                        android:host="twitter-oauth-response"
+                        android:scheme="x-org-springsource-android-twitterclient" />
+                </intent-filter>
+            </activity>&ndash;&gt;
+
+        </application>
+    -->
+
+
+    <application>
+
 
         <activity
-            android:name=".view.activities.CustomerListActivity"
-            android:label="@string/app_name">
+            android:name=".view.activities.CrmWebOAuthActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:label="@string/app_name"
-            android:name=".view.activities.CustomerDetailActivity">
-
-        </activity>
-
-        <activity
-            android:name=".TwitterWebOAuthActivity"
-            android:excludeFromRecents="true"
-            android:noHistory="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
+                <!--    <string name="twitter_oauth_callback_url">x-org-springsource-android-twitterclient://twitter-oauth-response</string>  -->
+                <!--x-com-jl-crm-android://crm-oauth-response#access_token=dd994424-2d23-44ff-8063-17fe239014eb&token_type=bearer&expires_in=43040]] in DispatcherServlet-->
                 <data
-                    android:host="twitter-oauth-response"
-                    android:scheme="x-org-springsource-android-twitterclient" />
+                    android:scheme="x-com-jl-crm-android"
+                    android:host="crm-oauth-response" />
+
             </intent-filter>
         </activity>
+
 
     </application>
 

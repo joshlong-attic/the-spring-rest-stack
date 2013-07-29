@@ -77,5 +77,5 @@ public abstract class AbstractWebViewActivity extends AbstractActivity implement
         }
     }
 
-}
 
+	}

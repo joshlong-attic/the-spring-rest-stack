@@ -72,14 +72,8 @@ public class CrmWebOAuthActivity extends BaseActivity {
 			return super.shouldInterceptRequest(view, url);
 		}
 	};
-
-	protected void establishAccessToken(final String at) {
-		if (StringUtils.hasText(at)){
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.putString("accessToken", at);
-			editor.commit();
-		}
-	}
+	@Inject
+	Provider<CrmOperations> crmOperationsProvider;
 
 /*
 	protected void doWithCrmOperations(final CrmOperations crmOperations) {
@@ -88,8 +82,13 @@ public class CrmWebOAuthActivity extends BaseActivity {
 	}
 */
 
-	@Inject
-	Provider<CrmOperations> crmOperationsProvider ;
+	protected void establishAccessToken(final String at) {
+		if (StringUtils.hasText(at)){
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putString("accessToken", at);
+			editor.commit();
+		}
+	}
 
 	protected String oauthCallbackUrl() {
 		return getString(R.string.oauth_access_token_callback_uri);
@@ -105,8 +104,8 @@ public class CrmWebOAuthActivity extends BaseActivity {
 			String returnUrl = oauthCallbackUrl();
 			String authorizationUrl = buildAuthenticationUrl(returnUrl);
 
-			this.webView.clearView();
-			this.webView.loadUrl(authorizationUrl);
+			//	this.webView.clearView();
+			this.webView.loadUrl("http://adobe.com");
 
 		}
 	}
@@ -134,8 +133,10 @@ public class CrmWebOAuthActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 
 		this.webView = webView();
-		getWindow().requestFeature(Window.FEATURE_PROGRESS);
-		getWindow().setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
+
+		Window w = this.getWindow();
+		w.requestFeature(Window.FEATURE_PROGRESS);
+		w.setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
 
 		setContentView(this.webView);
 	}
@@ -150,6 +151,7 @@ public class CrmWebOAuthActivity extends BaseActivity {
 
 	protected WebView webView() {
 		WebView webView = new WebView(this);
+		webView.getSettings().setAllowContentAccess(true);
 		webView.setWebViewClient(this.webViewClient);
 		webView.setWebChromeClient(this.webChromeClient);
 		return webView;

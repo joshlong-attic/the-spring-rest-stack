@@ -12,7 +12,6 @@ import com.jl.crm.android.activities.BaseActivity;
  */
 public class DaggerInjectionUtils {
 
-
 	public static void inject(BaseActivity ac) {
 		doInjectionForTarget(ac, ac);
 	}

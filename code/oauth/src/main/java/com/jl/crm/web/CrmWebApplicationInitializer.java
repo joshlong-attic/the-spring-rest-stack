@@ -109,7 +109,7 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 							 "/resources/"
 				  };
 
-		http.authorizeRequests() 
+		http.authorizeRequests()
 				  .antMatchers(filesToLetThroughUnAuthorized).permitAll()
 				  .anyRequest().authenticated();
 

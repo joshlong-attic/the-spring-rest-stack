@@ -64,21 +64,19 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!--    <string name="twitter_oauth_callback_url">x-org-springsource-android-twitterclient://twitter-oauth-response</string>  -->
-                <!--x-com-jl-crm-android://crm-oauth-response#access_token=dd994424-2d23-44ff-8063-17fe239014eb&token_type=bearer&expires_in=43040]] in DispatcherServlet-->
                 <data
                     android:scheme="x-com-jl-crm-android"
                     android:host="crm-oauth-response" />
 
             </intent-filter>
         </activity>
-        <activity
+       <!-- <activity
             android:name=".activities.UserWelcomeActivity"
             android:excludeFromRecents="true"
             android:noHistory="true">
 
 
-        </activity>
+        </activity>-->
 
     </application>
 

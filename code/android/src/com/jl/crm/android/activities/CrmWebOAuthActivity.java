@@ -113,16 +113,16 @@ public class CrmWebOAuthActivity extends Activity /* <T> */ {
 
 		final Activity self = this;
 
-		String baseUrl = "http://10.0.2.2:8080/";
-		String clientId = "android-crm";
-		String clientSecret = "123456";
-		String accessTokenUrl = fullUrl(baseUrl, "/oauth/token");
-		String authorizeUrl = fullUrl(baseUrl, "/oauth/authorize");
+		String baseUrl = getString(R.string.base_uri) ;
+		String clientId =getString(R.string.client_id) ;
+		String clientSecret = getString(R.string.client_secret ) ;
+		String accessTokenUri = fullUrl(baseUrl,getString(R.string.token_uri) );
+		String authorizeUri = fullUrl(baseUrl, getString(R.string.authorize_uri));
 
 		// setup common infrastructure for Spring Social
 		twitterPreferences = getSharedPreferences("CrmConnectPreferences", Context.MODE_PRIVATE);
 		connectionFactoryRegistry = new ConnectionFactoryRegistry();
-		crmOperationsConnectionFactory = crmConnectionFactory(serviceProvider(clientId, clientSecret, baseUrl, authorizeUrl, accessTokenUrl), apiAdapter());
+		crmOperationsConnectionFactory = crmConnectionFactory(serviceProvider(clientId, clientSecret, baseUrl, authorizeUri, accessTokenUri), apiAdapter());
 		connectionFactoryRegistry.addConnectionFactory(crmOperationsConnectionFactory);
 		repositoryHelper = new SQLiteConnectionRepositoryHelper(self);
 		connectionRepository = new SQLiteConnectionRepository(repositoryHelper, connectionFactoryRegistry, AndroidEncryptors.text("password", "5c0744940b5c369b"));

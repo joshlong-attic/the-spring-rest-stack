@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-     <string name="client_id">android-crm</string>
-    <string name="client_secret">123456</string>
+     <string name="oauth_client_id">android-crm</string>
+    <string name="oauth_client_secret">123456</string>
     <string name="oauth_access_token_callback_uri">x-com-jl-crm-android://crm-oauth-response</string>
-    <string name="token_uri">/oauth/token</string>
-    <string name="authorize_uri">/oauth/authorize</string>
+    <string name="oauth_token_uri">/oauth/token</string>
+    <string name="oauth_authorize_uri">/oauth/authorize</string>
+    <string name="oauth_scope">read,write</string>
+    <string name="shared_preferences">CrmPreferences</string>
 
     <string name="base_uri">http://10.0.2.2:8080/</string>
 </resources>

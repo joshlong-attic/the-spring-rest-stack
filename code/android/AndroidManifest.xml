@@ -51,9 +51,7 @@
     -->
 
 
-    <application>
-
-
+    <application android:name=".Crm">
         <activity
             android:name=".activities.CrmWebOAuthActivity"
             android:excludeFromRecents="true"

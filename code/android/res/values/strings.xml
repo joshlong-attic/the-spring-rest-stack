@@ -3,5 +3,6 @@
 <resources>
     <string name="fetching">Fetching data...</string>
     <string name="app_name">Spring CRM</string>
+    <string name="loading_string">Loading...</string>
     <string name="your_changes_have_been_saved">Your changes have been saved!</string>
  </resources>

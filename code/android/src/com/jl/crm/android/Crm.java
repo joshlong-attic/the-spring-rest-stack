@@ -14,9 +14,7 @@ import java.util.*;
 public class Crm extends Application {
 	private ObjectGraph objectGraph;
 
-	public static Crm forActivity(Activity a) {
-		return (Crm) a.getApplication();
-	}
+
 
 	@Override
 	public void onCreate() {
@@ -26,12 +24,9 @@ public class Crm extends Application {
 	}
 
 	protected List<Object> getModules() {
-		return Arrays.<Object>asList(/*new CrmModule(this)*/);
+		return Arrays.<Object>asList( new CrmModule(this) );
 	}
 
-	public ObjectGraph getObjectGraph() {
-		return this.objectGraph;
-	}
 
 	public void inject(Object crmComponent) {
 		this.objectGraph.inject(crmComponent);

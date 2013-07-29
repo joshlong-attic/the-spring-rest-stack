@@ -2,6 +2,8 @@ package com.jl.crm.android;
 
 import android.content.*;
 import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.view.LayoutInflater;
 import com.jl.crm.android.activities.CrmWebOAuthActivity;
 import com.jl.crm.client.*;
 import dagger.*;
@@ -12,6 +14,7 @@ import org.springframework.social.connect.support.ConnectionFactoryRegistry;
 import org.springframework.social.oauth2.AccessGrant;
 
 import javax.inject.Singleton;
+import java.lang.reflect.*;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -37,10 +40,24 @@ public class CrmModule {
 	}
 
 	@Provides
-	CrmOperations crmOperations (CrmConnectionFactory connectionFactory , SharedPreferences preferences ){
-		final String accessToken = preferences.getString( "accessToken",null );
-		AccessGrant accessGrant = new AccessGrant(accessToken);
-		return connectionFactory.createConnection(accessGrant).getApi();
+	CrmOperations crmOperations(final CrmConnectionFactory connectionFactory,
+			                             final SharedPreferences preferences) {
+		final String accessToken = preferences.getString("accessToken", null);
+		final AccessGrant accessGrant = new AccessGrant(accessToken);
+		AsyncTask<?, ?, CrmOperations> crmOperationsAsyncTask =
+				  new AsyncTask<Object, Object, CrmOperations>() {
+					  @Override
+					  protected CrmOperations doInBackground(Object... params) {
+						  return connectionFactory.createConnection(accessGrant).getApi();
+					  }
+				  };
+
+		try {
+			return OffUiThreadRunningProxyFactory.runOffUiThread(crmOperationsAsyncTask.execute().get(), CrmOperations.class);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 	/*@Provides
 	@Singleton
@@ -108,6 +125,11 @@ public class CrmModule {
 	}
 
 	@Provides
+	public LayoutInflater layoutInflater(@InjectAndroidApplicationContext Context context) {
+		return (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	}
+
+	@Provides
 	@Singleton
 	CrmConnectionFactory crmConnectionFactory(ConnectionFactoryRegistry connectionFactoryRegistry,
 			                                           CrmServiceProvider crmServiceProvider,
@@ -122,5 +144,44 @@ public class CrmModule {
 	@InjectAndroidApplicationContext
 	Context provideApplicationContext() {
 		return this.application.getApplicationContext();
+	}
+}
+
+/**
+ * All invocations on the {@link CrmOperations crmOperations } client should be run off of the main UI thread.
+ * <p/>
+ * This factory simply proxies the bean, and runs all method invocations on the background thread and returns the UI
+ * data to the UI thread synchronously.
+ *
+ * @author Josh Long
+ */
+class OffUiThreadRunningProxyFactory {
+	public static <T> T runOffUiThread(final T target, final Class<?>... tClass) {
+
+		InvocationHandler invocationHandler = new InvocationHandler() {
+
+			@Override
+			public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+
+				final Method methodToInvokeOnTargetObject =
+						  target.getClass().getMethod(method.getName(), method.getParameterTypes());
+
+				AsyncTask<?, ?, T> valueReturningAsyncTask =
+						  new AsyncTask<Object, Object, T>() {
+							  @Override
+							  protected T doInBackground(Object... params) {
+								  try {
+									  return (T) methodToInvokeOnTargetObject.invoke(target, args);
+								  }
+								  catch (Exception e) {
+									  throw new RuntimeException(e);
+								  }
+							  }
+						  };
+				return valueReturningAsyncTask.execute().get();
+			}
+		};
+		Object objectProxy = Proxy.newProxyInstance(target.getClass().getClassLoader(), tClass, invocationHandler);
+		return (T) objectProxy;
 	}
 }

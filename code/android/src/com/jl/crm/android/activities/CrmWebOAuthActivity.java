@@ -1,8 +1,8 @@
 package com.jl.crm.android.activities;
 
-import android.content.SharedPreferences;
+import android.content.*;
 import android.net.Uri;
-import android.os.*;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.webkit.*;
@@ -50,8 +50,11 @@ public class CrmWebOAuthActivity extends BaseActivity {
 				String at = "access_token=";
 				if (encodedFragment.contains(at)){
 					String accessToken = (encodedFragment.substring((at.length())).split("&")[0]);
-					CrmOperations crmOperations = crmOperations(accessToken, connectionFactory, preferences);
-					doWithCrmOperations(crmOperations);
+					establishAccessToken(accessToken);
+
+					Intent intent = new Intent(CrmWebOAuthActivity.this, UserWelcomeActivity.class);
+					startActivity(intent);
+
 				}
 			}
 			return true;
@@ -70,55 +73,23 @@ public class CrmWebOAuthActivity extends BaseActivity {
 		}
 	};
 
-	@Inject
-	Provider<CrmOperations>  operationsProvider ;
-
-	CrmOperations crmOperations(final String at, final CrmConnectionFactory connectionFactory, final SharedPreferences preferences) {
-		AsyncTask<?, ?, CrmOperations> crmOperationsAsyncTask = new AsyncTask<Object, Object, CrmOperations>() {
-			private final String accessTokenPreferenceName = "accessToken";
-
-			@Override
-			protected CrmOperations doInBackground(Object... params) {
-
-
-				return operationsProvider.get();
-
-				/*final String accessToken = preferences.getString(this.accessTokenPreferenceName, at);
-				AccessGrant accessGrant = new AccessGrant(accessToken);
-				return connectionFactory.createConnection(accessGrant).getApi();*/
-			}
-		};
-		SharedPreferences.Editor editor = preferences.edit();
-		editor.putString("accessToken", at);
-		editor.commit();
-		try {
-			return crmOperationsAsyncTask.execute().get();
+	protected void establishAccessToken(final String at) {
+		if (StringUtils.hasText(at)){
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putString("accessToken", at);
+			editor.commit();
 		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
 	}
 
+/*
 	protected void doWithCrmOperations(final CrmOperations crmOperations) {
-		AsyncTask<?, ?, ?> asyncTask = new AsyncTask<Object, Object, Object>() {
-			@Override
-			protected Object doInBackground(Object... params) {
-				User currentSignedInUser = crmOperations.currentUser();
-				Log.d(CrmWebOAuthActivity.class.getName(), currentSignedInUser.toString());
-
-				return null;
-			}
-		};
-		try {
-			asyncTask.execute().get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-
+		User currentSignedInUser = crmOperations.currentUser();
+		Log.d(CrmWebOAuthActivity.class.getName(), currentSignedInUser.toString());
 	}
+*/
+
+	@Inject
+	Provider<CrmOperations> crmOperationsProvider ;
 
 	protected String oauthCallbackUrl() {
 		return getString(R.string.oauth_access_token_callback_uri);

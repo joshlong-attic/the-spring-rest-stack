@@ -12,7 +12,6 @@ import com.jl.crm.android.utils.DaggerInjectionUtils;
 public class BaseActivity
  extends Activity
 {
-
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		DaggerInjectionUtils.inject(this);

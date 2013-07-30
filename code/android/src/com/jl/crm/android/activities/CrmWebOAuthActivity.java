@@ -39,6 +39,13 @@ public class CrmWebOAuthActivity extends BaseActivity {
 			}
 		}
 	};
+
+	protected void continueWithAccessToken(String accessToken ){
+		establishAccessToken(accessToken);
+		Intent intent = new Intent(CrmWebOAuthActivity.this, UserWelcomeActivity.class);
+		startActivity(intent);
+	}
+
 	WebViewClient webViewClient = new WebViewClient() {
 
 		@Override
@@ -50,11 +57,8 @@ public class CrmWebOAuthActivity extends BaseActivity {
 				String at = "access_token=";
 				if (encodedFragment.contains(at)){
 					String accessToken = (encodedFragment.substring((at.length())).split("&")[0]);
-					establishAccessToken(accessToken);
 
-					Intent intent = new Intent(CrmWebOAuthActivity.this, UserWelcomeActivity.class);
-					startActivity(intent);
-
+					continueWithAccessToken(accessToken);
 					return true ;
 				}
 			}
@@ -75,14 +79,7 @@ public class CrmWebOAuthActivity extends BaseActivity {
 	};
 
 
-	@Inject Provider<CrmOperations> crmOperationsProvider;
 
-/*
-	protected void doWithCrmOperations(final CrmOperations crmOperations) {
-		User currentSignedInUser = crmOperations.currentUser();
-		Log.d(CrmWebOAuthActivity.class.getName(), currentSignedInUser.toString());
-	}
-*/
 
 	protected void establishAccessToken(final String at) {
 		if (StringUtils.hasText(at)){
@@ -139,8 +136,6 @@ public class CrmWebOAuthActivity extends BaseActivity {
 
 		this.webView = webView();
 
-
-
 		setContentView(this.webView);
 	}
 
@@ -154,9 +149,9 @@ public class CrmWebOAuthActivity extends BaseActivity {
 
 	protected WebView webView() {
 		WebView webView = new WebView(this);
-//		webView.getSettings().setAllowContentAccess(true);
+		webView.getSettings().setAllowContentAccess(true);
       webView.setWebViewClient(this.webViewClient);
-//		webView.setWebChromeClient(this.webChromeClient);
+		webView.setWebChromeClient(this.webChromeClient);
 		return webView;
 	}
 

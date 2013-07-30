@@ -55,9 +55,10 @@ public class CrmWebOAuthActivity extends BaseActivity {
 					Intent intent = new Intent(CrmWebOAuthActivity.this, UserWelcomeActivity.class);
 					startActivity(intent);
 
+					return true ;
 				}
 			}
-			return true;
+			return false ;
 		}
 
 		@Override
@@ -72,8 +73,9 @@ public class CrmWebOAuthActivity extends BaseActivity {
 			return super.shouldInterceptRequest(view, url);
 		}
 	};
-	@Inject
-	Provider<CrmOperations> crmOperationsProvider;
+
+
+	@Inject Provider<CrmOperations> crmOperationsProvider;
 
 /*
 	protected void doWithCrmOperations(final CrmOperations crmOperations) {
@@ -103,11 +105,11 @@ public class CrmWebOAuthActivity extends BaseActivity {
 		if (uri == null){
 			String returnUrl = oauthCallbackUrl();
 			String authorizationUrl = buildAuthenticationUrl(returnUrl);
-
-			//	this.webView.clearView();
-			this.webView.loadUrl("http://adobe.com");
-
+			this.webView.clearView();
+			this.webView.loadUrl(authorizationUrl);
 		}
+
+
 	}
 
 	protected String buildAuthenticationUrl(String returnUrl) {
@@ -131,12 +133,13 @@ public class CrmWebOAuthActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		this.webView = webView();
-
 		Window w = this.getWindow();
 		w.requestFeature(Window.FEATURE_PROGRESS);
 		w.setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
+
+		this.webView = webView();
+
+
 
 		setContentView(this.webView);
 	}
@@ -151,9 +154,9 @@ public class CrmWebOAuthActivity extends BaseActivity {
 
 	protected WebView webView() {
 		WebView webView = new WebView(this);
-		webView.getSettings().setAllowContentAccess(true);
-		webView.setWebViewClient(this.webViewClient);
-		webView.setWebChromeClient(this.webChromeClient);
+//		webView.getSettings().setAllowContentAccess(true);
+      webView.setWebViewClient(this.webViewClient);
+//		webView.setWebChromeClient(this.webChromeClient);
 		return webView;
 	}
 

@@ -28,10 +28,10 @@ public class UserWelcomeActivity
 	protected void onStart() {
 		super.onStart();
 		user = crmOperations.currentUser();
-		TextView fn = (TextView) findViewById(R.id.first_name);
+		TextView fn = (TextView) findViewById(R.id.firstName);
 		fn.setText(user.getFirstName());
 
-		TextView ln = (TextView) findViewById(R.id.last_name);
+		TextView ln = (TextView) findViewById(R.id.lastName);
 		ln.setText(user.getLastName());
 
 

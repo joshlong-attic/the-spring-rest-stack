@@ -4,7 +4,7 @@ import android.content.*;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
-import com.jl.crm.android.activities.CrmWebOAuthActivity;
+import com.jl.crm.android.activities.*;
 import com.jl.crm.client.*;
 import dagger.*;
 import org.springframework.security.crypto.encrypt.*;
@@ -18,7 +18,7 @@ import java.lang.reflect.*;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-@Module (library = true, injects = {CrmWebOAuthActivity.class})
+@Module (library = true, injects = {UserWelcomeActivity.class , CrmWebOAuthActivity.class})
 public class CrmModule {
 	private Crm application;
 

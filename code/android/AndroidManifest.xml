@@ -70,13 +70,12 @@
 
             </intent-filter>
         </activity>
-       <!-- <activity
+
+        <activity
             android:name=".activities.UserWelcomeActivity"
             android:excludeFromRecents="true"
             android:noHistory="true">
-
-
-        </activity>-->
+        </activity>
 
     </application>
 

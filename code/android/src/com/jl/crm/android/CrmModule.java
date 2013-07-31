@@ -1,8 +1,7 @@
 package com.jl.crm.android;
 
-import android.content.*;
+import android.content.Context;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import com.jl.crm.android.activities.*;
 import com.jl.crm.android.utils.AndroidUiThreadUtils;
@@ -12,13 +11,12 @@ import org.springframework.security.crypto.encrypt.*;
 import org.springframework.social.connect.sqlite.SQLiteConnectionRepository;
 import org.springframework.social.connect.sqlite.support.SQLiteConnectionRepositoryHelper;
 import org.springframework.social.connect.support.ConnectionFactoryRegistry;
-import org.springframework.social.oauth2.AccessGrant;
 
 import javax.inject.Singleton;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-@Module (library = true, injects = {UserWelcomeActivity.class, CrmWebOAuthActivity.class})
+@Module (injects = {UserWelcomeActivity.class, CrmWebOAuthActivity.class})
 public class CrmModule {
 	private Crm application;
 
@@ -32,39 +30,17 @@ public class CrmModule {
 		return (LocationManager) application.getSystemService(LOCATION_SERVICE);
 	}
 
-	@Provides
-	@Singleton
-	SharedPreferences sharedPreferences(@InjectAndroidApplicationContext Context context) {
-		String sharedPrefsName = context.getString(R.string.shared_preferences);
-		return context.getSharedPreferences(sharedPrefsName, Context.MODE_PRIVATE);
-	}
 
 	@Provides
 	@Singleton
-	CrmOperations crmOperations(final AccessTokenClient accessTokenClient,
-			                             final CrmConnectionFactory connectionFactory) {
-		final String accessToken = accessTokenClient.readAccessTokenKey();
-		final AccessGrant accessGrant = new AccessGrant(accessToken);
-		AsyncTask<?, ?, CrmOperations> crmOperationsAsyncTask =
-				  new AsyncTask<Object, Object, CrmOperations>() {
-					  @Override
-					  protected CrmOperations doInBackground(Object... params) {
-						  return connectionFactory.createConnection(accessGrant).getApi();
-					  }
-				  };
-
+	CrmOperations crmOperations(final SQLiteConnectionRepository sqLiteConnectionRepository) {
 		try {
-			return AndroidUiThreadUtils.runOffUiThread(crmOperationsAsyncTask.execute().get(), CrmOperations.class);
+			CrmOperations ops = sqLiteConnectionRepository.getPrimaryConnection(CrmOperations.class).getApi();
+			return AndroidUiThreadUtils.runOffUiThread(ops, CrmOperations.class);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	@Provides
-	@Singleton
-	public AccessTokenClient accessTokenClient(SharedPreferences sharedPreferences) {
-		return new AccessTokenClient(sharedPreferences);
 	}
 
 	@Provides

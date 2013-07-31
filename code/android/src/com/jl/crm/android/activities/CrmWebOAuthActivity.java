@@ -1,16 +1,17 @@
 package com.jl.crm.android.activities;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
+import android.os.*;
 import android.view.Window;
-import com.jl.crm.android.*;
-import com.jl.crm.client.CrmConnectionFactory;
+import com.jl.crm.android.R;
+import com.jl.crm.client.*;
+import org.springframework.social.connect.Connection;
+import org.springframework.social.connect.sqlite.SQLiteConnectionRepository;
 import org.springframework.social.oauth2.*;
-import org.springframework.util.StringUtils;
+import org.springframework.util.*;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * this is designed to be the interface into the RESTful web service
@@ -24,55 +25,84 @@ import javax.inject.Inject;
 public class CrmWebOAuthActivity extends BaseActivity {
 
 	@Inject
-	AccessTokenClient accessTokenClient;
+	SQLiteConnectionRepository sqLiteConnectionRepository;
 	@Inject
 	CrmConnectionFactory connectionFactory;
 	Oauth2ImplicitFlowWebView webView;
 	Oauth2ImplicitFlowWebView.AccessTokenReceivedListener accessTokenReceivedListener = new Oauth2ImplicitFlowWebView.AccessTokenReceivedListener() {
+
 		@Override
-		public void accessTokenReceived(String at) {
-			Intent intent = new Intent(CrmWebOAuthActivity.this, UserWelcomeActivity.class);
-			startActivity(intent);
+		public void accessTokenReceived(final String accessToken) {
+
+			AsyncTask<?, ?, Connection<CrmOperations>> asyncTask = new AsyncTask<Object, Object, Connection<CrmOperations>>() {
+				@Override
+				protected Connection<CrmOperations> doInBackground(Object... params) {
+					AccessGrant accessGrant = new AccessGrant(accessToken);
+					Connection<CrmOperations> crmOperationsConnection = connectionFactory.createConnection(accessGrant);
+					sqLiteConnectionRepository.addConnection(crmOperationsConnection);
+					runOnUiThread(connectionEstablishedRunnable);
+					return crmOperationsConnection;
+				}
+			};
+			try {
+				asyncTask.execute();
+			}
+			catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+
 		}
 	};
+	private Runnable connectionEstablishedRunnable =
+			  new Runnable() {
+				  @Override
+				  public void run() {
+					  connectionEstablished();
+				  }
+			  };
+	private AsyncTask<?, ?, Connection<CrmOperations>> asyncTaskToLoadCrmOperationsConnection =
+			  new AsyncTask<Object, Object, Connection<CrmOperations>>() {
+				  @Override
+				  protected Connection<CrmOperations> doInBackground(Object... params) {
 
+					  //josh clearAllConnections();
 
-	@Override
-	public void onStart() {
-		super.onStart();
+					  Connection<CrmOperations> connection = sqLiteConnectionRepository.findPrimaryConnection(CrmOperations.class);
+					  if (connection != null){
+						  runOnUiThread(connectionEstablishedRunnable);
+					  }
+					  else {
 
-		//resetAccessToken();
+						  runOnUiThread(new Runnable() {
+							  @Override
+							  public void run() {
+								  webView.noAccessToken();
+							  }
+						  });
+					  }
+					  return null;
+				  }
+			  };
 
-
-		String accessToken = this.accessTokenClient.readAccessTokenKey();
-		if (StringUtils.hasText(accessToken)){
-			this.accessTokenReceivedListener.accessTokenReceived(accessToken);    // skip the form all together
-		}
-		else {
-			Uri uri = getIntent().getData();
-			if (uri == null){
-				webView.noAccessToken();
+	protected void clearAllConnections() {
+		MultiValueMap<String, Connection<?>> mvMapOfConnections = sqLiteConnectionRepository.findAllConnections();
+		for (String k : mvMapOfConnections.keySet()) {
+			List<Connection<?>> connectionList = mvMapOfConnections.get(k);
+			for (Connection<?> c : connectionList) {
+				sqLiteConnectionRepository.removeConnection(c.getKey());
 			}
 		}
 	}
 
-	protected String buildAuthenticationUrl( ) {
-		OAuth2Operations oAuth2Operations = this.connectionFactory.getOAuthOperations();
-		if (oAuth2Operations instanceof OAuth2Template){
-			OAuth2Template oAuth2Template = (OAuth2Template) oAuth2Operations;
-			oAuth2Template.setUseParametersForClientAuthentication(false);
-		}
+	protected void connectionEstablished() {
+		Intent intent = new Intent(CrmWebOAuthActivity.this, UserWelcomeActivity.class);
+		startActivity(intent);
+	}
 
-		String returnUri = getString(R.string.oauth_access_token_callback_uri);
-		OAuth2Parameters oAuth2Parameters = new OAuth2Parameters();
-		oAuth2Parameters.setScope("read,write");
-		if (StringUtils.hasText(returnUri)){
-			oAuth2Parameters.setRedirectUri(returnUri);
-		}
-
-		String authorizationUrl = oAuth2Operations.buildAuthenticateUrl(GrantType.IMPLICIT_GRANT, oAuth2Parameters);
-		Log.d(CrmWebOAuthActivity.class.getName(), "buildAuthenticationUrl: '" + authorizationUrl + "'. returnUrl: '" + returnUri + "'");
-		return authorizationUrl;
+	@Override
+	public void onStart() {
+		super.onStart();
+		asyncTaskToLoadCrmOperationsConnection.execute();
 	}
 
 	@Override
@@ -87,8 +117,23 @@ public class CrmWebOAuthActivity extends BaseActivity {
 		setContentView(this.webView);
 	}
 
+	protected String buildAuthenticationUrl() {
+		OAuth2Operations oAuth2Operations = this.connectionFactory.getOAuthOperations();
+		if (oAuth2Operations instanceof OAuth2Template){
+			OAuth2Template oAuth2Template = (OAuth2Template) oAuth2Operations;
+			oAuth2Template.setUseParametersForClientAuthentication(false);
+		}
+		String returnUri = getString(R.string.oauth_access_token_callback_uri);
+		OAuth2Parameters oAuth2Parameters = new OAuth2Parameters();
+		oAuth2Parameters.setScope("read,write");
+		if (StringUtils.hasText(returnUri)){
+			oAuth2Parameters.setRedirectUri(returnUri);
+		}
+		return oAuth2Operations.buildAuthenticateUrl(GrantType.IMPLICIT_GRANT, oAuth2Parameters);
+	}
+
 	protected Oauth2ImplicitFlowWebView webView() {
-		String authenticateUri = buildAuthenticationUrl( );
+		String authenticateUri = buildAuthenticationUrl();
 		String returnUri = getString(R.string.oauth_access_token_callback_uri);
 		return new Oauth2ImplicitFlowWebView(this, authenticateUri, returnUri, this.accessTokenReceivedListener);
 	}

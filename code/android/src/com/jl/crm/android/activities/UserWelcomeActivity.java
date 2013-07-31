@@ -1,6 +1,8 @@
 package com.jl.crm.android.activities;
 
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 import com.jl.crm.android.R;
@@ -20,21 +22,25 @@ public class UserWelcomeActivity
 
 	User user;
 
-	@Inject CrmOperations crmOperations;
-
-	@Inject LayoutInflater layoutInflater;
+	@Inject
+	LocationManager locationManager;
+	@Inject
+	CrmOperations crmOperations;
+	@Inject
+	LayoutInflater layoutInflater;
 
 	@Override
 	protected void onStart() {
 		super.onStart();
 		user = crmOperations.currentUser();
+
+		Log.d(UserWelcomeActivity.class.getName(), "currently connected user: " + user.toString());
+
 		TextView fn = (TextView) findViewById(R.id.firstName);
 		fn.setText(user.getFirstName());
 
 		TextView ln = (TextView) findViewById(R.id.lastName);
 		ln.setText(user.getLastName());
-
-
 	}
 
 	@Override

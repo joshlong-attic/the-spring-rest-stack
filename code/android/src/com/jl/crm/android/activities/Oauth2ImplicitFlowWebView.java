@@ -84,7 +84,6 @@ public class Oauth2ImplicitFlowWebView extends WebView {
 		Assert.notNull(this.redirectUri);
 		Assert.notNull(this.authenticateUri);
 
-
 	}
 
 	public void setAccessTokenReceivedListener(AccessTokenReceivedListener atl) {

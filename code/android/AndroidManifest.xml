@@ -82,7 +82,7 @@
             />
 
         <activity
-            android:name=".activities.UserWelcomeActivity"
+            android:name=".activities.UserHomeActivity"
             android:excludeFromRecents="true"
             android:noHistory="true" />
 

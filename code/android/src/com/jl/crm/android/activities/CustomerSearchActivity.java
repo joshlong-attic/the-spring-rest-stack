@@ -47,6 +47,7 @@ public class CustomerSearchActivity extends BaseActivity implements SearchView.O
 		searchView.setSuggestionsAdapter(mSuggestionsAdapter);
 
 		menu.add("Search")
+						 .setIcon(R.drawable.action_search)
 				       // .setIcon(isLight ? R.drawable.ic_search_inverse : R.drawable.abs__ic_search)
 				  .setActionView(searchView)
 				  .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);

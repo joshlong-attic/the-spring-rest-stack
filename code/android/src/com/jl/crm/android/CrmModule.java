@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-@Module (injects = {UserWelcomeActivity.class, AuthenticationActivity.class, CustomerSearchActivity.class })
+@Module (injects = {UserHomeActivity.class, AuthenticationActivity.class, CustomerSearchActivity.class })
 public class CrmModule {
 	private Crm application;
 

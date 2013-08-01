@@ -17,7 +17,7 @@ import javax.inject.Inject;
  *
  * @author Josh Long
  */
-public class UserWelcomeActivity extends BaseActivity {
+public class UserHomeActivity extends BaseActivity {
 
 	@Inject LocationManager locationManager;
 	@Inject CrmOperations crmOperations;
@@ -29,7 +29,7 @@ public class UserWelcomeActivity extends BaseActivity {
 		super.onStart();
 		user = crmOperations.currentUser();
 
-		Log.d(UserWelcomeActivity.class.getName(), "currently connected user: " + user.toString());
+		Log.d(UserHomeActivity.class.getName(), "currently connected user: " + user.toString());
 
 		TextView fn = (TextView) findViewById(R.id.firstName);
 		fn.setText(user.getFirstName());

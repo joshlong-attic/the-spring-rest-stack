@@ -12,7 +12,7 @@
     <modules>
         <module>services</module>
         <module>social</module>
-        <module>android</module>		
+        <module>android</module>
         <module>rest</module>
         <module>hateoas</module>
         <module>hateoas-data</module>
@@ -30,6 +30,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-redis</artifactId>
+                <version>1.0.5.RELEASE</version>
+            </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
@@ -74,7 +79,7 @@
                 <artifactId>spring-aop</artifactId>
                 <version>3.2.3.RELEASE</version>
             </dependency>
-        
+
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-expression</artifactId>
@@ -156,7 +161,7 @@
                 <artifactId>spring-core</artifactId>
                 <version>3.2.3.RELEASE</version>
             </dependency>
-   
+
 
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -233,7 +238,7 @@
                 <version>1.7.2</version>
             </dependency>
             <dependency>
-                 <groupId>org.codehaus.jackson</groupId>
+                <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-mapper-asl</artifactId>
                 <version>1.9.2</version>
             </dependency>
@@ -278,7 +283,6 @@
                 <artifactId>spring-security-web</artifactId>
                 <version>${spring-security.version}</version>
             </dependency>
-
 
 
         </dependencies>

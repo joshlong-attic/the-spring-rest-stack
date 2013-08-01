@@ -29,9 +29,7 @@
             android:layout_height="wrap_content"
             android:text="New Text"
             android:id="@+id/username" />
-        <!--
-        todo we should also load the profile image and make that editable!
-        -->
+
 
     </LinearLayout>
 

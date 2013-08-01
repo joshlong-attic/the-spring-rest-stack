@@ -28,8 +28,8 @@ public class CrmWebOAuthActivity extends BaseActivity {
 	SQLiteConnectionRepository sqLiteConnectionRepository;
 	@Inject
 	CrmConnectionFactory connectionFactory;
-	Oauth2ImplicitFlowWebView webView;
-	Oauth2ImplicitFlowWebView.AccessTokenReceivedListener accessTokenReceivedListener = new Oauth2ImplicitFlowWebView.AccessTokenReceivedListener() {
+	OAuth2ImplicitFlowWebView webView;
+	OAuth2ImplicitFlowWebView.AccessTokenReceivedListener accessTokenReceivedListener = new OAuth2ImplicitFlowWebView.AccessTokenReceivedListener() {
 
 		@Override
 		public void accessTokenReceived(final String accessToken) {
@@ -45,7 +45,7 @@ public class CrmWebOAuthActivity extends BaseActivity {
 				}
 			};
 			try {
-				asyncTask.execute();
+				asyncTask.execute(new Object[0]);
 			}
 			catch (Exception e) {
 				throw new RuntimeException(e);
@@ -53,26 +53,24 @@ public class CrmWebOAuthActivity extends BaseActivity {
 
 		}
 	};
-	private Runnable connectionEstablishedRunnable =
-			  new Runnable() {
-				  @Override
-				  public void run() {
-					  connectionEstablished();
-				  }
-			  };
+	private Runnable connectionEstablishedRunnable = new Runnable() {
+		@Override
+		public void run() {
+			connectionEstablished();
+		}
+	};
 	private AsyncTask<?, ?, Connection<CrmOperations>> asyncTaskToLoadCrmOperationsConnection =
 			  new AsyncTask<Object, Object, Connection<CrmOperations>>() {
 				  @Override
 				  protected Connection<CrmOperations> doInBackground(Object... params) {
 
-					  //josh clearAllConnections();
+					  clearAllConnections();
 
 					  Connection<CrmOperations> connection = sqLiteConnectionRepository.findPrimaryConnection(CrmOperations.class);
 					  if (connection != null){
 						  runOnUiThread(connectionEstablishedRunnable);
 					  }
 					  else {
-
 						  runOnUiThread(new Runnable() {
 							  @Override
 							  public void run() {
@@ -132,10 +130,10 @@ public class CrmWebOAuthActivity extends BaseActivity {
 		return oAuth2Operations.buildAuthenticateUrl(GrantType.IMPLICIT_GRANT, oAuth2Parameters);
 	}
 
-	protected Oauth2ImplicitFlowWebView webView() {
+	protected OAuth2ImplicitFlowWebView webView() {
 		String authenticateUri = buildAuthenticationUrl();
 		String returnUri = getString(R.string.oauth_access_token_callback_uri);
-		return new Oauth2ImplicitFlowWebView(this, authenticateUri, returnUri, this.accessTokenReceivedListener);
+		return new OAuth2ImplicitFlowWebView(this, authenticateUri, returnUri, this.accessTokenReceivedListener);
 	}
 
 }

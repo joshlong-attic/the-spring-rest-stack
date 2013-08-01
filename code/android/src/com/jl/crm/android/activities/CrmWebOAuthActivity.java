@@ -24,10 +24,9 @@ import java.util.List;
  */
 public class CrmWebOAuthActivity extends BaseActivity {
 
-	@Inject
-	SQLiteConnectionRepository sqLiteConnectionRepository;
-	@Inject
-	CrmConnectionFactory connectionFactory;
+	@Inject SQLiteConnectionRepository sqLiteConnectionRepository;
+	@Inject CrmConnectionFactory connectionFactory;
+
 	OAuth2ImplicitFlowWebView webView;
 	OAuth2ImplicitFlowWebView.AccessTokenReceivedListener accessTokenReceivedListener = new OAuth2ImplicitFlowWebView.AccessTokenReceivedListener() {
 
@@ -115,6 +114,12 @@ public class CrmWebOAuthActivity extends BaseActivity {
 		setContentView(this.webView);
 	}
 
+	protected OAuth2ImplicitFlowWebView webView() {
+		String authenticateUri = buildAuthenticationUrl();
+		String returnUri = getString(R.string.oauth_access_token_callback_uri);
+		return new OAuth2ImplicitFlowWebView(this, authenticateUri, returnUri, this.accessTokenReceivedListener);
+	}
+
 	protected String buildAuthenticationUrl() {
 		OAuth2Operations oAuth2Operations = this.connectionFactory.getOAuthOperations();
 		if (oAuth2Operations instanceof OAuth2Template){
@@ -128,12 +133,6 @@ public class CrmWebOAuthActivity extends BaseActivity {
 			oAuth2Parameters.setRedirectUri(returnUri);
 		}
 		return oAuth2Operations.buildAuthenticateUrl(GrantType.IMPLICIT_GRANT, oAuth2Parameters);
-	}
-
-	protected OAuth2ImplicitFlowWebView webView() {
-		String authenticateUri = buildAuthenticationUrl();
-		String returnUri = getString(R.string.oauth_access_token_callback_uri);
-		return new OAuth2ImplicitFlowWebView(this, authenticateUri, returnUri, this.accessTokenReceivedListener);
 	}
 
 }

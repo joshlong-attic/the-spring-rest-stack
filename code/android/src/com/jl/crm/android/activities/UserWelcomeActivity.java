@@ -17,17 +17,12 @@ import javax.inject.Inject;
  *
  * @author Josh Long
  */
-public class UserWelcomeActivity
-		  extends BaseActivity {
+public class UserWelcomeActivity extends BaseActivity {
 
+	@Inject LocationManager locationManager;
+	@Inject CrmOperations crmOperations;
+	@Inject LayoutInflater layoutInflater;
 	User user;
-
-	@Inject
-	LocationManager locationManager;
-	@Inject
-	CrmOperations crmOperations;
-	@Inject
-	LayoutInflater layoutInflater;
 
 	@Override
 	protected void onStart() {

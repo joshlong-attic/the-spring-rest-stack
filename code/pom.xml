@@ -12,7 +12,15 @@
     <modules>
         <module>services</module>
         <module>social</module>
-        <module>android</module>
+        <!--
+					 <module>android</module> 
+					TODO 	should this be included in the main build? 
+								it would mean that everyone who wants to consume this
+								would need to have the Android SDK setup. And it would have to work with the 
+								build configuration specified in the Android module's pom.xml, which is
+								not nearly the same certainty a given version working with a previous version of the JVM is.
+						
+				-->
         <module>rest</module>
         <module>hateoas</module>
         <module>hateoas-data</module>
@@ -30,6 +38,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>2.0.1</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-redis</artifactId>
@@ -149,6 +162,11 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
+                <version>3.2.3.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
                 <version>3.2.3.RELEASE</version>
             </dependency>
             <dependency>

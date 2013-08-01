@@ -1,4 +1,4 @@
-package com.jl.crm.android.activities;
+package com.jl.crm.android.widget;
 
 import android.content.Context;
 import android.net.Uri;

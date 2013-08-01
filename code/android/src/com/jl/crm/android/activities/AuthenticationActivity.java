@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.*;
 import android.view.Window;
 import com.jl.crm.android.R;
+import com.jl.crm.android.widget.OAuth2ImplicitFlowWebView;
 import com.jl.crm.client.*;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.sqlite.SQLiteConnectionRepository;
@@ -22,7 +23,7 @@ import java.util.List;
  *
  * @author Josh Long
  */
-public class CrmWebOAuthActivity extends BaseActivity {
+public class AuthenticationActivity extends BaseActivity {
 
 	@Inject SQLiteConnectionRepository sqLiteConnectionRepository;
 	@Inject CrmConnectionFactory connectionFactory;
@@ -63,7 +64,7 @@ public class CrmWebOAuthActivity extends BaseActivity {
 				  @Override
 				  protected Connection<CrmOperations> doInBackground(Object... params) {
 
-					  clearAllConnections();
+						clearAllConnections();
 
 					  Connection<CrmOperations> connection = sqLiteConnectionRepository.findPrimaryConnection(CrmOperations.class);
 					  if (connection != null){
@@ -92,14 +93,14 @@ public class CrmWebOAuthActivity extends BaseActivity {
 	}
 
 	protected void connectionEstablished() {
-		Intent intent = new Intent(CrmWebOAuthActivity.this, UserWelcomeActivity.class);
+		Intent intent = new Intent(AuthenticationActivity.this, CustomerSearchActivity.class);
 		startActivity(intent);
 	}
 
 	@Override
-	public void onStart() {
+ 	public void onStart() {
 		super.onStart();
-		asyncTaskToLoadCrmOperationsConnection.execute();
+		asyncTaskToLoadCrmOperationsConnection.execute( new Object[]{});
 	}
 
 	@Override

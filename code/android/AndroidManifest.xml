@@ -58,7 +58,7 @@
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
 
         <activity
-            android:name=".activities.CrmWebOAuthActivity"
+            android:name=".activities.AuthenticationActivity"
             android:excludeFromRecents="true"
             android:noHistory="true">
 
@@ -75,6 +75,11 @@
 
             </intent-filter>
         </activity>
+
+        <activity android:name=".activities.CustomerSearchActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            />
 
         <activity
             android:name=".activities.UserWelcomeActivity"

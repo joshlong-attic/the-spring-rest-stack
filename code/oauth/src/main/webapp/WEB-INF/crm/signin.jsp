@@ -26,13 +26,13 @@
     </p>
     <form method="post" action="${pageContext.request.contextPath}/signin">
         <DIV>
-            <label style="width: 100px; display: inline-block;" class="control-label" for="username"> User Name: </label>
+            <label style="width: 100px; display: inline-block;" class="control-label" for="username"> User Name: </label> <br/>
             <input id="username" name="username" type="text"/>
 
         </DIV>
 
         <DIV>
-            <label style="width: 100px; display: inline-block" class="control-label" for="password"> Password: </label>
+            <label style="width: 100px; display: inline-block" class="control-label" for="password"> Password: </label>   <br/>
             <input class="input-xlarge" id="password" name="password" type="password"/>
 
         </DIV>

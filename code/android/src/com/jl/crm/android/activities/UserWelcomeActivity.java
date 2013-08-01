@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 /**
  * A simple {@code Activity} to demonstrate that we can work with a refreshed {@link com.jl.crm.client.CrmOperations}
- * instance with impunity anywhere in the application once they've gone through the initial {@link CrmWebOAuthActivity
+ * instance with impunity anywhere in the application once they've gone through the initial {@link AuthenticationActivity
  * OAuth flow}.
  *
  * @author Josh Long

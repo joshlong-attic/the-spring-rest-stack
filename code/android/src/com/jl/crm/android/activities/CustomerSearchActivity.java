@@ -5,23 +5,30 @@ import android.content.Context;
 import android.database.*;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
 import com.jl.crm.android.R;
+import com.jl.crm.client.*;
 
-public class CustomerSearchActivity  extends SherlockActivity implements SearchView.OnQueryTextListener,
-		                                                               SearchView.OnSuggestionListener {
+import javax.inject.Inject;
 
-	private static final String[] COLUMNS = { BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1, };
+public class CustomerSearchActivity extends BaseActivity implements SearchView.OnQueryTextListener,
+		                                                                          SearchView.OnSuggestionListener {
 
-	private SuggestionsAdapter mSuggestionsAdapter;
+	static final String[] COLUMNS = {BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1};
+	SuggestionsAdapter mSuggestionsAdapter;
+	@Inject CrmOperations crmOperations;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+
+		User user = this.crmOperations.currentUser();
+
+		Log.d(CustomerSearchActivity.class.getName(), "the user is " + user.toString()) ;
+
 
 		//Create the search view
 		SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
@@ -29,7 +36,7 @@ public class CustomerSearchActivity  extends SherlockActivity implements SearchV
 		searchView.setOnQueryTextListener(this);
 		searchView.setOnSuggestionListener(this);
 
-		if (mSuggestionsAdapter == null) {
+		if (mSuggestionsAdapter == null){
 			MatrixCursor cursor = new MatrixCursor(COLUMNS);
 			cursor.addRow(new String[]{"1", "'Murica"});
 			cursor.addRow(new String[]{"2", "Canada"});
@@ -40,7 +47,7 @@ public class CustomerSearchActivity  extends SherlockActivity implements SearchV
 		searchView.setSuggestionsAdapter(mSuggestionsAdapter);
 
 		menu.add("Search")
-				 // .setIcon(isLight ? R.drawable.ic_search_inverse : R.drawable.abs__ic_search)
+				       // .setIcon(isLight ? R.drawable.ic_search_inverse : R.drawable.abs__ic_search)
 				  .setActionView(searchView)
 				  .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
 
@@ -49,9 +56,9 @@ public class CustomerSearchActivity  extends SherlockActivity implements SearchV
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
- 		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.text);
-		((TextView)findViewById(R.id.text)).setText(R.string.search_views_content);
+		((TextView) findViewById(R.id.text)).setText(R.string.search_views_content);
 	}
 
 	@Override
@@ -78,7 +85,7 @@ public class CustomerSearchActivity  extends SherlockActivity implements SearchV
 		return true;
 	}
 
-	private class SuggestionsAdapter extends android.support.v4.widget.CursorAdapter {
+	private class SuggestionsAdapter extends CursorAdapter {
 
 		public SuggestionsAdapter(Context context, Cursor c) {
 			super(context, c, 0);

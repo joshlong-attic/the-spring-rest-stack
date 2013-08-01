@@ -84,7 +84,7 @@
     <string name="progress_content">The action bar includes a standard progress bar. The methods for accessing it are prefixed with `support`. See the source for this demo for more information.</string>
 
     <string name="search_views">Search Views</string>
-    <string name="search_views_content">SearchView allows you provide a unified mechanism of searching with optional featurs such as auto-completion and an always-expanded mode.</string>
+    <string name="search_views_content">SearchView allows you provide a unified mechanism of searching with optional features such as auto-completion and an always-expanded mode.</string>
 
     <string name="simple">Simple</string>
     <string name="simple_content">This is a simple showcase of how easy it is to add the action bar to your activities. Take a look at the source code, it\'s surprisingly simple!</string>

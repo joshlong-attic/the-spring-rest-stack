@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-@Module (injects = {UserWelcomeActivity.class, CrmWebOAuthActivity.class})
+@Module (injects = {UserWelcomeActivity.class, AuthenticationActivity.class, CustomerSearchActivity.class })
 public class CrmModule {
 	private Crm application;
 
@@ -32,7 +32,6 @@ public class CrmModule {
 
 
 	@Provides
-	@Singleton
 	CrmOperations crmOperations(final SQLiteConnectionRepository sqLiteConnectionRepository) {
 		try {
 			CrmOperations ops = sqLiteConnectionRepository.getPrimaryConnection(CrmOperations.class).getApi();

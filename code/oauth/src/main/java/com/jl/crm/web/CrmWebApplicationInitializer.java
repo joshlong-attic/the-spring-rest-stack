@@ -13,6 +13,9 @@ import org.springframework.security.crypto.password.*;
 import org.springframework.security.oauth2.config.annotation.authentication.configurers.InMemoryClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.OAuth2ServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.OAuth2ServerConfigurer;
+import org.springframework.security.web.header.writers.*;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter.XFrameOptionsMode;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
@@ -94,7 +97,14 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 				  .failureUrl("/crm/signin.html?error=true")
 				  .usernameParameter("username")
 				  .passwordParameter("password")
-				  .permitAll(true);
+				  .permitAll(true)
+				  .and()
+			.headers()
+				  .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsMode.SAMEORIGIN))
+				  .addHeaderWriter(new XContentTypeOptionsHeaderWriter())
+				  .addHeaderWriter(new XXssProtectionHeaderWriter())
+				  .addHeaderWriter(new CacheControlHeadersWriter())
+				  .addHeaderWriter(new HstsHeaderWriter());
 
 		http.logout().logoutUrl("/signout").deleteCookies("JSESSIONID");
 

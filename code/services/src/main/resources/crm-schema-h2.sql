@@ -51,3 +51,15 @@ INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_f
 
 
 
+
+-- insert into oauth_access_token (token_id, token, authentication_id, user_name, client_id, authentication, refresh_token) values (?, ?, ?, ?, ?, ?, ?)
+create table oauth_access_token (
+  token_id varchar ,
+  token bytea ,
+  authentication_id varchar ,
+  user_name varchar ,
+  client_id varchar ,
+  authentication varchar ,
+  refresh_token varchar  ,
+  CONSTRAINT pk PRIMARY KEY (token_id )
+) ;

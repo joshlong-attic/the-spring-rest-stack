@@ -15,7 +15,6 @@
  */
 package com.jl.crm.web;
 
-import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.context.WebApplicationContext;
@@ -47,7 +46,7 @@ public class CrmSecurityApplicationInitializer extends AbstractSecurityWebApplic
 	/** Insert the following filters before Spring Security. Be careful when inserting filters before Spring Security! */
 	@Override
 	protected void afterSpringSecurityFilterChain(ServletContext servletContext) {
-		insertFilters(servletContext, new HiddenHttpMethodFilter(), new MultipartFilter(), new OpenEntityManagerInViewFilter());
+		insertFilters(servletContext, new HiddenHttpMethodFilter(), new MultipartFilter()/*, new OpenEntityManagerInViewFilter()*/);
 	}
 
 	/** Register the {@link HttpSessionEventPublisher} */

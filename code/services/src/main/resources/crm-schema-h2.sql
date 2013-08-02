@@ -48,3 +48,6 @@ INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_f
 INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'scott', 'andrews', '2013-06-28 19:11:19', 2);
 INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'mark', 'fisher', '2013-06-28 19:54:14', 5);
 INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'josh', 'long', '2013-07-15 17:12:46', 6);
+
+
+

@@ -1,6 +1,7 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.ServiceConfiguration;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.springframework.context.annotation.*;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.*;
 import org.springframework.security.oauth2.config.annotation.authentication.configurers.InMemoryClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.OAuth2ServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.OAuth2ServerConfigurer;
+import org.springframework.security.oauth2.provider.token.JdbcTokenStore;
 import org.springframework.security.web.header.writers.*;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter.XFrameOptionsMode;
@@ -25,7 +27,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.inject.Inject;
 import javax.servlet.*;
+import javax.sql.DataSource;
 import java.io.File;
+import java.lang.reflect.Field;
 
 
 /**
@@ -66,25 +70,25 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
-	private String applicationName = ServiceConfiguration.CRM_NAME;
 
-	@Inject
-	private UserDetailsService userDetailsService;
+	private final String applicationName = ServiceConfiguration.CRM_NAME;
+	@Inject private UserDetailsService userDetailsService;
+ 	@Inject private DataSource dataSource;
 
 	@Override
-	protected void registerAuthentication(AuthenticationManagerBuilder auth)
-			  throws Exception {
+	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
 
-		auth.apply(new InMemoryClientDetailsServiceConfigurer())
+		InMemoryClientDetailsServiceConfigurer inMemoryClientDetailsServiceConfigurer = auth.apply(new InMemoryClientDetailsServiceConfigurer());
+		inMemoryClientDetailsServiceConfigurer
 				  .withClient("android-crm")
 				  .resourceIds(applicationName)
 				  .scopes("read", "write")
 				  .authorities("ROLE_USER")
 				  .authorizedGrantTypes("authorization_code", "implicit", "password")
-				  .secret("123456")
-				  .and()
-				  .and()
-				  .userDetailsService(userDetailsService);
+				  .secret("123456");
+
+		auth.userDetailsService(userDetailsService);
+
 	}
 
 	@Override
@@ -123,8 +127,15 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 				  .antMatchers(filesToLetThroughUnAuthorized).permitAll()
 				  .anyRequest().authenticated();
 
-		http.apply(new OAuth2ServerConfigurer()).resourceId(applicationName);
+		OAuth2ServerConfigurer oAuth2ServerConfigurer = new OAuth2ServerConfigurer()
+                    .tokenStore( this.jdbcTokenStore(this.dataSource));
 
+		http.apply(oAuth2ServerConfigurer).resourceId(applicationName);
+
+	}
+
+	protected JdbcTokenStore jdbcTokenStore(DataSource dataSource) {
+		return new JdbcTokenStore(dataSource);
 	}
 
 	@Bean

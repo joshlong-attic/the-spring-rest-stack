@@ -1,7 +1,6 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.ServiceConfiguration;
-import org.apache.commons.lang.reflect.FieldUtils;
 import org.springframework.context.annotation.*;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
@@ -29,7 +28,6 @@ import javax.inject.Inject;
 import javax.servlet.*;
 import javax.sql.DataSource;
 import java.io.File;
-import java.lang.reflect.Field;
 
 
 /**
@@ -73,13 +71,12 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 
 	private final String applicationName = ServiceConfiguration.CRM_NAME;
 	@Inject private UserDetailsService userDetailsService;
- 	@Inject private DataSource dataSource;
+	@Inject private DataSource dataSource;
 
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
 
-		InMemoryClientDetailsServiceConfigurer inMemoryClientDetailsServiceConfigurer = auth.apply(new InMemoryClientDetailsServiceConfigurer());
-		inMemoryClientDetailsServiceConfigurer
+		auth.apply(new InMemoryClientDetailsServiceConfigurer())
 				  .withClient("android-crm")
 				  .resourceIds(applicationName)
 				  .scopes("read", "write")
@@ -101,9 +98,9 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 				  .failureUrl("/crm/signin.html?error=true")
 				  .usernameParameter("username")
 				  .passwordParameter("password")
-				  .permitAll(true)
-				  .and()
-			.headers()
+				  .permitAll(true);
+
+		http.headers()
 				  .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsMode.SAMEORIGIN))
 				  .addHeaderWriter(new XContentTypeOptionsHeaderWriter())
 				  .addHeaderWriter(new XXssProtectionHeaderWriter())
@@ -119,23 +116,18 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 				  {
 							 H2EmbeddedDatbaseConsoleInitializer.H2_DATABASE_CONSOLE_MAPPING,
 							 "/favicon.ico",
-							 "/oauth/authorize",
-							 "/resources/"
+							 "/oauth/authorize"
 				  };
 
 		http.authorizeRequests()
 				  .antMatchers(filesToLetThroughUnAuthorized).permitAll()
 				  .anyRequest().authenticated();
 
-		OAuth2ServerConfigurer oAuth2ServerConfigurer = new OAuth2ServerConfigurer()
-                    .tokenStore( this.jdbcTokenStore(this.dataSource));
 
-		http.apply(oAuth2ServerConfigurer).resourceId(applicationName);
+		http.apply(new OAuth2ServerConfigurer())
+				  .tokenStore(new JdbcTokenStore(this.dataSource))
+				  .resourceId(applicationName);
 
-	}
-
-	protected JdbcTokenStore jdbcTokenStore(DataSource dataSource) {
-		return new JdbcTokenStore(dataSource);
 	}
 
 	@Bean

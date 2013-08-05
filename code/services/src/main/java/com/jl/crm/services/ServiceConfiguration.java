@@ -42,9 +42,8 @@ public class ServiceConfiguration {
 		File[] files = {CRM_STORAGE_DIRECTORY, CRM_STORAGE_UPLOADS_DIRECTORY, CRM_STORAGE_PROFILES_DIRECTORY};
 		for (File f : files) {
 			if (!f.exists() && !f.mkdirs()){
-				throw new RuntimeException("you must create the profile " +
-				                           "photos directory, " + f.getAbsolutePath() +
-				                           ". Unable to do so from this process.");
+				String msg = String.format("you must create the profile photos directory, '%s' and make it accessible to this process. Unable to do so from this process.", f.getAbsolutePath());
+				throw new RuntimeException(msg);
 			}
 		}
 	}
@@ -65,8 +64,8 @@ public class ServiceConfiguration {
 }
 
 @Configuration
-@Profile ({  "production"})
- class ProductionDataSourceConfiguration {
+@Profile ({"production"})
+class ProductionDataSourceConfiguration {
 	@Bean
 	public HibernateJpaVendorAdapter hibernateJpaVendorAdapter() {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();

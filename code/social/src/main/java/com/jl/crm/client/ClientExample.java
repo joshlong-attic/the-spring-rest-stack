@@ -1,17 +1,18 @@
 package com.jl.crm.client;
 
+import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.*;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.*;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.social.connect.*;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
@@ -25,6 +26,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.URI;
+import java.sql.Driver;
 import java.util.*;
 
 /**
@@ -34,9 +36,10 @@ import java.util.*;
  */
 public class ClientExample implements InitializingBean {
 	private static Log logger = LogFactory.getLog(ClientExample.class.getName());
-	private CrmConnectionFactory crmConnectionFactory;
-	private Environment environment;
+	@Inject private CrmConnectionFactory crmConnectionFactory;
+	@Inject private Environment environment;
 	private Connection<CrmOperations> connection;
+	@Inject private UsersConnectionRepository usersConnectionRepository;
 
 	public static void main(String args[]) throws Throwable {
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
@@ -45,7 +48,7 @@ public class ClientExample implements InitializingBean {
 		properties.put("sscrm.client-id", "android-crm");
 		properties.put("sscrm.client-secret", "123456");
 		properties.put("sscrm.authorize-url", "oauth/authorize");    // NB: these two paths are relative.
-		properties.put("sscrm.access-token-url", "oauth/token");
+		properties.put("sscrm.access-token-url", "oauth/token");     //
 		MapPropertySource mapPropertySource = new MapPropertySource("oauth", properties);
 		applicationContext.getEnvironment().getPropertySources().addLast(mapPropertySource);
 		applicationContext.register(SocialClientConfiguration.class);
@@ -70,18 +73,9 @@ public class ClientExample implements InitializingBean {
 		IOUtils.copy(byteArrayInputStream, outputStream);
 	}
 
-	@Inject
-	public void setEnvironment(Environment e) {
-		this.environment = e;
-	}
-
-	@Inject
-	public void setCrmConnectionFactory(CrmConnectionFactory crmConnectionFactory) {
-		this.crmConnectionFactory = crmConnectionFactory;
-	}
-
 	@Override
 	public void afterPropertiesSet() throws Exception {
+
 		String returnToUrl = environment.getProperty("sscrm.base-url") + "/";
 		OAuth2Operations oAuth2Operations = crmConnectionFactory.getOAuthOperations();
 		if (oAuth2Operations instanceof OAuth2Template){
@@ -96,35 +90,37 @@ public class ClientExample implements InitializingBean {
 		Desktop.getDesktop().browse(new URI(authorizationUrl));
 		String i = JOptionPane.showInputDialog(null, "What's the 'access_token'?");
 		String accessToken = i != null && !i.trim().equals("") ? i.trim() : null;
-		connection = crmConnectionFactory.createConnection(new AccessGrant(accessToken));
+
+
+		// we have a live connection
+		AccessGrant accessGrant = new AccessGrant(accessToken);
+		connection = crmConnectionFactory.createConnection(accessGrant);
+
+		UserProfile userProfile = connection.fetchUserProfile();
+
+		String userId = userProfile.getUsername();
+		Set<String> userIdSet = Sets.newHashSet(userId);
+
+		ConnectionRepository connectionRepository = this.usersConnectionRepository.createConnectionRepository(userId);
+		if (usersConnectionRepository.findUserIdsConnectedTo(crmConnectionFactory.getProviderId(), userIdSet).size() == 0){
+			connectionRepository.addConnection(this.connection);
+		}
+
 	}
+
 }
 
+@ComponentScan
+@PropertySource ("classpath:config.properties")
 @Configuration
 class SocialClientConfiguration {
+
 	public static final String CRM_SOCIAL_NAME = "crm-social";
-	private Log log = LogFactory.getLog(getClass());
+	private final Log log = LogFactory.getLog(getClass());
 
 	@Bean
-	public ClientExample clientExample() {
+	public ClientExample clientExample(Environment e, CrmConnectionFactory crmConnectionFactory) {
 		return new ClientExample();
-	}
-
-	@Bean
-	public DataSource dataSource() {
-
-		ClassPathResource classPathResource = new ClassPathResource("/crm-social-schema-h2.sql");
-
-		ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
-		resourceDatabasePopulator.addScript(classPathResource);
-
-		EmbeddedDatabaseFactoryBean embeddedDatabaseFactoryBean = new EmbeddedDatabaseFactoryBean();
-		embeddedDatabaseFactoryBean.setDatabasePopulator(resourceDatabasePopulator);
-		embeddedDatabaseFactoryBean.setDatabaseName(CRM_SOCIAL_NAME);
-		embeddedDatabaseFactoryBean.setDatabaseType(EmbeddedDatabaseType.H2);
-		embeddedDatabaseFactoryBean.afterPropertiesSet();
-		return embeddedDatabaseFactoryBean.getObject();
-
 	}
 
 	@Bean
@@ -179,18 +175,47 @@ class SocialClientConfiguration {
 
 	@Bean
 	@Scope (value = "prototype", proxyMode = ScopedProxyMode.INTERFACES)
-	public ConnectionRepository connectionRepository(UsersConnectionRepository usersConnectionRepository) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication == null){
-			throw new IllegalStateException("Unable to get a " + ConnectionRepository.class.getName() + ": no user signed in via Spring Security. Please fix this!");
-		}
-		return usersConnectionRepository.createConnectionRepository(authentication.getName());
-	}
-
-	@Bean
-	@Scope (value = "request", proxyMode = ScopedProxyMode.INTERFACES)
 	public CrmOperations customerServiceOperations(ConnectionRepository connectionRepository) {
 		Connection<CrmOperations> customerServiceOperations = connectionRepository.findPrimaryConnection(CrmOperations.class);
 		return customerServiceOperations != null ? customerServiceOperations.getApi() : null;
 	}
+
 }
+
+@Configuration
+@Profile ({"default", "test"})
+class EmbeddedDataSourceConfiguration {
+	@Bean
+	public DataSource dataSource() {
+
+		ClassPathResource classPathResource = new ClassPathResource("/crm-social-schema-h2.sql");
+
+		ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
+		resourceDatabasePopulator.addScript(classPathResource);
+
+		EmbeddedDatabaseFactoryBean embeddedDatabaseFactoryBean = new EmbeddedDatabaseFactoryBean();
+		embeddedDatabaseFactoryBean.setDatabasePopulator(resourceDatabasePopulator);
+		embeddedDatabaseFactoryBean.setDatabaseName(SocialClientConfiguration.CRM_SOCIAL_NAME);
+		embeddedDatabaseFactoryBean.setDatabaseType(EmbeddedDatabaseType.H2);
+		embeddedDatabaseFactoryBean.afterPropertiesSet();
+		return embeddedDatabaseFactoryBean.getObject();
+
+	}
+
+}
+
+@Configuration
+@Profile ({"production"})
+class ProductionDataSourceConfiguration {
+
+	@Bean
+	public DataSource dataSource(Environment env) {
+		SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+		dataSource.setDriverClass(env.getPropertyAsClass("dataSource.driverClass", Driver.class));
+		dataSource.setUrl(env.getProperty("dataSource.url").trim());
+		dataSource.setUsername(env.getProperty("dataSource.user").trim());
+		dataSource.setPassword(env.getProperty("dataSource.password").trim());
+		return dataSource;
+	}
+}
+

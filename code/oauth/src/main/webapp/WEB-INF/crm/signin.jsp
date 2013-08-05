@@ -11,6 +11,7 @@
 <body>
 <h1> Sign In</h1>
 
+
 <div>${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message}
 </div>
 <authz:authorize ifAllGranted="ROLE_USER">
@@ -24,21 +25,31 @@
     <p>
         Please enter your username and password to log into the application.
     </p>
+
     <form method="post" action="${pageContext.request.contextPath}/signin">
         <DIV>
-            <label style="width: 100px; display: inline-block;" class="control-label" for="username"> User Name: </label> <br/>
+            <label style="width: 100px; display: inline-block;" class="control-label" for="username"> User
+                Name: </label> <br/>
             <input id="username" name="username" type="text"/>
 
         </DIV>
 
         <DIV>
-            <label style="width: 100px; display: inline-block" class="control-label" for="password"> Password: </label>   <br/>
+            <label style="width: 100px; display: inline-block" class="control-label" for="password"> Password: </label>
+            <br/>
             <input class="input-xlarge" id="password" name="password" type="password"/>
 
         </DIV>
         <input type="submit"/>
 
+
     </form>
+    <p style="background-color: ActiveBorder; padding: 10px;">The preloaded (demonstration!) usernames and passwords are
+        in the file <code>/services/src/main/resources/crm-schema-*.sql</code>, where
+        <code>*</code> is either <code>postgresql</code> or <code>h2</code>.
+        You might consult those if this is your first time signing in.
+    </p>
+
 </authz:authorize>
 
 </body>

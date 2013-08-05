@@ -27,7 +27,6 @@ public class AuthenticationActivity extends BaseActivity {
 
 	@Inject SQLiteConnectionRepository sqLiteConnectionRepository;
 	@Inject CrmConnectionFactory connectionFactory;
-
 	OAuth2ImplicitFlowWebView webView;
 	OAuth2ImplicitFlowWebView.AccessTokenReceivedListener accessTokenReceivedListener = new OAuth2ImplicitFlowWebView.AccessTokenReceivedListener() {
 
@@ -64,7 +63,7 @@ public class AuthenticationActivity extends BaseActivity {
 				  @Override
 				  protected Connection<CrmOperations> doInBackground(Object... params) {
 
-						clearAllConnections();
+					  clearAllConnections();
 
 					  Connection<CrmOperations> connection = sqLiteConnectionRepository.findPrimaryConnection(CrmOperations.class);
 					  if (connection != null){
@@ -98,9 +97,9 @@ public class AuthenticationActivity extends BaseActivity {
 	}
 
 	@Override
- 	public void onStart() {
+	public void onStart() {
 		super.onStart();
-		asyncTaskToLoadCrmOperationsConnection.execute( new Object[]{});
+		asyncTaskToLoadCrmOperationsConnection.execute(new Object[]{});
 	}
 
 	@Override

@@ -11,7 +11,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.File;
 import java.net.URI;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A client to the RESTful API.
@@ -20,12 +19,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperations {
 
-	private final Map<String, Object> emptyMap = new ConcurrentHashMap<String, Object>();
 	private final File rootFile = new File(System.getProperty("java.io.tmpdir"));
 	private URI apiBaseUri;
 
 	public CrmTemplate(String accessToken, String apiUrl) {
-
 		super(accessToken);
 		try {
 			this.apiBaseUri = new URI(apiUrl);
@@ -36,14 +33,43 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 		}
 	}
 
-	private static String missingDependency(String dep) {
-		return String.format("you must provide a valid '%s'", dep);
-	}
-
 	private static Customer unwrapCustomer(Resource<Customer> tResource) {
 		Customer customer = tResource.getContent();
 		customer.setId(tResource.getId());
 		return customer;
+	}
+
+	private Map<String, Object> customerMap(Customer customer) {
+		Map<String, Object> mapOfUserData = null;
+		if (customer.getUser() != null){
+			mapOfUserData = new HashMap<String, Object>();
+			mapOfUserData.put("id", customer.getUser().getDatabaseId());
+		}
+		Map<String, Object> customerDataMap = new HashMap<String, Object>();
+		customerDataMap.put("firstName", customer.getFirstName());
+		customerDataMap.put("lastName", customer.getLastName());
+		if (customer.getSignupDate() != null){
+			customerDataMap.put("signupDate", customer.getSignupDate());
+		}
+		if (mapOfUserData != null){
+			customerDataMap.put("user", mapOfUserData);
+		}
+		return customerDataMap;
+	}
+
+	private Customer customer(URI uri) {
+		ResponseEntity<CustomerResource> customerResourceResponseEntity = getRestTemplate().getForEntity(uri, CustomerResource.class);
+		Resource<Customer> customerResource = customerResourceResponseEntity.getBody();
+		return unwrapCustomer(customerResource);
+	}
+
+	public static class CustomerList extends Resources<Resource<Customer>> {
+	}
+
+	public static class UserResource extends Resource<User> {
+	}
+
+	public static class CustomerResource extends Resource<Customer> {
 	}
 
 	private static User unwrapUser(Resource<User> tResource) {
@@ -52,12 +78,14 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 		return user;
 	}
 
+
 	@Override
 	public User currentUser() {
 		ResponseEntity<UserResource> userResponse = this.getRestTemplate().getForEntity(uriFrom("/user"), UserResource.class);
-		UserResource userResource = userResponse.getBody();
+		Resource<User> userResource = userResponse.getBody();
 		return unwrapUser(userResource);
 	}
+
 
 	@Override
 	public Customer createCustomer(String firstName, String lastName, Date signupDate) {
@@ -78,25 +106,6 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 		return customer(newLocation);
 	}
 
-	private Map<String, Object> customerMap(Customer customer) {
-		Map<String, Object> mapOfUserData = null;
-		if (customer.getUser() != null){
-			mapOfUserData = new HashMap<String, Object>();
-			mapOfUserData.put("id", customer.getUser().getDatabaseId());
-		}
-		Map<String, Object> mapOfCutomerData = new HashMap<String, Object>();
-		mapOfCutomerData.put("firstName", customer.getFirstName());
-		mapOfCutomerData.put("lastName", customer.getLastName());
-		if (customer.getSignupDate() != null){
-			// optional
-			mapOfCutomerData.put("signupDate", customer.getSignupDate());
-		}
-		if (mapOfUserData != null){
-			mapOfCutomerData.put("user", mapOfUserData);
-		}
-
-		return mapOfCutomerData;
-	}
 
 	@Override
 	public Collection<Customer> loadAllUserCustomers() {
@@ -118,11 +127,6 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 		this.getRestTemplate().delete(uri);
 	}
 
-	private Customer customer(URI uri) {
-		ResponseEntity<CustomerResource> customerResourceResponseEntity = getRestTemplate().getForEntity(uri, CustomerResource.class);
-		Resource<Customer> customerResource = customerResourceResponseEntity.getBody();
-		return unwrapCustomer(customerResource);
-	}
 
 	@Override
 	public Customer loadUserCustomer(Long id) {
@@ -132,18 +136,21 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 	}
 
 	@Override
-	public URI setUserProfilePhoto(byte[] bytesOfImage, final MediaType mediaType) {
+	public void setUserProfilePhoto(byte[] bytesOfImage, final MediaType mediaType) {
 		ByteArrayResource byteArrayResource = new ByteArrayResource(bytesOfImage) {
 			@Override
 			public String getFilename() {
 				return new File(rootFile, "profile-image." + mediaType.getSubtype()).getAbsolutePath();
 			}
 		};
-
 		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
 		parts.set("file", byteArrayResource);
-
-		return this.getRestTemplate().postForLocation(uriFrom("/users/" + currentUser().getDatabaseId() + "/photo").toString(), parts, ResponseEntity.class);
+		String photoUri = uriFrom("/users/" + currentUser().getDatabaseId() + "/photo").toString();
+		ResponseEntity<?> responseEntity = this.getRestTemplate().postForEntity(photoUri, parts, ResponseEntity.class);
+		HttpStatus.Series series = responseEntity.getStatusCode().series();
+		if (!series.equals(HttpStatus.Series.SUCCESSFUL)){
+			throw new RuntimeException("couldn't write the profile photo!");
+		}
 	}
 
 	@Override
@@ -174,27 +181,12 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 	}
 
 	private URI uriFrom(String subUrl) {
-		return this.uriFrom(subUrl, this.emptyMap);
+		return this.uriFrom(subUrl, Collections.<String, String>emptyMap());
 	}
 
 	private URI uriFrom(String subUrl, Map<String, ?> params) {
 		return UriComponentsBuilder.fromUri(this.apiBaseUri).path(subUrl).buildAndExpand(params).toUri();
 	}
 
-	// types that we need simply to lock in the generic information so that
-	// it's available at runtime to things like Jackson
 
-	// todo simplify all this url string building with methods that generate the URLs for you
-	URI customerUri(long customerId) {
-		return uriFrom("/customers/" + customerId);
-	}
-
-	public static class CustomerList extends Resources<Resource<Customer>> {
-	}
-
-	public static class UserResource extends Resource<User> {
-	}
-
-	public static class CustomerResource extends Resource<Customer> {
-	}
 }

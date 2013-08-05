@@ -2,7 +2,6 @@ package com.jl.crm.client;
 
 import org.springframework.http.MediaType;
 
-import java.net.URI;
 import java.util.*;
 
 /**
@@ -22,13 +21,9 @@ public interface CrmOperations {
 
 	void removeCustomer(Long id);
 
-	URI setUserProfilePhoto(byte[] bytesOfImage, MediaType mediaType);
+	void  setUserProfilePhoto(byte[] bytesOfImage, MediaType mediaType);
 
 	Customer updateCustomer(Long id, String firstName, String lastName);
 
 	ProfilePhoto getUserProfilePhoto();
-
-
-
-
 }

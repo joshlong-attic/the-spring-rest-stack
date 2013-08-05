@@ -115,8 +115,7 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 		String[] filesToLetThroughUnAuthorized =
 				  {
 							 H2EmbeddedDatbaseConsoleInitializer.H2_DATABASE_CONSOLE_MAPPING,
-							 "/favicon.ico",
-							 "/oauth/authorize"
+							 "/favicon.ico"
 				  };
 
 		http.authorizeRequests()

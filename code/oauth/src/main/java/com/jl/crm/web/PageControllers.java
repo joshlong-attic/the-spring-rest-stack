@@ -16,8 +16,5 @@ public class PageControllers {
 		return "signin";
 	}
 
-	@RequestMapping ("/crm/access_confirmation.html")
-	public String accessConfirmation() {
-		return "access_confirmation";
-	}
+
 }

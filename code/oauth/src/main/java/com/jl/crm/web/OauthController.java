@@ -11,9 +11,9 @@ import javax.inject.Inject;
 import javax.servlet.http.*;
 import java.util.Map;
 
- @Controller
-@SessionAttributes("authorizationRequest")
-public class OauthAccessConfirmationController {
+@Controller
+@SessionAttributes ("authorizationRequest")
+public class OauthController {
 
 	private ClientDetailsService clientDetailsService;
 
@@ -25,21 +25,13 @@ public class OauthAccessConfirmationController {
 		model.put("client", client);
 
 		HttpSession httpSession = httpServletRequest.getSession(false);
-		if (httpSession != null) {
+		if (httpSession != null){
 			Object exception = httpSession.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-			if (exception != null && exception instanceof AuthenticationException) {
+			if (exception != null && exception instanceof AuthenticationException){
 				model.put("exception", exception);
 			}
 		}
 		return new ModelAndView("access_confirmation", model);
-	}
-
-	@RequestMapping("/oauth/error")
-	public String handleError(Map<String, Object> model) throws Exception {
-		// We can add more stuff to the model here for JSP rendering.  If the client was a machine then
-		// the JSON will already have been rendered.
-		model.put("message", "There was a problem with the OAuth2 protocol");
-		return "oauth_error";
 	}
 
 	@Inject

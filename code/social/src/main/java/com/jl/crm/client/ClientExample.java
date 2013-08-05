@@ -76,7 +76,7 @@ public class ClientExample implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
-		String returnToUrl = environment.getProperty("sscrm.base-url") + "/";
+		String returnToUrl = environment.getProperty("sscrm.base-url") + "crm/welcome.html";
 		OAuth2Operations oAuth2Operations = crmConnectionFactory.getOAuthOperations();
 		if (oAuth2Operations instanceof OAuth2Template){
 			((OAuth2Template) oAuth2Operations).setUseParametersForClientAuthentication(false);

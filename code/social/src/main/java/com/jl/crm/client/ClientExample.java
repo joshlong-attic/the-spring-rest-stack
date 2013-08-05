@@ -20,7 +20,6 @@ import org.springframework.social.connect.support.ConnectionFactoryRegistry;
 import org.springframework.social.oauth2.*;
 import org.springframework.util.StringUtils;
 
-import javax.inject.Inject;
 import javax.sql.DataSource;
 import javax.swing.*;
 import java.awt.*;
@@ -36,10 +35,16 @@ import java.util.*;
  */
 public class ClientExample implements InitializingBean {
 	private static Log logger = LogFactory.getLog(ClientExample.class.getName());
-	@Inject private CrmConnectionFactory crmConnectionFactory;
-	@Inject private Environment environment;
+	private CrmConnectionFactory crmConnectionFactory;
+	private Environment environment;
+	private UsersConnectionRepository usersConnectionRepository;
 	private Connection<CrmOperations> connection;
-	@Inject private UsersConnectionRepository usersConnectionRepository;
+
+	public ClientExample(CrmConnectionFactory crmConnectionFactory, Environment environment, UsersConnectionRepository usersConnectionRepository) {
+		this.crmConnectionFactory = crmConnectionFactory;
+		this.environment = environment;
+		this.usersConnectionRepository = usersConnectionRepository;
+	}
 
 	public static void main(String args[]) throws Throwable {
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
@@ -76,18 +81,26 @@ public class ClientExample implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
+		// build up the OAuth2Parameters
 		String returnToUrl = environment.getProperty("sscrm.base-url") + "crm/welcome.html";
-		OAuth2Operations oAuth2Operations = crmConnectionFactory.getOAuthOperations();
-		if (oAuth2Operations instanceof OAuth2Template){
-			((OAuth2Template) oAuth2Operations).setUseParametersForClientAuthentication(false);
-		}
+		OAuth2Template oAuth2Operations = crmConnectionFactory.getOAuthOperations();
+		oAuth2Operations.setUseParametersForClientAuthentication(false);
+
 		OAuth2Parameters parameters = new OAuth2Parameters();
+		parameters.setScope("read,write");
 		if (StringUtils.hasText(returnToUrl)){
 			parameters.setRedirectUri(returnToUrl);
 		}
-		parameters.setScope("read,write");
+
+
+		// figure out what the OAuth "authorize" endpoint should be and open it with
+		// the system's default HTTP browser
 		String authorizationUrl = oAuth2Operations.buildAuthenticateUrl(GrantType.IMPLICIT_GRANT, parameters);
 		Desktop.getDesktop().browse(new URI(authorizationUrl));
+
+		// the authorizationUrl above will have at a minimum, prompted an authenticated user to approve
+		// certain permissions. After the approval, it will return with an `access_token` parameter
+		// we must provide that `access_token` here.
 		String i = JOptionPane.showInputDialog(null, "What's the 'access_token'?");
 		String accessToken = i != null && !i.trim().equals("") ? i.trim() : null;
 
@@ -100,12 +113,17 @@ public class ClientExample implements InitializingBean {
 
 		String userId = userProfile.getUsername();
 		Set<String> userIdSet = Sets.newHashSet(userId);
+		String providerId = crmConnectionFactory.getProviderId();
+
+		// find out whether we've already connected before.
 
 		ConnectionRepository connectionRepository = this.usersConnectionRepository.createConnectionRepository(userId);
-		if (usersConnectionRepository.findUserIdsConnectedTo(crmConnectionFactory.getProviderId(), userIdSet).size() == 0){
+		boolean hasThisUserConnectedToThisServiceProviderBefore = usersConnectionRepository.findUserIdsConnectedTo(providerId, userIdSet).size() == 0;
+		if (hasThisUserConnectedToThisServiceProviderBefore){
+			// If not, save this connection information
+			// in theory we could look this up simply by persisting the userId in some sort of client-side storage
 			connectionRepository.addConnection(this.connection);
 		}
-
 	}
 
 }
@@ -116,23 +134,20 @@ public class ClientExample implements InitializingBean {
 class SocialClientConfiguration {
 
 	public static final String CRM_SOCIAL_NAME = "crm-social";
-	private final Log log = LogFactory.getLog(getClass());
 
 	@Bean
-	public ClientExample clientExample(Environment e, CrmConnectionFactory crmConnectionFactory) {
-		return new ClientExample();
+	public ClientExample clientExample(CrmConnectionFactory crmConnectionFactory, Environment environment, UsersConnectionRepository usersConnectionRepository) {
+		return new ClientExample(crmConnectionFactory, environment, usersConnectionRepository);
 	}
 
 	@Bean
 	public CrmServiceProvider crmServiceProvider(Environment e) {
 		final String propertyNameRoot = "sscrm";
-		String clientId = e.getProperty(propertyNameRoot + ".client-id"), clientSecret = e.getProperty(propertyNameRoot + ".client-secret");
-		String baseUrl = e.getProperty(propertyNameRoot + ".base-url"), authorizeUrl = e.getProperty(propertyNameRoot + ".authorize-url"), accessTokenUrl = e.getProperty(propertyNameRoot + ".access-token-url");
-		return this.createCrmServiceProvider(clientId, clientSecret, baseUrl, authorizeUrl, accessTokenUrl);
-	}
-
-	private CrmServiceProvider createCrmServiceProvider(String clientId, String clientSecret, String baseUrl, String authorizeUrl, String accessTokenUrl) {
-		log.debug(String.format("baseUrl=%s, clientSecret=%s, consumerSecret=%s, authorizeUrl=%s, accessTokenUrl=%s", baseUrl, clientId, clientSecret, authorizeUrl, accessTokenUrl));
+		String clientId = e.getProperty(propertyNameRoot + ".client-id");
+		String clientSecret = e.getProperty(propertyNameRoot + ".client-secret");
+		String baseUrl = e.getProperty(propertyNameRoot + ".base-url");
+		String authorizeUrl = e.getProperty(propertyNameRoot + ".authorize-url");
+		String accessTokenUrl = e.getProperty(propertyNameRoot + ".access-token-url");
 		final String http = "http://";
 		assert baseUrl != null && baseUrl.length() > 0 : "the baseUrl can't be null!";
 		if (!authorizeUrl.toLowerCase().startsWith(http)){

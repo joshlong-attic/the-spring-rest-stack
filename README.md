@@ -23,8 +23,4 @@ The `social` module is a Spring Social API binding for the OAuth 2.0-secured CRM
 The `android` module is a [Spring Android](http://github.com/SpringSource/spring-android)-powered Android client that embeds the `social` client and uses it to support an [Android mobile application](http://www.google.com/mobile/android/).
 
 ## Notes on Implementation 
-The entire project is delivered using Java configuration-centric options wherever possible. All Spring projects used require no XML. And, thanks to abstractions available in Spring, our uses of Java EE standards like JPA and Servlets require no XML, either.   
-
-This is meant to demonstrate how Spring's sophisticated, layerable, integrated approach offers a stack without compare for web and REST-powered applications. 
-
-
+For a detailed walkthrough of all the code, please check [out the tutorial](https://github.com/joshlong/the-spring-rest-stack/blob/master/tutorial.asc).

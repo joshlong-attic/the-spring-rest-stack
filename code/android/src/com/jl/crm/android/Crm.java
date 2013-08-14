@@ -1,7 +1,7 @@
 package com.jl.crm.android;
 
 
-import android.app.*;
+import android.app.Application;
 import dagger.ObjectGraph;
 
 import java.util.*;
@@ -14,8 +14,6 @@ import java.util.*;
 public class Crm extends Application {
 	private ObjectGraph objectGraph;
 
-
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -24,9 +22,8 @@ public class Crm extends Application {
 	}
 
 	protected List<Object> getModules() {
-		return Arrays.<Object>asList( new CrmModule(this) );
+		return Arrays.<Object>asList(new CrmModule(this));
 	}
-
 
 	public void inject(Object crmComponent) {
 		this.objectGraph.inject(crmComponent);

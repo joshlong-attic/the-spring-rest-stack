@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.*;
 import android.view.Window;
 import com.jl.crm.android.R;
-import com.jl.crm.android.widget.OAuth2ImplicitFlowWebView;
+import com.jl.crm.android.widget.CrmOAuthFlowWebView;
 import com.jl.crm.client.*;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.sqlite.SQLiteConnectionRepository;
@@ -26,9 +26,12 @@ import java.util.List;
 public class AuthenticationActivity extends BaseActivity {
 
 	@Inject SQLiteConnectionRepository sqLiteConnectionRepository;
+
 	@Inject CrmConnectionFactory connectionFactory;
-	OAuth2ImplicitFlowWebView webView;
-	OAuth2ImplicitFlowWebView.AccessTokenReceivedListener accessTokenReceivedListener = new OAuth2ImplicitFlowWebView.AccessTokenReceivedListener() {
+
+	CrmOAuthFlowWebView webView;
+
+	CrmOAuthFlowWebView.AccessTokenReceivedListener accessTokenReceivedListener = new CrmOAuthFlowWebView.AccessTokenReceivedListener() {
 
 		@Override
 		public void accessTokenReceived(final String accessToken) {
@@ -52,18 +55,18 @@ public class AuthenticationActivity extends BaseActivity {
 
 		}
 	};
-	private Runnable connectionEstablishedRunnable = new Runnable() {
+
+	Runnable connectionEstablishedRunnable = new Runnable() {
 		@Override
 		public void run() {
 			connectionEstablished();
 		}
 	};
-	private AsyncTask<?, ?, Connection<CrmOperations>> asyncTaskToLoadCrmOperationsConnection =
+
+	AsyncTask<?, ?, Connection<CrmOperations>> asyncTaskToLoadCrmOperationsConnection =
 			  new AsyncTask<Object, Object, Connection<CrmOperations>>() {
 				  @Override
 				  protected Connection<CrmOperations> doInBackground(Object... params) {
-
-					  clearAllConnections();
 
 					  Connection<CrmOperations> connection = sqLiteConnectionRepository.findPrimaryConnection(CrmOperations.class);
 					  if (connection != null){
@@ -80,21 +83,6 @@ public class AuthenticationActivity extends BaseActivity {
 					  return null;
 				  }
 			  };
-
-	protected void clearAllConnections() {
-		MultiValueMap<String, Connection<?>> mvMapOfConnections = sqLiteConnectionRepository.findAllConnections();
-		for (String k : mvMapOfConnections.keySet()) {
-			List<Connection<?>> connectionList = mvMapOfConnections.get(k);
-			for (Connection<?> c : connectionList) {
-				sqLiteConnectionRepository.removeConnection(c.getKey());
-			}
-		}
-	}
-
-	protected void connectionEstablished() {
-		Intent intent = new Intent(AuthenticationActivity.this, CustomerSearchActivity.class);
-		startActivity(intent);
-	}
 
 	@Override
 	public void onStart() {
@@ -114,10 +102,26 @@ public class AuthenticationActivity extends BaseActivity {
 		setContentView(this.webView);
 	}
 
-	protected OAuth2ImplicitFlowWebView webView() {
+	@SuppressWarnings("unused")
+	protected void clearAllConnections() {
+		MultiValueMap<String, Connection<?>> mvMapOfConnections = sqLiteConnectionRepository.findAllConnections();
+		for (String k : mvMapOfConnections.keySet()) {
+			List<Connection<?>> connectionList = mvMapOfConnections.get(k);
+			for (Connection<?> c : connectionList) {
+				sqLiteConnectionRepository.removeConnection(c.getKey());
+			}
+		}
+	}
+
+	protected void connectionEstablished() {
+		Intent intent = new Intent(AuthenticationActivity.this, CustomerSearchActivity.class);
+		startActivity(intent);
+	}
+
+	protected CrmOAuthFlowWebView webView() {
 		String authenticateUri = buildAuthenticationUrl();
 		String returnUri = getString(R.string.oauth_access_token_callback_uri);
-		return new OAuth2ImplicitFlowWebView(this, authenticateUri, returnUri, this.accessTokenReceivedListener);
+		return new CrmOAuthFlowWebView(this, authenticateUri, returnUri, this.accessTokenReceivedListener);
 	}
 
 	protected String buildAuthenticationUrl() {

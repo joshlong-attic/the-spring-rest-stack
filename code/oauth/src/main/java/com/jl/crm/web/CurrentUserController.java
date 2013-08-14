@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import java.util.*;
 
 /**
  * Convenience REST endpoint to answer the question: <EM>who's currently signed in for this session?</EM>.
@@ -28,8 +29,11 @@ public class CurrentUserController {
 		CrmUserDetailsService.CrmUserDetails crmUserDetails = (CrmUserDetailsService.CrmUserDetails) auth.getPrincipal();
 		long userId = crmUserDetails.getUser().getId();
 		User self = this.crmService.findById(userId);
-		Link userLink = this.userLinks.getSelfLink(self);
-		UserResource userResource = new UserResource(self, userLink);
+		List<Link> linkList = new ArrayList<Link>();
+		linkList.add( this.userLinks.getSelfLink(self));
+		linkList.add(this.userLinks.getPhotoLink( self));
+		linkList.add(this.userLinks.getCustomersLink(self));
+		UserResource userResource = new UserResource(self, linkList);
 		return new ResponseEntity<Resource<User>>(userResource , HttpStatus.OK);
 	}
 
@@ -44,7 +48,7 @@ public class CurrentUserController {
 	}
 
 	static class UserResource extends Resource<User> {
-		public UserResource(User content, Link... links) {
+		public UserResource(User content, Iterable<Link> links) {
 			super(content, links);
 		}
 	}

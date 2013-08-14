@@ -11,15 +11,19 @@ import javax.inject.Inject;
 import javax.servlet.http.*;
 import java.util.Map;
 
+import static com.jl.crm.web.OAuthController.AUTHORIZATION_REQUEST_SESSION_ATTRIBUTE;
+
 @Controller
-@SessionAttributes ("authorizationRequest")
-public class OauthController {
+@SessionAttributes (AUTHORIZATION_REQUEST_SESSION_ATTRIBUTE)
+public class OAuthController {
+
+	public static final String AUTHORIZATION_REQUEST_SESSION_ATTRIBUTE = "authorizationRequest";
 
 	private ClientDetailsService clientDetailsService;
 
 	@RequestMapping ("/oauth/confirm_access")
 	public ModelAndView getAccessConfirmation(Map<String, Object> model, HttpServletRequest httpServletRequest) throws Exception {
-		AuthorizationRequest clientAuth = (AuthorizationRequest) model.remove("authorizationRequest");
+		AuthorizationRequest clientAuth = (AuthorizationRequest) model.remove(AUTHORIZATION_REQUEST_SESSION_ATTRIBUTE);
 		ClientDetails client = clientDetailsService.loadClientByClientId(clientAuth.getClientId());
 		model.put("auth_request", clientAuth);
 		model.put("client", client);

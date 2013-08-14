@@ -30,7 +30,6 @@ public class CrmModule {
 		return (LocationManager) application.getSystemService(LOCATION_SERVICE);
 	}
 
-
 	@Provides
 	CrmOperations crmOperations(final SQLiteConnectionRepository sqLiteConnectionRepository) {
 		try {
@@ -68,12 +67,6 @@ public class CrmModule {
 		return new CrmApiAdapter();
 	}
 
-	private String fullUrl(String baseUrl, String end) {
-		String base = !baseUrl.endsWith("/") ? baseUrl + "/" : baseUrl;
-		String newEnd = end.startsWith("/") ? end.substring(1) : end;
-		return base + newEnd;
-	}
-
 	@Provides
 	@Singleton
 	CrmServiceProvider serviceProvider(@InjectAndroidApplicationContext Context c) {
@@ -105,5 +98,11 @@ public class CrmModule {
 	@InjectAndroidApplicationContext
 	Context provideApplicationContext() {
 		return this.application.getApplicationContext();
+	}
+
+	private String fullUrl(String baseUrl, String end) {
+		String base = !baseUrl.endsWith("/") ? baseUrl + "/" : baseUrl;
+		String newEnd = end.startsWith("/") ? end.substring(1) : end;
+		return base + newEnd;
 	}
 }

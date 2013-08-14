@@ -60,6 +60,12 @@
             <version>${project.version}</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.pegdown</groupId>
+            <artifactId>pegdown</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+
     </dependencies>
 
 

@@ -5,6 +5,7 @@ import com.jl.crm.services.*;
 import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,15 +19,12 @@ import java.net.URI;
 public class UserProfilePhotoController {
 
 	private CrmService crmService;
+
 	private UserLinks userLinks;
 
 	@Inject
-	void setCrmService(CrmService crmService) {
+	public UserProfilePhotoController(CrmService crmService, UserLinks userLinks) {
 		this.crmService = crmService;
-	}
-
-	@Inject
-	void setUserLinks(UserLinks userLinks) {
 		this.userLinks = userLinks;
 	}
 

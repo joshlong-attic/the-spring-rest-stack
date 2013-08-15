@@ -20,7 +20,6 @@ public class UserLinks {
 
 	@Inject
 	UserLinks(EntityLinks entityLinks) {
-		Assert.notNull(entityLinks, "EntityLinks must not be null!");
 		this.entityLinks = entityLinks;
 	}
 

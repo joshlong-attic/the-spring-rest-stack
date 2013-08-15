@@ -1,11 +1,13 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.*;
+
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+
 import java.util.ArrayList;
 
 /**
@@ -21,7 +23,7 @@ class UserController {
 	private CrmService crmService;
 
 	@Inject
-	void setCrmService(CrmService crmService) {
+	public UserController(CrmService crmService) {
 		this.crmService = crmService;
 	}
 

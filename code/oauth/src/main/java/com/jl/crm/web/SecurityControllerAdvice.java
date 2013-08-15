@@ -17,8 +17,12 @@ import javax.inject.Inject;
 @ControllerAdvice
 public class SecurityControllerAdvice {
 
-	@Inject
 	private CrmService service;
+
+	@Inject
+	public SecurityControllerAdvice(CrmService service) {
+		this.service = service;
+	}
 
 	@ModelAttribute
 	public User currentUser(Authentication authentication) {

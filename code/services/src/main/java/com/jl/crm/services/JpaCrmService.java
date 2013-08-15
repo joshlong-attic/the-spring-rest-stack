@@ -6,8 +6,10 @@ import org.hibernate.Hibernate;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import javax.inject.Inject;
+
 import java.io.*;
 import java.util.*;
 
@@ -24,12 +26,9 @@ public class JpaCrmService implements CrmService {
 	private UserRepository userRepository;
 
 	@Inject
-	public void setCustomerRepository(CustomerRepository customerRepository) {
+	public JpaCrmService(CustomerRepository customerRepository,
+			UserRepository userRepository) {
 		this.customerRepository = customerRepository;
-	}
-
-	@Inject
-	public void setUserRepository(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 

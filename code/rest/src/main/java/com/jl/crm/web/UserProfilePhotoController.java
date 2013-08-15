@@ -21,7 +21,7 @@ class UserProfilePhotoController {
 	private CrmService crmService;
 
 	@Inject
-	void setCrmService(CrmService crmService) {
+	public UserProfilePhotoController(CrmService crmService) {
 		this.crmService = crmService;
 	}
 

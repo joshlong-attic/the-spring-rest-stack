@@ -12,7 +12,7 @@ public class CustomerResourceProcessor implements ResourceProcessor<Resource<Cus
 	private CustomerLinks customerLinks;
 
 	@Inject
-	public void setCustomerLinks(CustomerLinks customerLinks) {
+	public CustomerResourceProcessor(CustomerLinks customerLinks) {
 		this.customerLinks = customerLinks;
 	}
 

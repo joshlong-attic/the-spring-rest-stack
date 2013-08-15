@@ -1,17 +1,20 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.Customer;
+
 import org.springframework.hateoas.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.inject.Inject;
 
 @Component
 public class CustomerResourceProcessor implements ResourceProcessor<Resource<Customer>> {
+
 	private CustomerLinks customerLinks;
 
 	@Inject
-	public void setCustomerLinks(CustomerLinks customerLinks) {
+	public CustomerResourceProcessor(CustomerLinks customerLinks) {
 		this.customerLinks = customerLinks;
 	}
 

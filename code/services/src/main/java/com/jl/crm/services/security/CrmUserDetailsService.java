@@ -16,7 +16,7 @@ public class CrmUserDetailsService implements UserDetailsService {
 	private CrmService crmService;
 
 	@Inject
-	public void setCrmService(CrmService crmService) {
+	public CrmUserDetailsService(CrmService crmService) {
 		this.crmService = crmService;
 	}
 

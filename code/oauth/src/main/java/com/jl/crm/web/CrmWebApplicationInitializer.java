@@ -76,8 +76,12 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 
 	private final String applicationName = ServiceConfiguration.CRM_NAME;
-	@Inject private DataSource dataSource;
-	@Inject private ContentNegotiationStrategy contentNegotiationStrategy;
+
+	@Inject
+	private DataSource dataSource;
+
+	@Inject
+	private ContentNegotiationStrategy contentNegotiationStrategy;
 
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {

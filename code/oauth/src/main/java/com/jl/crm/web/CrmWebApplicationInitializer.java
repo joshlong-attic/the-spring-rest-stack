@@ -131,8 +131,8 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 @EnableWebSecurity
 class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	@Inject private UserDetailsService userDetailsService;
-	@Inject private DataSource dataSource;
+	@Inject
+	private UserDetailsService userDetailsService;
 
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {

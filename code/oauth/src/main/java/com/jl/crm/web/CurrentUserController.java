@@ -6,7 +6,6 @@ import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;

@@ -2,11 +2,14 @@ package com.jl.crm.web;
 
 import com.jl.crm.services.ServiceConfiguration;
 import org.springframework.context.annotation.*;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.encrypt.*;
 import org.springframework.security.crypto.password.*;
@@ -14,9 +17,10 @@ import org.springframework.security.oauth2.config.annotation.authentication.conf
 import org.springframework.security.oauth2.config.annotation.web.configuration.OAuth2ServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.OAuth2ServerConfigurer;
 import org.springframework.security.oauth2.provider.token.JdbcTokenStore;
-import org.springframework.security.web.header.writers.*;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter.XFrameOptionsMode;
+import org.springframework.security.web.util.MediaTypeRequestMatcher;
+import org.springframework.web.accept.ContentNegotiationStrategy;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
@@ -28,6 +32,7 @@ import javax.inject.Inject;
 import javax.servlet.*;
 import javax.sql.DataSource;
 import java.io.File;
+import java.util.Collections;
 
 
 /**
@@ -67,11 +72,12 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
+@Order(1)
+class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 
 	private final String applicationName = ServiceConfiguration.CRM_NAME;
-	@Inject private UserDetailsService userDetailsService;
 	@Inject private DataSource dataSource;
+	@Inject private ContentNegotiationStrategy contentNegotiationStrategy;
 
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
@@ -84,13 +90,53 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 				  .authorizedGrantTypes("authorization_code", "implicit", "password")
 				  .secret("123456");
 
-		auth.userDetailsService(userDetailsService);
-
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		http.requestMatcher(oauthRequestMatcher());
 
+		http.authorizeRequests()
+				  .anyRequest().authenticated();
+
+		http.apply(new OAuth2ServerConfigurer())
+				  .tokenStore(new JdbcTokenStore(this.dataSource))
+				  .resourceId(applicationName);
+	}
+
+	@Bean
+	public MediaTypeRequestMatcher oauthRequestMatcher() {
+		MediaTypeRequestMatcher mediaTypeRequestMatcher = new MediaTypeRequestMatcher(contentNegotiationStrategy, MediaType.APPLICATION_JSON);
+		mediaTypeRequestMatcher.setIgnoredMediaTypes(Collections.singleton(MediaType.ALL));
+		return mediaTypeRequestMatcher;
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return NoOpPasswordEncoder.getInstance();
+	}
+
+	@Bean
+	public TextEncryptor textEncryptor() {
+		return Encryptors.noOpText();
+	}
+}
+
+
+@Configuration
+@EnableWebSecurity
+class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+	@Inject private UserDetailsService userDetailsService;
+	@Inject private DataSource dataSource;
+
+	@Override
+	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService);
+	}
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
 		http.formLogin()
 				  .loginPage("/crm/signin.html")
 				  .loginProcessingUrl("/signin")
@@ -98,14 +144,14 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 				  .failureUrl("/crm/signin.html?error=true")
 				  .usernameParameter("username")
 				  .passwordParameter("password")
-				  .permitAll(true);
+				  .permitAll();
 
 		http.headers()
 				  .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsMode.SAMEORIGIN))
-				  .addHeaderWriter(new XContentTypeOptionsHeaderWriter())
-				  .addHeaderWriter(new XXssProtectionHeaderWriter())
-				  .addHeaderWriter(new CacheControlHeadersWriter())
-				  .addHeaderWriter(new HstsHeaderWriter());
+				  .contentTypeOptions()
+				  .xssProtection()
+				  .cacheControl()
+				  .httpStrictTransportSecurity();
 
 		http.logout().logoutUrl("/signout").deleteCookies("JSESSIONID");
 
@@ -123,21 +169,6 @@ class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 				  .antMatchers("/users/*").denyAll()
 				  .anyRequest().authenticated();
 
-
-		http.apply(new OAuth2ServerConfigurer())
-				  .tokenStore(new JdbcTokenStore(this.dataSource))
-				  .resourceId(applicationName);
-
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return NoOpPasswordEncoder.getInstance();
-	}
-
-	@Bean
-	public TextEncryptor textEncryptor() {
-		return Encryptors.noOpText();
 	}
 }
 

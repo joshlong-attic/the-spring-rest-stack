@@ -42,7 +42,7 @@
         </DIV>
         <input type="submit"/>
 
-
+        <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>" value="<c:out value="${_csrf.token}"/>"/>
     </form>
     <p style="background-color: ActiveBorder; padding: 10px;">The preloaded (demonstration!) usernames and passwords are
         in the file <code>/services/src/main/resources/crm-schema-*.sql</code>, where

@@ -70,9 +70,7 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 class SecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 
 	private final String applicationName = ServiceConfiguration.CRM_NAME;
-
 	@Inject private UserDetailsService userDetailsService;
-
 	@Inject private DataSource dataSource;
 
 	@Override

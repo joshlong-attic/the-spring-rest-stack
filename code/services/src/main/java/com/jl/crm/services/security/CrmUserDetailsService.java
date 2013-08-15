@@ -28,9 +28,9 @@ public class CrmUserDetailsService implements UserDetailsService {
 
 	@SuppressWarnings("serial")
 	public static class CrmUserDetails implements UserDetails {
- 		public static final String SCOPE_READ = "read";
+		public static final String SCOPE_READ = "read";
 		public static final String SCOPE_WRITE = "write";
- 		public static final String ROLE_USER = "ROLE_USER";
+		public static final String ROLE_USER = "ROLE_USER";
 		private Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
 		private com.jl.crm.services.User user;
 

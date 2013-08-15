@@ -34,5 +34,5 @@ public class UserLinks {
 	Link getPhotoLink(User user) {
 		return this.entityLinks.linkForSingleResource(User.class, user.getId()).slash(PHOTO).withRel(PHOTO_REL);
 	}
- 
+
 }

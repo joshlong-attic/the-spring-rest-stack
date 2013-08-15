@@ -69,10 +69,10 @@ public class Customer implements Identifiable<Long>, Serializable {
 	public boolean equals(Object o) {
 		Customer other = (Customer) o;
 		return new EqualsBuilder()
-				         .append(other.firstName, this.firstName)
-				         .append(other.lastName, this.lastName)
-				         .append(other.id, this.id)
-				         .isEquals();
+						 .append(other.firstName, this.firstName)
+						 .append(other.lastName, this.lastName)
+						 .append(other.id, this.id)
+						 .isEquals();
 	}
 
 	@Override

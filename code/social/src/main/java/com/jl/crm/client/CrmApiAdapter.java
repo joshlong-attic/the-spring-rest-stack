@@ -24,16 +24,16 @@ public class CrmApiAdapter implements ApiAdapter<CrmOperations> {
 		User user = customerServiceOperations.currentUser();
 		String name = user.getFirstName() + ' ' + user.getLastName();
 		return new UserProfileBuilder()
-				         .setName(name)
-				         .setUsername(user.getUsername())
-				         .setFirstName(user.getFirstName())
-				         .setLastName(user.getLastName())
-				         .build();
+						 .setName(name)
+						 .setUsername(user.getUsername())
+						 .setFirstName(user.getFirstName())
+						 .setLastName(user.getLastName())
+						 .build();
 	}
 
 	@Override
 	public void updateStatus(CrmOperations customerServiceOperations, String message) {
-		 System.out.println (String.format("calling updateStatus(CustomerServiceOperations customerServiceOperations, " +
-		                       "String message) with the status '%s', but this method is a no-op!", message));
+		System.out.println (String.format("calling updateStatus(CustomerServiceOperations customerServiceOperations, " +
+							   "String message) with the status '%s', but this method is a no-op!", message));
 	}
 }

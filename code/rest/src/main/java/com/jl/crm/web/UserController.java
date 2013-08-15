@@ -14,8 +14,8 @@ import java.util.ArrayList;
  * @author Josh Long
  */
 @Controller
-@RequestMapping (value = ApiUrls.ROOT_URL_USERS, 
-                 produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping (value = ApiUrls.ROOT_URL_USERS,
+				 produces = MediaType.APPLICATION_JSON_VALUE)
 class UserController {
 
 	private CrmService crmService;
@@ -24,8 +24,8 @@ class UserController {
 	void setCrmService(CrmService crmService) {
 		this.crmService = crmService;
 	}
-	
- 	@RequestMapping (method = RequestMethod.DELETE, value = ApiUrls.URL_USERS_USER)
+
+	@RequestMapping (method = RequestMethod.DELETE, value = ApiUrls.URL_USERS_USER)
 	@ResponseBody
 	User deleteUser(@PathVariable Long user) {
 		return crmService.removeUser(user);

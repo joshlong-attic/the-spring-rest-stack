@@ -52,9 +52,9 @@ public class ProfilePhotoUploadClient {
 	public URI postProfilePhoto(long userId, final String fileName, byte[] bytesForImage) throws IOException {
 
 		URI uri = UriComponentsBuilder.fromUri(this.baseUri)
-				            .path("/users/{user}/photo")
-				            .buildAndExpand(Collections.singletonMap("user", userId))
-				            .toUri();
+							.path("/users/{user}/photo")
+							.buildAndExpand(Collections.singletonMap("user", userId))
+							.toUri();
 
 		ByteArrayResource byteArrayResource = new ByteArrayResource(bytesForImage) {
 			@Override

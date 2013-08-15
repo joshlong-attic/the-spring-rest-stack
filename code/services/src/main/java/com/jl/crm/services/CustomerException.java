@@ -3,7 +3,7 @@ package com.jl.crm.services;
 /** @author Josh Long */
 public class CustomerException extends RuntimeException {
 	private static final String message =
-			  "could not update customer # ";
+			"could not update customer # ";
 
 	public CustomerException(Customer customer, Throwable cause) {
 		this(customer.getId(), cause);

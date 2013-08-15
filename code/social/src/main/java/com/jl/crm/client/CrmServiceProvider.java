@@ -8,11 +8,11 @@ public class CrmServiceProvider extends AbstractOAuth2ServiceProvider<CrmOperati
 	private String baseUrl;
 
 	public CrmServiceProvider(
-			                           String baseUrl,
-			                           String clientId,
-			                           String consumerSecret,
-			                           String authorizeUrl,
-			                           String accessTokenUrl) {
+									   String baseUrl,
+									   String clientId,
+									   String consumerSecret,
+									   String authorizeUrl,
+									   String accessTokenUrl) {
 		super(new OAuth2Template(clientId, consumerSecret, authorizeUrl, accessTokenUrl));
 		this.baseUrl = safeBaseUrl(baseUrl);
 	}

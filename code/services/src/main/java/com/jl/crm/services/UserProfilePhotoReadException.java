@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author Josh Long
  */
 @ResponseStatus (HttpStatus.NOT_FOUND)
- public class UserProfilePhotoReadException extends UserException {
+public class UserProfilePhotoReadException extends UserException {
 
 
 	public UserProfilePhotoReadException(User user, Throwable cause) {

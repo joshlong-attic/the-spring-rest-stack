@@ -44,37 +44,37 @@ import com.jl.crm.services.ServiceConfiguration;
 @WebAppConfiguration
 public class OAuthTest {
 
-    @Autowired
-    private FilterChainProxy springSecurityFilterChain;
+	@Autowired
+	private FilterChainProxy springSecurityFilterChain;
 
-    private MockHttpServletRequest request;
-    private MockHttpServletResponse response;
-    private MockFilterChain chain;
+	private MockHttpServletRequest request;
+	private MockHttpServletResponse response;
+	private MockFilterChain chain;
 
-    @Before
-    public void setup() {
-        request = new MockHttpServletRequest();
-        request.setMethod("GET");
-        response = new MockHttpServletResponse();
-        chain = new MockFilterChain();
-    }
+	@Before
+	public void setup() {
+		request = new MockHttpServletRequest();
+		request.setMethod("GET");
+		response = new MockHttpServletResponse();
+		chain = new MockFilterChain();
+	}
 
-    @Test
-    public void formLoginForContentAll()  throws Exception {
-        request.addHeader("Accept", MediaType.ALL_VALUE);
+	@Test
+	public void formLoginForContentAll()  throws Exception {
+		request.addHeader("Accept", MediaType.ALL_VALUE);
 
-        springSecurityFilterChain.doFilter(request, response, chain);
+		springSecurityFilterChain.doFilter(request, response, chain);
 
-        assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY, response.getStatus());
-    }
+		assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY, response.getStatus());
+	}
 
-    @Test
-    public void oauthLoginForJson()  throws Exception {
-        request.addHeader("Accept", MediaType.APPLICATION_JSON_VALUE);
+	@Test
+	public void oauthLoginForJson()  throws Exception {
+		request.addHeader("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-        springSecurityFilterChain.doFilter(request, response, chain);
+		springSecurityFilterChain.doFilter(request, response, chain);
 
-        assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
-        assertEquals("Bearer realm=\"oauth\", error=\"unauthorized\", error_description=\"Full authentication is required to access this resource\"",response.getHeader("WWW-Authenticate"));
-    }
+		assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
+		assertEquals("Bearer realm=\"oauth\", error=\"unauthorized\", error_description=\"Full authentication is required to access this resource\"",response.getHeader("WWW-Authenticate"));
+	}
 }

@@ -97,12 +97,12 @@ public class User implements Identifiable<Long>, Serializable {
 	public boolean equals(Object o) {
 		User other = (User) o;
 		return new EqualsBuilder()
-				         .append(other.firstName, this.firstName)
-				         .append(other.lastName, this.lastName)
-				         .append(other.password, this.password)
-				         .append(other.username, this.username)
-				         .append(other.id, this.id)
-				         .isEquals();
+						 .append(other.firstName, this.firstName)
+						 .append(other.lastName, this.lastName)
+						 .append(other.password, this.password)
+						 .append(other.username, this.username)
+						 .append(other.id, this.id)
+						 .isEquals();
 	}
 
 	public String getFirstName() {

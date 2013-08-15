@@ -83,12 +83,12 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
 
 		auth.apply(new InMemoryClientDetailsServiceConfigurer())
-				  .withClient("android-crm")
-				  .resourceIds(applicationName)
-				  .scopes("read", "write")
-				  .authorities("ROLE_USER")
-				  .authorizedGrantTypes("authorization_code", "implicit", "password")
-				  .secret("123456");
+				.withClient("android-crm")
+				.resourceIds(applicationName)
+				.scopes("read", "write")
+				.authorities("ROLE_USER")
+				.authorizedGrantTypes("authorization_code", "implicit", "password")
+				.secret("123456");
 
 	}
 
@@ -138,20 +138,20 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.formLogin()
-				  .loginPage("/crm/signin.html")
-				  .loginProcessingUrl("/signin")
-				  .defaultSuccessUrl("/crm/welcome.html")
-				  .failureUrl("/crm/signin.html?error=true")
-				  .usernameParameter("username")
-				  .passwordParameter("password")
-				  .permitAll();
+				.loginPage("/crm/signin.html")
+				.loginProcessingUrl("/signin")
+				.defaultSuccessUrl("/crm/welcome.html")
+				.failureUrl("/crm/signin.html?error=true")
+				.usernameParameter("username")
+				.passwordParameter("password")
+				.permitAll();
 
 		http.headers()
-				  .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsMode.SAMEORIGIN))
-				  .contentTypeOptions()
-				  .xssProtection()
-				  .cacheControl()
-				  .httpStrictTransportSecurity();
+				.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsMode.SAMEORIGIN))
+				.contentTypeOptions()
+				.xssProtection()
+				.cacheControl()
+				.httpStrictTransportSecurity();
 
 		http.logout().logoutUrl("/signout").deleteCookies("JSESSIONID");
 
@@ -159,16 +159,15 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// nb: the H2 administration console should *not* be left exposed.
 		// comment out the mapping path below so that it requires an authentication to see it.
 		String[] filesToLetThroughUnAuthorized =
-				  {
-							 H2EmbeddedDatbaseConsoleInitializer.H2_DATABASE_CONSOLE_MAPPING,
-							 "/favicon.ico"
-				  };
+				{
+							H2EmbeddedDatbaseConsoleInitializer.H2_DATABASE_CONSOLE_MAPPING,
+							"/favicon.ico"
+				};
 
 		http.authorizeRequests()
-				  .antMatchers(filesToLetThroughUnAuthorized).permitAll()
-				  .antMatchers("/users/*").denyAll()
-				  .anyRequest().authenticated();
-
+				.antMatchers(filesToLetThroughUnAuthorized).permitAll()
+				.antMatchers("/users/*").denyAll()
+				.anyRequest().authenticated();
 	}
 }
 

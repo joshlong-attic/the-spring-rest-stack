@@ -4,7 +4,7 @@ package com.jl.crm.services;
 public class UserException extends RuntimeException {
 
 	private static final String message =
-			  "Could not find user profile photo for user # ";
+			"Could not find user profile photo for user # ";
 
 	public UserException(User user, Throwable cause) {
 		this(user == null ? -1 : user.getId(), cause);

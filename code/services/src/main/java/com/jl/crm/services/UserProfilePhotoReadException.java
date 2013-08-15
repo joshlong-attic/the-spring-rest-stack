@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus (HttpStatus.NOT_FOUND)
 public class UserProfilePhotoReadException extends UserException {
 
+	private static final long serialVersionUID = 1L;
+
 	public UserProfilePhotoReadException(User user, Throwable cause) {
 		super(user, cause);
 	}

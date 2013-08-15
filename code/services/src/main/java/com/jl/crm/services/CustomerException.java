@@ -5,6 +5,8 @@ package com.jl.crm.services;
  */
 public class CustomerException extends RuntimeException {
 
+	private static final long serialVersionUID = 1L;
+
 	public CustomerException(Customer customer, Throwable cause) {
 		this(customer.getId(), cause);
 	}

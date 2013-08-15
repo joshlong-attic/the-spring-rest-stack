@@ -20,6 +20,8 @@ import java.util.*;
 @Table (name = "user_account")
 public class User implements Identifiable<Long>, Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	@Column (name = "id", unique = true, nullable = false)

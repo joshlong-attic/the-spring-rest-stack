@@ -57,5 +57,8 @@ class UserController {
 	 * Jackson in the conversion at runtime.
 	 */
 	static class CustomerList extends ArrayList<Customer> {
+
+		private static final long serialVersionUID = 1L;
+
 	}
 }

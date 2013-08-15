@@ -1,6 +1,7 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.*;
+
 import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
+
 import java.net.URI;
 import java.util.List;
 
@@ -48,7 +50,7 @@ class UserProfilePhotoController {
 
 	@RequestMapping (method = RequestMethod.GET)
 	public HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long user) throws Exception  {
-		CrmService.ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user );
+		ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user );
 		if (null != profilePhoto){
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setContentType(profilePhoto.getMediaType());

@@ -1,6 +1,7 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.*;
+
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
@@ -9,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.inject.Inject;
+
 import java.net.URI;
 import java.util.Collections;
 
@@ -40,7 +42,7 @@ class UserProfilePhotoController {
 
 	@RequestMapping (method = RequestMethod.GET)
 	public HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long user) throws Throwable {
-		CrmService.ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user);
+		ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user);
 		if (null != profilePhoto){
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setContentType(profilePhoto.getMediaType());

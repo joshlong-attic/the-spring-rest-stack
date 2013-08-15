@@ -34,7 +34,7 @@ public class JpaCrmService implements CrmService {
 	}
 
 	@Override
-	public CrmService.ProfilePhoto readUserProfilePhoto(long userId) {
+	public ProfilePhoto readUserProfilePhoto(long userId) {
 		InputStream fileInputSteam = null;
 		try {
 			User user = findById(userId);

@@ -1,17 +1,52 @@
 package com.jl.crm.android.activities;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.*;
+import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.jl.crm.android.R;
 
-import java.text.Collator;
-import java.util.*;
-
+/**
+ *
+ * Lets users search for customer records.
+ *
+ * @author Josh Long
+ *
+ */
 public class CustomerSearchActivity extends SherlockListActivity {
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		this.setIntent(intent);
+		this.handleIntent(intent);
+	}
+
+	protected void handleIntent(Intent intent) {
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())){
+			String query = intent.getStringExtra(SearchManager.QUERY);
+			this.doSearch(query);
+		}
+	}
+
+	protected void doSearch(String query) {
+	  // get a cursor, prepare the ListAdapter, and set it
+	}
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		this.handleIntent(getIntent());
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		// call detail activity for the clicked entry
+	}
+
+
+}
+/*
 
 
 	@Override
@@ -66,13 +101,15 @@ public class CustomerSearchActivity extends SherlockListActivity {
 		result.setClassName(pkg, componentName);
 		return result;
 	}
+*/
 /*
 	protected Intent browseIntent(String path) {
 		Intent result = new Intent();
 		result.setClass(this, ListSamples.class);
 		result.putExtra(INTENT_PATH, path);
 		return result;
-	}*/
+	}*//*
+
 
 	protected void addItem(List<Map<String, Object>> data, String name, Intent intent) {
 		Map<String, Object> temp = new HashMap<String, Object>();
@@ -89,6 +126,7 @@ public class CustomerSearchActivity extends SherlockListActivity {
 		Intent intent = (Intent) map.get("intent");
 		startActivity(intent);
 	}
+*/
 /*	String[] columns = {BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1};
 
 	@Inject CrmOperations crmOperations;
@@ -131,6 +169,8 @@ public class CustomerSearchActivity extends SherlockListActivity {
 		searchView.setOnQueryTextListener(this.onQueryTextListener);
 		searchView.setOnSuggestionListener(this.onSuggestionListener);
 *//*
+*/
+/*
 		if (mSuggestionsAdapter == null){
 
 			MatrixCursor cursor = new MatrixCursor(columns);
@@ -143,6 +183,8 @@ public class CustomerSearchActivity extends SherlockListActivity {
 		}
 
 		searchView.setSuggestionsAdapter(mSuggestionsAdapter);*//*
+*/
+/*
 
 		menu.add(R.string.search_hint)
 				  .setIcon(R.drawable.action_search)
@@ -158,4 +200,3 @@ public class CustomerSearchActivity extends SherlockListActivity {
 
 	}*/
 
-}

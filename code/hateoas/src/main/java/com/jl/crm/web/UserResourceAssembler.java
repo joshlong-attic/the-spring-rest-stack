@@ -42,6 +42,6 @@ class UserResourceAssembler implements ResourceAssembler<User, Resource<User>> {
 		} catch (Exception throwable) {
 			throw new RuntimeException(throwable);
 		}
-
 	}
+
 }

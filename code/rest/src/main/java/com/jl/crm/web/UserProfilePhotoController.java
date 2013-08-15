@@ -47,7 +47,6 @@ class UserProfilePhotoController {
 			return new ResponseEntity<byte[]>(profilePhoto.getPhoto(), httpHeaders, HttpStatus.OK);
 		}
 		throw new UserProfilePhotoReadException(user);
-
 	}
 
 }

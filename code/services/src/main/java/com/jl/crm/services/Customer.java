@@ -22,14 +22,18 @@ public class Customer implements Identifiable<Long>, Serializable {
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	@Column (name = "id", unique = true, nullable = false )
 	private Long id;
+
 	@JsonIgnore
 	@ManyToOne (fetch = FetchType.LAZY)
 	@JoinColumn (nullable = false, name = "customer_user_id_fkey")
 	private User user;
+
 	@Column (name = "signup_date")
 	private Date signupDate;
+
 	@Column (name = "first_name")
 	private String firstName;
+
 	@Column (name = "last_name")
 	private String lastName;
 
@@ -62,24 +66,21 @@ public class Customer implements Identifiable<Long>, Serializable {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(55, 113).append(this.id).append(this.firstName).append(this.lastName).toHashCode();
+		return new HashCodeBuilder(55, 113).append(this.id).append(this.firstName).append(
+				this.lastName).toHashCode();
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		Customer other = (Customer) o;
-		return new EqualsBuilder()
-						 .append(other.firstName, this.firstName)
-						 .append(other.lastName, this.lastName)
-						 .append(other.id, this.id)
-						 .isEquals();
+		return new EqualsBuilder().append(other.firstName, this.firstName).append(
+				other.lastName, this.lastName).append(other.id, this.id).isEquals();
 	}
 
 	@Override
 	public Long getId() {
 		return this.id;
 	}
-
 
 	public void setDatabaseId(Long id) {
 		this.id = id;

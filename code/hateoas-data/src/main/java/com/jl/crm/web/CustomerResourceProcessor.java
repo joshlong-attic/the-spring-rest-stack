@@ -20,4 +20,5 @@ public class CustomerResourceProcessor implements ResourceProcessor<Resource<Cus
 		customerResource.add(customerLinks.getUserLink(customerResource.getContent()));
 		return customerResource;
 	}
+
 }

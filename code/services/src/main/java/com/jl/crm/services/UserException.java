@@ -20,4 +20,5 @@ public class UserException extends RuntimeException {
 	public UserException(long userId) {
 		super(message + userId);
 	}
+
 }

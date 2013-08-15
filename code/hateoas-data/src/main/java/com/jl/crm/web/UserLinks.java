@@ -15,6 +15,7 @@ public class UserLinks {
 	private static final String PHOTO_REL = "photo";
 	private static final String CUSTOMER = "customers";
 	private static final String CUSTOMER_REL = "customers";
+
 	private final EntityLinks entityLinks;
 
 	@Inject

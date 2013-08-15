@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus (HttpStatus.METHOD_NOT_ALLOWED)
 public class UserProfilePhotoWriteException extends UserException {
 
-
 	public UserProfilePhotoWriteException(User user, Throwable cause) {
 		super(user, cause);
 	}
@@ -27,4 +26,5 @@ public class UserProfilePhotoWriteException extends UserException {
 	public UserProfilePhotoWriteException(long userId) {
 		super(userId);
 	}
+
 }

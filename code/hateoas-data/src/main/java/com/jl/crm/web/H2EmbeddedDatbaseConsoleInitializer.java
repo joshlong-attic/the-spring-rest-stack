@@ -14,6 +14,7 @@ import javax.servlet.*;
  * @author Josh Long
  */
 public class H2EmbeddedDatbaseConsoleInitializer implements WebApplicationInitializer {
+
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		WebServlet webServlet = new WebServlet();

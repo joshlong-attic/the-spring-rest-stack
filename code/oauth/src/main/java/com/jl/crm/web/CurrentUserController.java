@@ -36,9 +36,12 @@ public class CurrentUserController {
 		this.userLinks = userLinks;
 	}
 
-	static class UserResource extends Resource<User> {
+	private static class UserResource extends Resource<User> {
+
 		public UserResource(User content, Iterable<Link> links) {
 			super(content, links);
 		}
+
 	}
+
 }

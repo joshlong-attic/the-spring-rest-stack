@@ -49,13 +49,13 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 		MultipartConfigElement multipartConfigElement = new MultipartConfigElement(uploadDirectory.getAbsolutePath(), maxUploadSizeInMb, maxUploadSizeInMb * 2, maxUploadSizeInMb / 2);
 		registration.setMultipartConfig(multipartConfigElement);
 	}
+
 }
 
 @Configuration
 @ComponentScan
 @EnableWebMvc
 class WebMvcConfiguration   {
-
 
 	@Bean
 	public MultipartResolver multipartResolver() {

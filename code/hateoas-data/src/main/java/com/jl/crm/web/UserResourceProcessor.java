@@ -23,4 +23,5 @@ public class UserResourceProcessor implements ResourceProcessor<Resource<User>> 
 		ur.add(userLinks.getCustomersLink(user));
 		return ur;
 	}
+
 }

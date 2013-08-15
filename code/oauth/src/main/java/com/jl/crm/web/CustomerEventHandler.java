@@ -34,4 +34,5 @@ public class CustomerEventHandler {
 	public void handleAfterDelete(Customer customer) {
 		logger.debug("deleted customer #" + customer.getId());
 	}
+
 }

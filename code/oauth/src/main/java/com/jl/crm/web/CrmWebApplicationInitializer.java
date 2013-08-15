@@ -67,6 +67,7 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 		MultipartConfigElement multipartConfigElement = new MultipartConfigElement(uploadDirectory.getAbsolutePath(), maxUploadSizeInMb, maxUploadSizeInMb * 2, maxUploadSizeInMb / 2);
 		registration.setMultipartConfig(multipartConfigElement);
 	}
+
 }
 
 @Configuration
@@ -168,6 +169,7 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/users/*").denyAll()
 				.anyRequest().authenticated();
 	}
+
 }
 
 @Configuration
@@ -175,7 +177,6 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 @EnableHypermediaSupport
 @EnableWebMvc
 class WebMvcConfiguration extends WebMvcConfigurationSupport {
-
 
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
@@ -195,6 +196,5 @@ class WebMvcConfiguration extends WebMvcConfigurationSupport {
 		internalResourceViewResolver.setSuffix(".jsp");
 		return internalResourceViewResolver;
 	}
-
 
 }

@@ -19,6 +19,7 @@ import java.util.*;
 @Service
 @Transactional
 public class JpaCrmService implements CrmService {
+
 	private CustomerRepository customerRepository;
 	private UserRepository userRepository;
 

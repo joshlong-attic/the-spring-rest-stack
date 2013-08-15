@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 @Component
 public class CustomerResourceProcessor implements ResourceProcessor<Resource<Customer>> {
+
 	private CustomerLinks customerLinks;
 
 	@Inject
@@ -20,4 +21,5 @@ public class CustomerResourceProcessor implements ResourceProcessor<Resource<Cus
 		customerResource.add(customerLinks.getUserLink(customerResource.getContent()));
 		return customerResource;
 	}
+
 }

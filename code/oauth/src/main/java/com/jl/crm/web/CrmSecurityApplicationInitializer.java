@@ -60,4 +60,5 @@ public class CrmSecurityApplicationInitializer extends AbstractSecurityWebApplic
 	protected boolean enableHttpSessionEventPublisher() {
 		return true;
 	}
+
 }

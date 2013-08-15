@@ -13,7 +13,9 @@ import java.util.List;
  */
 @RestResource (path = "customers", rel = "customers")
 public interface CustomerRepository extends PagingAndSortingRepository<Customer, Long> {
+
 	Page<Customer> findByUserId(Long id, Pageable pageable);
 
 	List<Customer> findByUserId(Long id);
+
 }

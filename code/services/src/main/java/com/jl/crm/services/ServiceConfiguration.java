@@ -49,7 +49,6 @@ public class ServiceConfiguration {
 
 	@PostConstruct
 	public void setupStorage() throws Throwable {
-
 		File[] files = {CRM_STORAGE_DIRECTORY, CRM_STORAGE_UPLOADS_DIRECTORY, CRM_STORAGE_PROFILES_DIRECTORY};
 		for (File f : files) {
 			if (!f.exists() && !f.mkdirs()){
@@ -72,11 +71,13 @@ public class ServiceConfiguration {
 	public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
 		return new JpaTransactionManager(emf);
 	}
+
 }
 
 @Configuration
 @Profile ({"production"})
 class ProductionDataSourceConfiguration {
+
 	@Bean
 	public HibernateJpaVendorAdapter hibernateJpaVendorAdapter() {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
@@ -127,7 +128,6 @@ class EmbeddedDataSourceConfiguration {
 		if (!profilePhotoForUser5.exists()){
 			throw new RuntimeException("couldn't setup profile photos at " + profilePhotoForUser5.getAbsolutePath() + ".");
 		}
-
 	}
 
 	@Bean
@@ -158,4 +158,5 @@ class EmbeddedDataSourceConfiguration {
 		embeddedDatabaseFactoryBean.afterPropertiesSet();
 		return embeddedDatabaseFactoryBean.getObject();
 	}
+
 }

@@ -4,6 +4,7 @@ package com.jl.crm.services;
  * @author Josh Long
  */
 public class CustomerException extends RuntimeException {
+
 	private static final String message =
 			"could not update customer # ";
 
@@ -22,4 +23,5 @@ public class CustomerException extends RuntimeException {
 	public CustomerException(long id) {
 		super(message + id);
 	}
+
 }

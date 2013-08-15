@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus (HttpStatus.METHOD_NOT_ALLOWED)
 public class CustomerWriteException extends CustomerException {
+
 	public CustomerWriteException(Customer customer, Throwable cause) {
 		super(customer, cause);
 	}
@@ -25,4 +26,5 @@ public class CustomerWriteException extends CustomerException {
 	public CustomerWriteException(long id) {
 		super(id);
 	}
+
 }

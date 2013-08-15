@@ -81,4 +81,5 @@ public class CrmUserDetailsService implements UserDetailsService {
 			return this.user;
 		}
 	}
+
 }

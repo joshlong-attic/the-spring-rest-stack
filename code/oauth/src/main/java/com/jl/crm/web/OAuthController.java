@@ -42,4 +42,5 @@ public class OAuthController {
 	public void setClientDetailsService(ClientDetailsService clientDetailsService) {
 		this.clientDetailsService = clientDetailsService;
 	}
+
 }

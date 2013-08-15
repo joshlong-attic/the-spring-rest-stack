@@ -31,7 +31,7 @@
             <strong>Yes</strong>, I authorize <strong>${client.clientId}</strong> to act on my behalf. Your password
             will <EM>not</EM> be shared with the client.
         </div>
-
+        <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>" value="<c:out value="${_csrf.token}"/>"/>
     </form>
 
 
@@ -46,6 +46,7 @@
         </div>
 
 
+        <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>" value="<c:out value="${_csrf.token}"/>"/>
     </form>
 
 

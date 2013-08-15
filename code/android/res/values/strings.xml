@@ -83,7 +83,7 @@
     <string name="progress">Progress</string>
     <string name="progress_content">The action bar includes a standard progress bar. The methods for accessing it are prefixed with `support`. See the source for this demo for more information.</string>
 
-    <string name="search_views">Search Views</string>
+    <string name="search">Search CRM</string>
     <string name="search_views_content">SearchView allows you provide a unified mechanism of searching with optional features such as auto-completion and an always-expanded mode.</string>
 
     <string name="simple">Simple</string>
@@ -151,5 +151,7 @@
 
     <string name="default_value_list_preference">beta</string>
     <string name="default_value_edittext_preference">Default value</string>
+    <string name="search_hint">Search CRM Customers</string>
+    <string name="app_label">CRM</string>
 
 </resources>

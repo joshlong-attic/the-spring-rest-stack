@@ -1,54 +1,151 @@
 package com.jl.crm.android.activities;
 
-import android.app.SearchManager;
-import android.content.Context;
-import android.database.*;
+import android.content.Intent;
 import android.os.Bundle;
-import android.provider.BaseColumns;
-import android.util.Log;
-import android.view.*;
+import android.view.View;
 import android.widget.*;
-import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.jl.crm.android.R;
-import com.jl.crm.client.*;
 
-import javax.inject.Inject;
+import java.text.Collator;
+import java.util.*;
 
-public class CustomerSearchActivity extends BaseActivity implements SearchView.OnQueryTextListener,
-		                                                                          SearchView.OnSuggestionListener {
+public class CustomerSearchActivity extends SherlockListActivity {
 
-	static final String[] COLUMNS = {BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1};
-	SuggestionsAdapter mSuggestionsAdapter;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		Intent intent = getIntent();
+		String path = intent.getStringExtra(INTENT_PATH);
+
+		if (path == null) {
+			path = "";
+		} else {
+			getSupportActionBar().setTitle(path);
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		}
+
+		SimpleAdapter simpleAdapter = new  SimpleAdapter(this, getData(path), android.R.layout.simple_list_item_1, new String[]{getString(R.string.search)}, new int[]{android.R.id.text1}) ;
+		setListAdapter(simpleAdapter);
+		getListView().setTextFilterEnabled(true);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				finish();
+				return true;
+		}
+		return true;
+	}
+
+	protected List<Map<String, Object>> getData(String prefix) {
+
+		List<Map<String,Object>> data = new ArrayList<Map<String, Object>>();
+
+		Collections.sort(data, NAME_COMPARATOR);
+
+		return data;
+	}
+
+	private final static Comparator<Map<String, Object>> NAME_COMPARATOR =
+			  new Comparator<Map<String, Object>>() {
+				  private final Collator collator = Collator.getInstance();
+
+				  public int compare(Map<String, Object> map1, Map<String, Object> map2) {
+					  return collator.compare(map1.get("title"), map2.get("title"));
+				  }
+			  };
+
+	protected Intent activityIntent(String pkg, String componentName) {
+		Intent result = new Intent();
+		result.setClassName(pkg, componentName);
+		return result;
+	}
+/*
+	protected Intent browseIntent(String path) {
+		Intent result = new Intent();
+		result.setClass(this, ListSamples.class);
+		result.putExtra(INTENT_PATH, path);
+		return result;
+	}*/
+
+	protected void addItem(List<Map<String, Object>> data, String name, Intent intent) {
+		Map<String, Object> temp = new HashMap<String, Object>();
+		temp.put("title", name);
+		temp.put("intent", intent);
+		data.add(temp);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		Map<String, Object> map = (Map<String, Object>) l.getItemAtPosition(position);
+
+		Intent intent = (Intent) map.get("intent");
+		startActivity(intent);
+	}
+/*	String[] columns = {BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1};
+
 	@Inject CrmOperations crmOperations;
+
+	SearchView.OnSuggestionListener onSuggestionListener = new SearchView.OnSuggestionListener() {
+		@Override
+		public boolean onSuggestionSelect(int position) {
+			return false;
+		}
+
+		@Override
+		public boolean onSuggestionClick(int position) {
+			return false;
+		}
+	};
+
+	SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
+		@Override
+		public boolean onQueryTextSubmit(String query) {
+			return false;
+		}
+
+		@Override
+		public boolean onQueryTextChange(String newText) {
+			return false;
+		}
+	};
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
-		User user = this.crmOperations.currentUser();
-
-		Log.d(CustomerSearchActivity.class.getName(), "the user is " + user.toString()) ;
+//		User user = this.crmOperations.currentUser();
+//
+//		Log.d(CustomerSearchActivity.class.getName(), "the user is " + user.toString());
 
 
 		//Create the search view
 		SearchView searchView = new SearchView(getSupportActionBar().getThemedContext());
-		searchView.setQueryHint("Search for countries…");
-		searchView.setOnQueryTextListener(this);
-		searchView.setOnSuggestionListener(this);
-
+		searchView.setQueryHint(getString(R.string.search_hint));
+		searchView.setOnQueryTextListener(this.onQueryTextListener);
+		searchView.setOnSuggestionListener(this.onSuggestionListener);
+*//*
 		if (mSuggestionsAdapter == null){
-			MatrixCursor cursor = new MatrixCursor(COLUMNS);
+
+			MatrixCursor cursor = new MatrixCursor(columns);
+
 			cursor.addRow(new String[]{"1", "'Murica"});
 			cursor.addRow(new String[]{"2", "Canada"});
 			cursor.addRow(new String[]{"3", "Denmark"});
+
 			mSuggestionsAdapter = new SuggestionsAdapter(getSupportActionBar().getThemedContext(), cursor);
 		}
 
-		searchView.setSuggestionsAdapter(mSuggestionsAdapter);
+		searchView.setSuggestionsAdapter(mSuggestionsAdapter);*//*
 
-		menu.add("Search")
-						 .setIcon(R.drawable.action_search)
-				       // .setIcon(isLight ? R.drawable.ic_search_inverse : R.drawable.abs__ic_search)
+		menu.add(R.string.search_hint)
+				  .setIcon(R.drawable.action_search)
 				  .setActionView(searchView)
 				  .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
 
@@ -58,52 +155,7 @@ public class CustomerSearchActivity extends BaseActivity implements SearchView.O
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.text);
-		((TextView) findViewById(R.id.text)).setText(R.string.search_views_content);
-	}
 
-	@Override
-	public boolean onQueryTextSubmit(String query) {
-		Toast.makeText(this, "You searched for: " + query, Toast.LENGTH_LONG).show();
-		return true;
-	}
+	}*/
 
-	@Override
-	public boolean onQueryTextChange(String newText) {
-		return false;
-	}
-
-	@Override
-	public boolean onSuggestionSelect(int position) {
-		return false;
-	}
-
-	@Override
-	public boolean onSuggestionClick(int position) {
-		Cursor c = (Cursor) mSuggestionsAdapter.getItem(position);
-		String query = c.getString(c.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
-		Toast.makeText(this, "Suggestion clicked: " + query, Toast.LENGTH_LONG).show();
-		return true;
-	}
-
-	private class SuggestionsAdapter extends CursorAdapter {
-
-		public SuggestionsAdapter(Context context, Cursor c) {
-			super(context, c, 0);
-		}
-
-		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			LayoutInflater inflater = LayoutInflater.from(context);
-			View v = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-			return v;
-		}
-
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-			TextView tv = (TextView) view;
-			final int textIndex = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1);
-			tv.setText(cursor.getString(textIndex));
-		}
-	}
 }

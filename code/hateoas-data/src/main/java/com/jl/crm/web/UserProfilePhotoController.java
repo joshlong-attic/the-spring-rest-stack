@@ -29,7 +29,7 @@ public class UserProfilePhotoController {
 	}
 
 	@RequestMapping (method = RequestMethod.POST)
-	HttpEntity<Void> writeUserProfilePhoto(@PathVariable Long userId, @RequestParam MultipartFile file) throws Throwable {
+	public HttpEntity<Void> writeUserProfilePhoto(@PathVariable Long userId, @RequestParam MultipartFile file) throws Throwable {
 		if (userId == null){
 			throw new UserProfilePhotoWriteException(null, new RuntimeException("you need to specify a valid user ID#"));
 		}
@@ -49,7 +49,7 @@ public class UserProfilePhotoController {
 	}
 
 	@RequestMapping (method = RequestMethod.GET)
-	HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long userId) throws Throwable {
+	public HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long userId) throws Throwable {
 		CrmService.ProfilePhoto profilePhoto;
 		User user = this.crmService.findById(userId);
 		if (null != user && (profilePhoto = this.crmService.readUserProfilePhoto(user.getId())) != null){

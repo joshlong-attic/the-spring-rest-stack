@@ -30,7 +30,7 @@ class UserProfilePhotoController {
 	}
 
 	@RequestMapping (method = RequestMethod.POST)
-	HttpEntity<Void> writeUserProfilePhoto(@PathVariable Long user, @RequestParam MultipartFile file) throws Throwable {
+	public HttpEntity<Void> writeUserProfilePhoto(@PathVariable Long user, @RequestParam MultipartFile file) throws Throwable {
 		byte bytesForProfilePhoto[] = FileCopyUtils.copyToByteArray(file.getInputStream());
 		this.crmService.writeUserProfilePhoto(user , MediaType.parseMediaType(file.getContentType()), bytesForProfilePhoto);
 
@@ -47,7 +47,7 @@ class UserProfilePhotoController {
 	}
 
 	@RequestMapping (method = RequestMethod.GET)
-	HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long user) throws Exception  {
+	public HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long user) throws Exception  {
 		CrmService.ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user );
 		if (null != profilePhoto){
 			HttpHeaders httpHeaders = new HttpHeaders();

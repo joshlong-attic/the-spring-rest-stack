@@ -5,15 +5,12 @@ package com.jl.crm.services;
  */
 public class CustomerException extends RuntimeException {
 
-	private static final String message =
-			"could not update customer # ";
-
 	public CustomerException(Customer customer, Throwable cause) {
 		this(customer.getId(), cause);
 	}
 
 	public CustomerException(long id, Throwable cause) {
-		super(message + id, cause);
+		super("Could not update customer # " + id, cause);
 	}
 
 	public CustomerException(Customer user) {
@@ -21,7 +18,7 @@ public class CustomerException extends RuntimeException {
 	}
 
 	public CustomerException(long id) {
-		super(message + id);
+		super("Could not update customer # " + id);
 	}
 
 }

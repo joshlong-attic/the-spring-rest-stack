@@ -4,23 +4,21 @@ public class UserException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String message =
-			"Could not find user profile photo for user # ";
+	public UserException(User user) {
+		this(user.getId());
+	}
 
 	public UserException(User user, Throwable cause) {
 		this(user == null ? -1 : user.getId(), cause);
 	}
 
 	public UserException(long userId, Throwable cause) {
-		super(message + userId, cause);
+		super("Could not find user profile photo for user # " + userId, cause);
 	}
 
-	public UserException(User user) {
-		this(user.getId());
-	}
 
 	public UserException(long userId) {
-		super(message + userId);
+		super("Could not find user profile photo for user # " + userId);
 	}
 
 }

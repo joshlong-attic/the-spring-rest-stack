@@ -52,16 +52,20 @@ public class UserProfilePhotoController {
 
 	@RequestMapping (method = RequestMethod.GET)
 	public HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long userId) throws Throwable {
-		ProfilePhoto profilePhoto;
+
 		User user = this.crmService.findById(userId);
-		if (null != user && (profilePhoto = this.crmService.readUserProfilePhoto(user.getId())) != null){
-			HttpHeaders httpHeaders = new HttpHeaders();
-			httpHeaders.setContentType(profilePhoto.getMediaType());
-			return new ResponseEntity<byte[]>(profilePhoto.getPhoto(), httpHeaders, HttpStatus.OK);
-		}
-		else {
+		if(user == null) {
 			throw new UserProfilePhotoReadException(-1, new RuntimeException("couldn't find the user"));
 		}
+
+		ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user.getId());
+		if(profilePhoto == null) {
+			throw new UserProfilePhotoReadException(-1, new RuntimeException("couldn't find the user photo"));
+		}
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(profilePhoto.getMediaType());
+		return new ResponseEntity<byte[]>(profilePhoto.getPhoto(), httpHeaders,HttpStatus.OK);
 	}
 
 }

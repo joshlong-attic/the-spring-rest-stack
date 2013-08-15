@@ -43,7 +43,7 @@ class UserProfilePhotoController {
 	@RequestMapping (method = RequestMethod.GET)
 	public HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long user) throws Throwable {
 		ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user);
-		if (null != profilePhoto){
+		if (profilePhoto != null){
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setContentType(profilePhoto.getMediaType());
 			return new ResponseEntity<byte[]>(profilePhoto.getPhoto(), httpHeaders, HttpStatus.OK);

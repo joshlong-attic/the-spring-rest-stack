@@ -14,13 +14,15 @@ public class CustomerEventHandler {
 
 	@HandleBeforeCreate
 	public void handleBeforeCreate(Customer customer) {
-		if (StringUtils.hasText(customer.getFirstName()) && StringUtils.hasText(customer.getLastName()) && customer.getUser() != null){
-			if (customer.getSignupDate() == null){
-				customer.setSignupDate(new java.util.Date());
-			}
+		if (StringUtils.isEmpty(customer.getFirstName())
+				|| StringUtils.isEmpty(customer.getLastName())
+				|| customer.getUser() == null) {
+			throw new CustomerWriteException(customer, new RuntimeException(
+					"you must specify a 'firstName' and "
+							+ "a 'lastName' and a valid user reference."));
 		}
-		else {
-			throw new CustomerWriteException(customer, new RuntimeException("you must specify a 'firstName' and a 'lastName' and a valid user reference."));
+		if (customer.getSignupDate() == null){
+			customer.setSignupDate(new java.util.Date());
 		}
 		logger.debug("handling before create for " + customer.toString());
 	}

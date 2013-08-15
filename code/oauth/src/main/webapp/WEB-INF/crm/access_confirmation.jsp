@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
+<%@ page session="false" %>
 <html>
 <head>
     <title>
@@ -27,7 +28,8 @@
         <input name="user_oauth_approval" value="true" type="hidden"/>
 
         <div>
-            <strong>Yes</strong>, I authorize <strong>${client.clientId}</strong> to act on my behalf. Your password will <EM>not</EM> be shared with the client.
+            <strong>Yes</strong>, I authorize <strong>${client.clientId}</strong> to act on my behalf. Your password
+            will <EM>not</EM> be shared with the client.
         </div>
 
     </form>

@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * thrown when the system fails to load a valid {@link User} profile photo image.
+ * Thrown when the system fails to load a valid {@link User} profile photo image.
  *
  * @author Josh Long
  */

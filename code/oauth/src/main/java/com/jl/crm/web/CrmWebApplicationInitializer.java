@@ -34,7 +34,6 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.util.Collections;
 
-
 /**
  * In conjunction with {@link CrmSecurityApplicationInitializer}, this configuration class sets up Spring Data REST, In
  * conjunction with {@link CrmWebApplicationInitializer}, this configuration class sets up Spring Data REST, Spring MVC,

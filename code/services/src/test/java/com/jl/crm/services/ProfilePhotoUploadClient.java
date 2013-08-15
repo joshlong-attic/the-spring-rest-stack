@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.Collections;
 
 /**
- * simple client that posts files to the photo upload endpoint.
+ * Simple client that posts files to the photo upload endpoint.
  *
  * @author Josh Long
  */

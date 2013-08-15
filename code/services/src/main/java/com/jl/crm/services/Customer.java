@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * represents a customer record.
+ * Represents a customer record.
  *
  * @author Josh Long
  */

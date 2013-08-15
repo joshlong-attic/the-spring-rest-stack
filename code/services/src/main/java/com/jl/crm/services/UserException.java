@@ -1,6 +1,5 @@
 package com.jl.crm.services;
 
-
 public class UserException extends RuntimeException {
 
 	private static final String message =

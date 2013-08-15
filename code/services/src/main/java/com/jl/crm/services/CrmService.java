@@ -4,7 +4,9 @@ import org.springframework.http.MediaType;
 
 import java.util.Collection;
 
-/** @author Josh Long */
+/**
+ * @author Josh Long
+ */
 public interface CrmService {
 
 	ProfilePhoto readUserProfilePhoto(long userId);
@@ -29,7 +31,9 @@ public interface CrmService {
 
 	Customer findCustomerById(long customerId);
 
-	/** simple abstraction to hold information about the profile photo. */
+	/**
+	 * Simple abstraction to hold information about the profile photo.
+	 */
 	static class ProfilePhoto {
 		private Long userId;
 		private byte[] photo;

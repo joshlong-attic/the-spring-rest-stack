@@ -7,7 +7,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * component that sits in the middle of all the processing and handles custom errors.
+ * Component that sits in the middle of all the processing and handles custom errors.
  * <p/>
  * Things this *doesn't* do: - handle exceptions from Spring Data REST itself. - handle exceptions from Spring Data REST
  * validators.

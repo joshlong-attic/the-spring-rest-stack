@@ -15,7 +15,6 @@ import java.util.*;
  *
  * @author Josh Long
  */
-
 @JsonAutoDetect (fieldVisibility = JsonAutoDetect.Visibility.ANY, isGetterVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.ANY)
 @Entity
 @Table (name = "user_account")

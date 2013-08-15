@@ -7,7 +7,7 @@ import org.springframework.web.WebApplicationInitializer;
 import javax.servlet.*;
 
 /**
- * loads the <A href="http://127.0.0.1:8080/h2/">web-based H2 database console</A>.
+ * Loads the <A href="http://127.0.0.1:8080/h2/">web-based H2 database console</A>.
  * <p/>
  * To access the database for this application, use the JDBC URI {@code jdbc:h2:mem:crm}.
  *

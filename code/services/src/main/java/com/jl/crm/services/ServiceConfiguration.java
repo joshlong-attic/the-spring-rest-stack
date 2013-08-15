@@ -29,11 +29,22 @@ import java.sql.Driver;
 public class ServiceConfiguration {
 
 	public static final String CRM_NAME = "crm";
-	/** The root directory to which all uploads for the application are uploaded. */
+
+	/**
+	 * The root directory to which all uploads for the application are uploaded.
+	 */
 	public static final File CRM_STORAGE_DIRECTORY = new File(SystemUtils.getUserHome(), CRM_NAME);
-	/** things are first uploaded by the application server to this directory. it's a sort of staging directory */
+
+	/**
+	 * Things are first uploaded by the application server to this directory. it's a sort
+	 * of staging directory
+	 */
 	public static final File CRM_STORAGE_UPLOADS_DIRECTORY = new File(CRM_STORAGE_DIRECTORY, "uploads");
-	/** when a profile photo is uploaded, the resultant, completely uploaded image is stored in this directory */
+
+	/**
+	 * When a profile photo is uploaded, the resultant, completely uploaded image is
+	 * stored in this directory
+	 */
 	public static final File CRM_STORAGE_PROFILES_DIRECTORY = new File(CRM_STORAGE_DIRECTORY, "profiles");
 
 	@PostConstruct

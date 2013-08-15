@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * thrown when the system is inable to - for whatever reason - write the user profile photo.
+ * Thrown when the system is inable to - for whatever reason - write the user profile photo.
  *
  * @author Josh Long
  */

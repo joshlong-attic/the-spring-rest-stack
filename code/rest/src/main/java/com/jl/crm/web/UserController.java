@@ -52,8 +52,9 @@ class UserController {
 	}
 
 	/**
-	 * this is superior to using an {@link ArrayList} of {@link Customer} because it bakes in the generic type information
-	 * which would've otherwise been lost and helps Jackson in the conversion at runtime.
+	 * This is superior to using an {@link ArrayList} of {@link Customer} because it bakes
+	 * in the generic type information which would've otherwise been lost and helps
+	 * Jackson in the conversion at runtime.
 	 */
 	static class CustomerList extends ArrayList<Customer> {
 	}

@@ -2,7 +2,7 @@ package com.jl.crm.client;
 
 import org.springframework.social.connect.*;
 
-/***
+/**
  * @author Josh Long
  */
 public class CrmApiAdapter implements ApiAdapter<CrmOperations> {

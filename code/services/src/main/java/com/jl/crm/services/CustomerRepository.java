@@ -7,7 +7,7 @@ import org.springframework.data.rest.repository.annotation.RestResource;
 import java.util.List;
 
 /**
- * a repository for dealing with {@link Customer customer } records.
+ * Repository for dealing with {@link Customer customer } records.
  *
  * @author Josh Long
  */

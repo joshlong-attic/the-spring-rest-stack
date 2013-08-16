@@ -143,9 +143,7 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.formLogin()
 				.loginPage("/crm/signin.html")
-				.loginProcessingUrl("/signin")
 				.defaultSuccessUrl("/crm/welcome.html")
-				.failureUrl("/crm/signin.html?error=true")
 				.usernameParameter("username")
 				.passwordParameter("password")
 				.permitAll();

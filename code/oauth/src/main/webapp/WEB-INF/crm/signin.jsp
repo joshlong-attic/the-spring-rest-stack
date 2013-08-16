@@ -26,7 +26,7 @@
         Please enter your username and password to log into the application.
     </p>
 
-    <form method="post" action="${pageContext.request.contextPath}/signin">
+    <form method="post" action="${pageContext.request.contextPath}/crm/signin.html">
         <DIV>
             <label style="width: 100px; display: inline-block;" class="control-label" for="username"> User
                 Name: </label> <br/>

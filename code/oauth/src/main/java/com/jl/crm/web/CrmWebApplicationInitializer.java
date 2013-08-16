@@ -153,7 +153,9 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.passwordParameter("password")
 				.permitAll();
 
-		http.logout().logoutUrl("/signout").deleteCookies("JSESSIONID");
+		http.logout()
+				.logoutUrl("/signout")
+				.permitAll();
 
 
 		// nb: the H2 administration console should *not* be left exposed.

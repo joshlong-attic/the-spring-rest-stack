@@ -7,6 +7,10 @@
     <title>
         Sign In
     </title>
+    <style type="text/css">
+    .error { color: #FF0000; }
+    .success { color: #00FF00; }
+    </style>
 </head>
 <body>
 <h1> Sign In</h1>
@@ -25,6 +29,12 @@
     <p>
         Please enter your username and password to log into the application.
     </p>
+    <c:if test="${param.error != null}">
+        <p class="error">Invalid username / password</p>
+    </c:if>
+    <c:if test="${param.logout != null}">
+        <p class="success">You have been logged out</p>
+    </c:if>
 
     <form method="post" action="${pageContext.request.contextPath}/crm/signin.html">
         <DIV>

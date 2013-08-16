@@ -1,6 +1,7 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.*;
+
 import org.springframework.hateoas.*;
 import org.springframework.stereotype.Component;
 
@@ -14,11 +15,12 @@ public class CustomerLinks {
 	private EntityLinks entityLinks;
 
 	@Inject
-	CustomerLinks(EntityLinks entityLinks) {
+	public CustomerLinks(EntityLinks entityLinks) {
 		this.entityLinks = entityLinks;
 	}
 
-	Link getUserLink(Customer customer) {
+	public Link getUserLink(Customer customer) {
 		return entityLinks.linkForSingleResource(User.class, customer.getUser().getId()).withRel(USER_REL);
 	}
+
 }

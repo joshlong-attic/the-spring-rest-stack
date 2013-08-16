@@ -31,4 +31,5 @@ public class JdbcClientDetailsServiceConfigurer extends SecurityConfigurerAdapte
 		builder.userDetailsService(userDetailsService);
 		builder.setSharedObject(ClientDetailsService.class, clientDetailsService);
 	}
+
 }

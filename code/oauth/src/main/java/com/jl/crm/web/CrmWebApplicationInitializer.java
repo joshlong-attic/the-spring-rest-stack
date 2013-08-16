@@ -34,7 +34,6 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.util.Collections;
 
-
 /**
  * In conjunction with {@link CrmSecurityApplicationInitializer}, this configuration class sets up Spring Data REST, In
  * conjunction with {@link CrmWebApplicationInitializer}, this configuration class sets up Spring Data REST, Spring MVC,
@@ -68,6 +67,7 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 		MultipartConfigElement multipartConfigElement = new MultipartConfigElement(uploadDirectory.getAbsolutePath(), maxUploadSizeInMb, maxUploadSizeInMb * 2, maxUploadSizeInMb / 2);
 		registration.setMultipartConfig(multipartConfigElement);
 	}
+
 }
 
 @Configuration
@@ -76,19 +76,23 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 
 	private final String applicationName = ServiceConfiguration.CRM_NAME;
-	@Inject private DataSource dataSource;
-	@Inject private ContentNegotiationStrategy contentNegotiationStrategy;
+
+	@Inject
+	private DataSource dataSource;
+
+	@Inject
+	private ContentNegotiationStrategy contentNegotiationStrategy;
 
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
 
 		auth.apply(new InMemoryClientDetailsServiceConfigurer())
-				  .withClient("android-crm")
-				  .resourceIds(applicationName)
-				  .scopes("read", "write")
-				  .authorities("ROLE_USER")
-				  .authorizedGrantTypes("authorization_code", "implicit", "password")
-				  .secret("123456");
+				.withClient("android-crm")
+				.resourceIds(applicationName)
+				.scopes("read", "write")
+				.authorities("ROLE_USER")
+				.authorizedGrantTypes("authorization_code", "implicit", "password")
+				.secret("123456");
 
 	}
 
@@ -127,8 +131,8 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 @EnableWebSecurity
 class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	@Inject private UserDetailsService userDetailsService;
-	@Inject private DataSource dataSource;
+	@Inject
+	private UserDetailsService userDetailsService;
 
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
@@ -138,20 +142,20 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.formLogin()
-				  .loginPage("/crm/signin.html")
-				  .loginProcessingUrl("/signin")
-				  .defaultSuccessUrl("/crm/welcome.html")
-				  .failureUrl("/crm/signin.html?error=true")
-				  .usernameParameter("username")
-				  .passwordParameter("password")
-				  .permitAll();
+				.loginPage("/crm/signin.html")
+				.loginProcessingUrl("/signin")
+				.defaultSuccessUrl("/crm/welcome.html")
+				.failureUrl("/crm/signin.html?error=true")
+				.usernameParameter("username")
+				.passwordParameter("password")
+				.permitAll();
 
 		http.headers()
-				  .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsMode.SAMEORIGIN))
-				  .contentTypeOptions()
-				  .xssProtection()
-				  .cacheControl()
-				  .httpStrictTransportSecurity();
+				.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsMode.SAMEORIGIN))
+				.contentTypeOptions()
+				.xssProtection()
+				.cacheControl()
+				.httpStrictTransportSecurity();
 
 		http.logout().logoutUrl("/signout").deleteCookies("JSESSIONID");
 
@@ -159,17 +163,17 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// nb: the H2 administration console should *not* be left exposed.
 		// comment out the mapping path below so that it requires an authentication to see it.
 		String[] filesToLetThroughUnAuthorized =
-				  {
-							 H2EmbeddedDatbaseConsoleInitializer.H2_DATABASE_CONSOLE_MAPPING,
-							 "/favicon.ico"
-				  };
+				{
+							H2EmbeddedDatbaseConsoleInitializer.H2_DATABASE_CONSOLE_MAPPING,
+							"/favicon.ico"
+				};
 
 		http.authorizeRequests()
-				  .antMatchers(filesToLetThroughUnAuthorized).permitAll()
-				  .antMatchers("/users/*").denyAll()
-				  .anyRequest().authenticated();
-
+				.antMatchers(filesToLetThroughUnAuthorized).permitAll()
+				.antMatchers("/users/*").denyAll()
+				.anyRequest().authenticated();
 	}
+
 }
 
 @Configuration
@@ -177,7 +181,6 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 @EnableHypermediaSupport
 @EnableWebMvc
 class WebMvcConfiguration extends WebMvcConfigurationSupport {
-
 
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
@@ -197,6 +200,5 @@ class WebMvcConfiguration extends WebMvcConfigurationSupport {
 		internalResourceViewResolver.setSuffix(".jsp");
 		return internalResourceViewResolver;
 	}
-
 
 }

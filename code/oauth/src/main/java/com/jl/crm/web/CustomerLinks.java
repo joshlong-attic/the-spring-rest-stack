@@ -21,4 +21,5 @@ public class CustomerLinks {
 	Link getUserLink(Customer customer) {
 		return entityLinks.linkForSingleResource(User.class, customer.getUser().getId()).withRel(USER_REL);
 	}
+
 }

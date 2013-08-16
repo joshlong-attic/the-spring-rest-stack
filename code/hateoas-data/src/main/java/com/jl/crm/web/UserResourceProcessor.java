@@ -2,6 +2,7 @@ package com.jl.crm.web;
 
 
 import com.jl.crm.services.User;
+
 import org.springframework.hateoas.*;
 import org.springframework.stereotype.Component;
 
@@ -9,11 +10,12 @@ import javax.inject.Inject;
 
 @Component
 public class UserResourceProcessor implements ResourceProcessor<Resource<User>> {
+
 	private UserLinks userLinks;
 
 	@Inject
-	public void setUserLinks(UserLinks ul) {
-		this.userLinks = ul;
+	public UserResourceProcessor(UserLinks userLinks) {
+		this.userLinks = userLinks;
 	}
 
 	@Override
@@ -23,4 +25,5 @@ public class UserResourceProcessor implements ResourceProcessor<Resource<User>> 
 		ur.add(userLinks.getCustomersLink(user));
 		return ur;
 	}
+
 }

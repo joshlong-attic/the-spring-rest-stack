@@ -17,6 +17,7 @@ import java.util.Collection;
 public class TestCustomerService {
 
 	private CrmService crmService;
+
 	private User joshlong;
 
 	@Inject

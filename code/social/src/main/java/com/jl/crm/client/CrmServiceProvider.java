@@ -3,16 +3,18 @@ package com.jl.crm.client;
 
 import org.springframework.social.oauth2.*;
 
-/** @author Josh Long */
+/**
+ * @author Josh Long
+ */
 public class CrmServiceProvider extends AbstractOAuth2ServiceProvider<CrmOperations> {
 	private String baseUrl;
 
 	public CrmServiceProvider(
-			                           String baseUrl,
-			                           String clientId,
-			                           String consumerSecret,
-			                           String authorizeUrl,
-			                           String accessTokenUrl) {
+									   String baseUrl,
+									   String clientId,
+									   String consumerSecret,
+									   String authorizeUrl,
+									   String accessTokenUrl) {
 		super(new OAuth2Template(clientId, consumerSecret, authorizeUrl, accessTokenUrl));
 		this.baseUrl = safeBaseUrl(baseUrl);
 	}

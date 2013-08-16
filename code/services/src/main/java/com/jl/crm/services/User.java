@@ -15,32 +15,42 @@ import java.util.*;
  *
  * @author Josh Long
  */
-
 @JsonAutoDetect (fieldVisibility = JsonAutoDetect.Visibility.ANY, isGetterVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.ANY)
 @Entity
 @Table (name = "user_account")
 public class User implements Identifiable<Long>, Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	@Column (name = "id", unique = true, nullable = false)
 	private Long id;
+
 	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	private Set<Customer> customers = new HashSet<Customer>();
+
 	@Column (name = "first_name")
 	private String firstName;
+
 	@Column (name = "profile_photo_media_type")
 	private String profilePhotoMediaType;
+
 	@Column (name = "last_name")
 	private String lastName;
+
 	@Column (name = "user_name")
 	private String username;
+
 	@Column (name = "pass_word")
 	private String password;
+
 	@Column (name = "profile_photo_imported")
 	private boolean profilePhotoImported;
+
 	@Column (name = "enabled")
 	private boolean enabled;
+
 	@Column (name = "signup_date")
 	private Date signupDate;
 
@@ -90,19 +100,16 @@ public class User implements Identifiable<Long>, Serializable {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(55, 113).append(this.id).append(this.firstName).append(this.lastName).append(this.password).append(this.username).toHashCode();
+		return new HashCodeBuilder(55, 113).append(this.id).append(this.firstName).append(
+				this.lastName).append(this.password).append(this.username).toHashCode();
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		User other = (User) o;
-		return new EqualsBuilder()
-				         .append(other.firstName, this.firstName)
-				         .append(other.lastName, this.lastName)
-				         .append(other.password, this.password)
-				         .append(other.username, this.username)
-				         .append(other.id, this.id)
-				         .isEquals();
+		return new EqualsBuilder().append(other.firstName, this.firstName).append(
+				other.lastName, this.lastName).append(other.password, this.password).append(
+				other.username, this.username).append(other.id, this.id).isEquals();
 	}
 
 	public String getFirstName() {
@@ -177,4 +184,5 @@ public class User implements Identifiable<Long>, Serializable {
 	public void setCustomers(Set<Customer> customers) {
 		this.customers = customers;
 	}
+
 }

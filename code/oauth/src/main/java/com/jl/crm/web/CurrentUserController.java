@@ -1,6 +1,7 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.User;
+
 import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+
 import java.util.*;
 
 /**
@@ -21,6 +23,11 @@ public class CurrentUserController {
 
 	private UserLinks userLinks;
 
+	@Inject
+	public CurrentUserController(UserLinks userLinks) {
+		this.userLinks = userLinks;
+	}
+
 	@RequestMapping (value = "/user", method = RequestMethod.GET)
 	public HttpEntity<Resource<User>> currentUser(@ModelAttribute User self) {
 		List<Link> linkList = new ArrayList<Link>();
@@ -31,14 +38,12 @@ public class CurrentUserController {
 		return new ResponseEntity<Resource<User>>(userResource, HttpStatus.OK);
 	}
 
-	@Inject
-	public void setUserLinks(UserLinks userLinks) {
-		this.userLinks = userLinks;
-	}
+	private static class UserResource extends Resource<User> {
 
-	static class UserResource extends Resource<User> {
 		public UserResource(User content, Iterable<Link> links) {
 			super(content, links);
 		}
+
 	}
+
 }

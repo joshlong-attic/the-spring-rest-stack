@@ -13,7 +13,7 @@ import javax.servlet.*;
 import java.io.File;
 
 /**
- * initializes the web application. This is a programmatic equivalent to {@literal web.xml}. {@link
+ * Initializes the web application. This is a programmatic equivalent to {@literal web.xml}. {@link
  * AbstractAnnotationConfigDispatcherServletInitializer} sets up the Servlet-3.0 application <EM>and</EM> bootstraps the
  * main {@link org.springframework.context.ApplicationContext application context} instance that powers the Spring MVC
  * application.
@@ -50,6 +50,7 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 		MultipartConfigElement multipartConfigElement = new MultipartConfigElement(uploadDirectory.getAbsolutePath(), maxUploadSizeInMb, maxUploadSizeInMb * 2, maxUploadSizeInMb / 2);
 		registration.setMultipartConfig(multipartConfigElement);
 	}
+
 }
 
 @Configuration
@@ -57,7 +58,6 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @EnableWebMvc
 @EnableHypermediaSupport
 class WebMvcConfiguration   {
-
 
 	@Bean
 	public MultipartResolver multipartResolver() {

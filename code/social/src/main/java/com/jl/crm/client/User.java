@@ -19,11 +19,8 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User{" +
-		       "firstName='" + firstName + '\'' +
-		       ", username='" + username + '\'' +
-		       ", lastName='" + lastName + '\'' +
-		       '}';
+		return "User{" + "firstName='" + firstName + '\'' + ", username='" + username
+				+ '\'' + ", lastName='" + lastName + '\'' + '}';
 	}
 
 	public User( String firstName, String lastName, String username, String profilePhotoMediaType, boolean hasProfilePhoto, Date signupDate) {

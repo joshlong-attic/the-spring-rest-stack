@@ -7,7 +7,9 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-/** @author Josh Long */
+/**
+ * @author Josh Long
+ */
 @Component
 class CustomerResourceAssembler implements ResourceAssembler<Customer, Resource<Customer>> {
 

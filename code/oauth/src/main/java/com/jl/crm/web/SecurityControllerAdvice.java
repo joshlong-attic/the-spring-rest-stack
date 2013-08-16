@@ -17,7 +17,12 @@ import javax.inject.Inject;
 @ControllerAdvice
 public class SecurityControllerAdvice {
 
-	@Inject private CrmService service;
+	private CrmService service;
+
+	@Inject
+	public SecurityControllerAdvice(CrmService service) {
+		this.service = service;
+	}
 
 	@ModelAttribute
 	public User currentUser(Authentication authentication) {
@@ -28,4 +33,5 @@ public class SecurityControllerAdvice {
 		long userId = crmUserDetails.getUser().getId();
 		return this.service.findById(userId);
 	}
+
 }

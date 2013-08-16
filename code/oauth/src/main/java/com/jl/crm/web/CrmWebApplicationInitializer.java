@@ -8,6 +8,7 @@ import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,8 +18,6 @@ import org.springframework.security.oauth2.config.annotation.authentication.conf
 import org.springframework.security.oauth2.config.annotation.web.configuration.OAuth2ServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.OAuth2ServerConfigurer;
 import org.springframework.security.oauth2.provider.token.JdbcTokenStore;
-import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
-import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter.XFrameOptionsMode;
 import org.springframework.security.web.util.MediaTypeRequestMatcher;
 import org.springframework.web.accept.ContentNegotiationStrategy;
 import org.springframework.web.multipart.MultipartResolver;
@@ -140,26 +139,23 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring()
+				.antMatchers("/h2/**"); // h2 has its own security
+	}
+
+	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.formLogin()
 				.loginPage("/crm/signin.html")
-				.loginProcessingUrl("/signin")
 				.defaultSuccessUrl("/crm/welcome.html")
-				.failureUrl("/crm/signin.html?error=true")
 				.usernameParameter("username")
 				.passwordParameter("password")
 				.permitAll();
 
-		http.csrf().disable();
-
-		http.headers()
-				.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsMode.SAMEORIGIN))
-				.contentTypeOptions()
-				.xssProtection()
-				.cacheControl()
-				.httpStrictTransportSecurity();
-
-		http.logout().logoutUrl("/signout").deleteCookies("JSESSIONID");
+		http.logout()
+				.logoutUrl("/signout")
+				.permitAll();
 
 
 		// nb: the H2 administration console should *not* be left exposed.

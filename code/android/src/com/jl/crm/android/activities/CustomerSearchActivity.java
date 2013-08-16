@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.*;
+import com.jl.crm.android.R;
 import com.jl.crm.client.*;
 
 import javax.inject.Inject;
@@ -43,10 +44,45 @@ public class CustomerSearchActivity extends ListActivity {
 		List<Customer> customerList = new ArrayList<Customer>();
 
 		for (String n : names) {
-			customerList.add(new Customer(this.currentUser, n.split(",")[0], n.split(",")[1]));
+			customerList.add(new Customer(this.currentUser, n.split(",")[0], n.split(",")[1]) {
+				@Override
+				public Long getDatabaseId() {
+					return (long) (Math.random() * 1000L);
+				}
+			});
 		}
 
-		ArrayAdapter<Customer> listAdapter = new ArrayAdapter<Customer>(this, com.jl.crm.android.R.layout.text, customerList);
+		ArrayAdapter<Customer> listAdapter = new ArrayAdapter<Customer>(this, R.layout.action_bar_search_item, customerList) {
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+
+				Customer customer = this.getItem(position);
+
+				// here you inflate the layout you want for the row
+				final View view = View.inflate(CustomerSearchActivity.this, R.layout.action_bar_search_item, null);
+
+
+				// todo figure out why the TextView is so short in height. it feels like the TextView would be easier to use if it were taller.
+
+				// you bind the layout with the content of your list
+				// for each element of your list of notes, the adapter will create a row and affect the right title
+				final TextView fn = (TextView) view.findViewById(R.id.first_name_label);
+				fn.setText(customer.getFirstName());
+
+				final TextView ln = (TextView) view.findViewById(R.id.last_name_label);
+				ln.setText(customer.getLastName());
+
+				final TextView id = (TextView) view.findViewById(R.id.customer_id);
+				id.setAlpha(.7f);
+				id.setText(Long.toString(customer.getDatabaseId()));
+
+				//			final TextView id = (TextView) view.findViewById(R.id.customer_id_label);
+//				id.setText(Long.toString(customer.getDatabaseId()));
+
+				return view;
+			}
+		};
+
 		setListAdapter(listAdapter);
 
 

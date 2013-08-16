@@ -14,7 +14,10 @@
 <sec:authorize ifAllGranted="ROLE_USER">
     <h1>Hi, <sec:authentication property="principal.username"/>!</h1>
 
-    <a href="${pageContext.request.contextPath}/signout">Sign Out</a>.
+    <form action="${pageContext.request.contextPath}/signout" method="post">
+        <input type="submit" value="Sign Out"/>
+        <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>" value="<c:out value="${_csrf.token}"/>"/>
+    </form>
 </sec:authorize>
 
 <sec:authorize ifNotGranted="ROLE_USER">

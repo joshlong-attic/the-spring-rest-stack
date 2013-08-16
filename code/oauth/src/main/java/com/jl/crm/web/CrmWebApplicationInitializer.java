@@ -150,6 +150,8 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.passwordParameter("password")
 				.permitAll();
 
+		http.csrf().disable();
+
 		http.headers()
 				.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsMode.SAMEORIGIN))
 				.contentTypeOptions()

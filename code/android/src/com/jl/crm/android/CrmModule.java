@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-@Module (injects = {UserHomeActivity.class, AuthenticationActivity.class, CustomerSearchActivity.class })
+@Module (injects = {UserHomeActivity.class, AuthenticationActivity.class, CustomerSearchActivity.class})
 public class CrmModule {
 	private Crm application;
 
@@ -33,8 +33,9 @@ public class CrmModule {
 	@Provides
 	CrmOperations crmOperations(final SQLiteConnectionRepository sqLiteConnectionRepository) {
 		try {
-			CrmOperations ops = sqLiteConnectionRepository.getPrimaryConnection(CrmOperations.class).getApi();
-			return AndroidUiThreadUtils.runOffUiThread(ops, CrmOperations.class);
+			Class<CrmOperations> crmOperationsClass = CrmOperations.class;
+			CrmOperations ops = sqLiteConnectionRepository.getPrimaryConnection(crmOperationsClass).getApi();
+			return AndroidUiThreadUtils.runOffUiThread(ops, crmOperationsClass);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);

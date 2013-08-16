@@ -4,10 +4,9 @@ import android.app.Activity;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.*;
 import android.widget.TextView;
 import com.jl.crm.android.R;
-import com.jl.crm.android.utils.DaggerInjectionUtils;
 import com.jl.crm.client.*;
 
 import javax.inject.Inject;
@@ -21,10 +20,21 @@ import javax.inject.Inject;
  */
 public class UserHomeActivity extends Activity {
 
+
 	@Inject LocationManager locationManager;
 	@Inject CrmOperations crmOperations;
 	@Inject LayoutInflater layoutInflater;
 	User user;
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		return Commons.onOptionsItemSelected(this, item);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		return Commons.onCreateOptionsMenu(this, menu);
+	}
 
 	@Override
 	protected void onStart() {
@@ -41,13 +51,10 @@ public class UserHomeActivity extends Activity {
 	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		DaggerInjectionUtils.inject(this);
+		Commons.onCreate(this, savedInstanceState);
 
 		setContentView(R.layout.user_detail_activity);
-
-
 	}
 }

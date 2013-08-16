@@ -1,20 +1,24 @@
 package com.jl.crm.android.activities;
 
-import android.app.SearchManager;
+import android.app.*;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ListView;
-import com.actionbarsherlock.app.SherlockListActivity;
+import android.view.*;
+import android.widget.*;
+import com.jl.crm.client.*;
+
+import javax.inject.Inject;
+import java.util.*;
 
 /**
- *
  * Lets users search for customer records.
  *
  * @author Josh Long
- *
  */
-public class CustomerSearchActivity extends SherlockListActivity {
+public class CustomerSearchActivity extends ListActivity {
+
+	@Inject CrmOperations crmService;
+	private User currentUser;
 
 	@Override
 	protected void onNewIntent(Intent intent) {
@@ -30,12 +34,38 @@ public class CustomerSearchActivity extends SherlockListActivity {
 	}
 
 	protected void doSearch(String query) {
-	  // get a cursor, prepare the ListAdapter, and set it
+		this.currentUser = crmService.currentUser();
+
+		// get a cursor, prepare the ListAdapter, and set it
+		Toast.makeText(this, "Searching for query '" + query + "'" + "and the current User is " + this.currentUser.toString(), 10);
+
+		String[] names = "John,Doe;Jane,Doe".split(";");
+		List<Customer> customerList = new ArrayList<Customer>();
+
+		for (String n : names) {
+			customerList.add(new Customer(this.currentUser, n.split(",")[0], n.split(",")[1]));
+		}
+
+		ArrayAdapter<Customer> listAdapter = new ArrayAdapter<Customer>(this, com.jl.crm.android.R.layout.text, customerList);
+		setListAdapter(listAdapter);
+
+
 	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public boolean onOptionsItemSelected(MenuItem item) {
+		return Commons.onOptionsItemSelected(this, item);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		return Commons.onCreateOptionsMenu(this, menu);
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Commons.onCreate(this, savedInstanceState);
 		this.handleIntent(getIntent());
 	}
 

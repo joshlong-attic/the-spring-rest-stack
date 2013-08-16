@@ -3,9 +3,8 @@ package com.jl.crm.android.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.*;
-import android.view.Window;
+import android.view.*;
 import com.jl.crm.android.R;
-import com.jl.crm.android.utils.DaggerInjectionUtils;
 import com.jl.crm.android.widget.CrmOAuthFlowWebView;
 import com.jl.crm.client.*;
 import org.springframework.social.connect.Connection;
@@ -88,14 +87,21 @@ public class AuthenticationActivity extends Activity {
 	}
 
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		return Commons.onOptionsItemSelected(this, item);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		return Commons.onCreateOptionsMenu(this, menu);
+	}
+
+
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		DaggerInjectionUtils.inject(this);
-
-		Window window = this.getWindow();
-		window.requestFeature(Window.FEATURE_PROGRESS);
-		window.setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
+		Commons.onCreate(this, savedInstanceState);
+		//	clearAllConnections();
 
 		this.webView = webView();
 
@@ -114,7 +120,7 @@ public class AuthenticationActivity extends Activity {
 	}
 
 	protected void connectionEstablished() {
-		Intent intent = new Intent(AuthenticationActivity.this, CustomerSearchActivity.class);
+		Intent intent = new Intent(this, CustomerSearchActivity.class);
 		startActivity(intent);
 	}
 
@@ -126,10 +132,8 @@ public class AuthenticationActivity extends Activity {
 
 	protected String buildAuthenticationUrl() {
 		OAuth2Operations oAuth2Operations = this.connectionFactory.getOAuthOperations();
-		if (oAuth2Operations instanceof OAuth2Template){
-			OAuth2Template oAuth2Template = (OAuth2Template) oAuth2Operations;
-			oAuth2Template.setUseParametersForClientAuthentication(false);
-		}
+		OAuth2Template oAuth2Template = (OAuth2Template) oAuth2Operations;
+		oAuth2Template.setUseParametersForClientAuthentication(false);
 		String returnUri = getString(R.string.oauth_access_token_callback_uri);
 		OAuth2Parameters oAuth2Parameters = new OAuth2Parameters();
 		oAuth2Parameters.setScope("read,write");

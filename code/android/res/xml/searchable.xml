@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<searchable
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<searchable xmlns:android="http://schemas.android.com/apk/res/android"
     android:label="@string/search"
-    android:searchSuggestAuthority="dictionary"
+    android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
     android:searchSuggestIntentAction="android.intent.action.VIEW" />

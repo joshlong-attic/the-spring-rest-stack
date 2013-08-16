@@ -23,4 +23,5 @@ class ErrorControllerAdvice {
 	HttpEntity<VndErrors> userProfilePhotoWriteException(UserProfilePhotoWriteException e) {
 		return doHandleException(e, HttpStatus.NOT_FOUND);
 	}
+
 }

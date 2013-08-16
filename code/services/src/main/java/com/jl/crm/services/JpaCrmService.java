@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+
 import java.io.*;
 import java.util.*;
 
@@ -19,21 +20,19 @@ import java.util.*;
 @Service
 @Transactional
 public class JpaCrmService implements CrmService {
+
 	private CustomerRepository customerRepository;
 	private UserRepository userRepository;
 
 	@Inject
-	public void setCustomerRepository(CustomerRepository customerRepository) {
+	public JpaCrmService(CustomerRepository customerRepository,
+			UserRepository userRepository) {
 		this.customerRepository = customerRepository;
-	}
-
-	@Inject
-	public void setUserRepository(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 
 	@Override
-	public CrmService.ProfilePhoto readUserProfilePhoto(long userId) {
+	public ProfilePhoto readUserProfilePhoto(long userId) {
 		InputStream fileInputSteam = null;
 		try {
 			User user = findById(userId);

@@ -29,16 +29,26 @@ import java.sql.Driver;
 public class ServiceConfiguration {
 
 	public static final String CRM_NAME = "crm";
-	/** The root directory to which all uploads for the application are uploaded. */
+
+	/**
+	 * The root directory to which all uploads for the application are uploaded.
+	 */
 	public static final File CRM_STORAGE_DIRECTORY = new File(SystemUtils.getUserHome(), CRM_NAME);
-	/** things are first uploaded by the application server to this directory. it's a sort of staging directory */
+
+	/**
+	 * Things are first uploaded by the application server to this directory. it's a sort
+	 * of staging directory
+	 */
 	public static final File CRM_STORAGE_UPLOADS_DIRECTORY = new File(CRM_STORAGE_DIRECTORY, "uploads");
-	/** when a profile photo is uploaded, the resultant, completely uploaded image is stored in this directory */
+
+	/**
+	 * When a profile photo is uploaded, the resultant, completely uploaded image is
+	 * stored in this directory
+	 */
 	public static final File CRM_STORAGE_PROFILES_DIRECTORY = new File(CRM_STORAGE_DIRECTORY, "profiles");
 
 	@PostConstruct
 	public void setupStorage() throws Throwable {
-
 		File[] files = {CRM_STORAGE_DIRECTORY, CRM_STORAGE_UPLOADS_DIRECTORY, CRM_STORAGE_PROFILES_DIRECTORY};
 		for (File f : files) {
 			if (!f.exists() && !f.mkdirs()){
@@ -61,11 +71,13 @@ public class ServiceConfiguration {
 	public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
 		return new JpaTransactionManager(emf);
 	}
+
 }
 
 @Configuration
 @Profile ({"production"})
 class ProductionDataSourceConfiguration {
+
 	@Bean
 	public HibernateJpaVendorAdapter hibernateJpaVendorAdapter() {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
@@ -116,7 +128,6 @@ class EmbeddedDataSourceConfiguration {
 		if (!profilePhotoForUser5.exists()){
 			throw new RuntimeException("couldn't setup profile photos at " + profilePhotoForUser5.getAbsolutePath() + ".");
 		}
-
 	}
 
 	@Bean
@@ -147,4 +158,5 @@ class EmbeddedDataSourceConfiguration {
 		embeddedDatabaseFactoryBean.afterPropertiesSet();
 		return embeddedDatabaseFactoryBean.getObject();
 	}
+
 }

@@ -5,7 +5,9 @@ import org.springframework.hateoas.Link;
 
 import java.util.Date;
 
-/** client side representation of customer data from the REST service. */
+/**
+ * Client side representation of customer data from the REST service.
+ */
 @JsonIgnoreProperties (ignoreUnknown = true)
 public class Customer {
 	private Link selfLink;
@@ -31,11 +33,8 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return "Customer{" +
-		       "firstName='" + firstName + '\'' +
-		       ", lastName='" + lastName + '\'' +
-		       ", signupDate=" + signupDate +
-		       '}';
+		return "Customer{" + "firstName='" + firstName + '\'' + ", lastName='" + lastName
+				+ '\'' + ", signupDate=" + signupDate + '}';
 	}
 
 	public Link getId() {

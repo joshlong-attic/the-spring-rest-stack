@@ -1,12 +1,14 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.*;
+
 import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+
 import java.util.*;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -26,18 +28,13 @@ class UserController {
 	private UserResourceAssembler userResourceAssembler;
 	private CustomerResourceAssembler customerResourceAssembler;
 
+
 	@Inject
-	void setCrmService(CrmService crmService) {
+	public UserController(CrmService crmService,
+			UserResourceAssembler userResourceAssembler,
+			CustomerResourceAssembler customerResourceAssembler) {
 		this.crmService = crmService;
-	}
-
-	@Inject
-	void setUserResourceAssembler(UserResourceAssembler userResourceAssembler) {
 		this.userResourceAssembler = userResourceAssembler;
-	}
-
-	@Inject
-	void setCustomerResourceAssembler(CustomerResourceAssembler customerResourceAssembler) {
 		this.customerResourceAssembler = customerResourceAssembler;
 	}
 

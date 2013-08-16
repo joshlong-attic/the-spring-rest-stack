@@ -14,6 +14,7 @@ import javax.servlet.*;
  * @author Josh Long
  */
 public class H2EmbeddedDatbaseConsoleInitializer implements WebApplicationInitializer {
+
 	/**
 	 * We use this variable both in installing the H2 database administration console, as well as
 	 * as excluding this from Spring Security's protection.

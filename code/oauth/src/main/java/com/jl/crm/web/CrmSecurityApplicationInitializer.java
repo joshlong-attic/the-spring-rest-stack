@@ -27,8 +27,8 @@ import org.springframework.web.servlet.support.AbstractDispatcherServletInitiali
 import javax.servlet.ServletContext;
 
 /**
- * In conjunction with {@link CrmWebApplicationInitializer}, this configuration class sets up Spring Security and Spring
- * Security OAuth.
+ * In conjunction with {@link CrmWebApplicationInitializer}, this configuration class sets
+ * up Spring Security and Spring Security OAuth.
  *
  * @author Rob Winch
  * @see CrmWebApplicationInitializer
@@ -36,23 +36,29 @@ import javax.servlet.ServletContext;
 public class CrmSecurityApplicationInitializer extends AbstractSecurityWebApplicationInitializer {
 
 	/**
-	 * Instruct Spring Security to use the {@link DispatcherServlet}'s {@link WebApplicationContext} to find the
-	 * springSecurityFilterChain.
+	 * Instruct Spring Security to use the {@link DispatcherServlet}'s
+	 * {@link WebApplicationContext} to find the springSecurityFilterChain.
 	 */
 	@Override
 	protected String getDispatcherWebApplicationContextSuffix() {
 		return AbstractDispatcherServletInitializer.DEFAULT_SERVLET_NAME;
 	}
 
-	/** Insert the following filters before Spring Security. Be careful when inserting filters before Spring Security! */
+	/**
+	 * Insert the following filters before Spring Security. Be careful when inserting
+	 * filters before Spring Security!
+	 */
 	@Override
 	protected void afterSpringSecurityFilterChain(ServletContext servletContext) {
 		insertFilters(servletContext, new HiddenHttpMethodFilter(), new MultipartFilter() , new OpenEntityManagerInViewFilter());
 	}
 
-	/** Register the {@link HttpSessionEventPublisher} */
+	/**
+	 * Register the {@link HttpSessionEventPublisher}
+	 */
 	@Override
 	protected boolean enableHttpSessionEventPublisher() {
 		return true;
 	}
+
 }

@@ -8,7 +8,9 @@ import org.springframework.http.MediaType;
  * @author Josh Long
  */
 public class ProfilePhoto {
+
 	private final MediaType mediaType;
+
 	private final byte[] bytes;
 
 	public ProfilePhoto(byte[] data, MediaType mediaType) {

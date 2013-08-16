@@ -16,7 +16,7 @@ public class CrmUserDetailsService implements UserDetailsService {
 	private CrmService crmService;
 
 	@Inject
-	public void setCrmService(CrmService crmService) {
+	public CrmUserDetailsService(CrmService crmService) {
 		this.crmService = crmService;
 	}
 
@@ -28,9 +28,9 @@ public class CrmUserDetailsService implements UserDetailsService {
 
 	@SuppressWarnings("serial")
 	public static class CrmUserDetails implements UserDetails {
- 		public static final String SCOPE_READ = "read";
+		public static final String SCOPE_READ = "read";
 		public static final String SCOPE_WRITE = "write";
- 		public static final String ROLE_USER = "ROLE_USER";
+		public static final String ROLE_USER = "ROLE_USER";
 		private Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
 		private com.jl.crm.services.User user;
 
@@ -81,4 +81,5 @@ public class CrmUserDetailsService implements UserDetailsService {
 			return this.user;
 		}
 	}
+
 }

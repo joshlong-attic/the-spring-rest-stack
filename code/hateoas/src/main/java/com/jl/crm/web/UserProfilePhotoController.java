@@ -1,6 +1,7 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.*;
+
 import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
+
 import java.net.URI;
 import java.util.List;
 
@@ -20,17 +22,14 @@ class UserProfilePhotoController {
 	private UserResourceAssembler userResourceAssembler;
 
 	@Inject
-	void setCrmService(CrmService crmService) {
+	public UserProfilePhotoController(CrmService crmService,
+			UserResourceAssembler userResourceAssembler) {
 		this.crmService = crmService;
-	}
-
-	@Inject
-	void setUserResourceAssembler(UserResourceAssembler userResourceAssembler) {
 		this.userResourceAssembler = userResourceAssembler;
 	}
 
 	@RequestMapping (method = RequestMethod.POST)
-	HttpEntity<Void> writeUserProfilePhoto(@PathVariable Long user, @RequestParam MultipartFile file) throws Throwable {
+	public HttpEntity<Void> writeUserProfilePhoto(@PathVariable Long user, @RequestParam MultipartFile file) throws Throwable {
 		byte bytesForProfilePhoto[] = FileCopyUtils.copyToByteArray(file.getInputStream());
 		this.crmService.writeUserProfilePhoto(user , MediaType.parseMediaType(file.getContentType()), bytesForProfilePhoto);
 
@@ -47,9 +46,9 @@ class UserProfilePhotoController {
 	}
 
 	@RequestMapping (method = RequestMethod.GET)
-	HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long user) throws Exception  {
-		CrmService.ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user );
-		if (null != profilePhoto){
+	public HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long user) throws Exception  {
+		ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user );
+		if (profilePhoto != null){
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setContentType(profilePhoto.getMediaType());
 			return new ResponseEntity<byte[]>(profilePhoto.getPhoto(), httpHeaders, HttpStatus.OK);
@@ -57,6 +56,5 @@ class UserProfilePhotoController {
 		throw new UserProfilePhotoReadException(user);
 
 	}
-
 
 }

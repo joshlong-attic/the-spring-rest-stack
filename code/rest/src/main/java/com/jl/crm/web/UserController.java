@@ -1,11 +1,13 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.*;
+
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+
 import java.util.ArrayList;
 
 /**
@@ -14,18 +16,18 @@ import java.util.ArrayList;
  * @author Josh Long
  */
 @Controller
-@RequestMapping (value = ApiUrls.ROOT_URL_USERS, 
-                 produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping (value = ApiUrls.ROOT_URL_USERS,
+				 produces = MediaType.APPLICATION_JSON_VALUE)
 class UserController {
 
 	private CrmService crmService;
 
 	@Inject
-	void setCrmService(CrmService crmService) {
+	public UserController(CrmService crmService) {
 		this.crmService = crmService;
 	}
-	
- 	@RequestMapping (method = RequestMethod.DELETE, value = ApiUrls.URL_USERS_USER)
+
+	@RequestMapping (method = RequestMethod.DELETE, value = ApiUrls.URL_USERS_USER)
 	@ResponseBody
 	User deleteUser(@PathVariable Long user) {
 		return crmService.removeUser(user);
@@ -52,9 +54,13 @@ class UserController {
 	}
 
 	/**
-	 * this is superior to using an {@link ArrayList} of {@link Customer} because it bakes in the generic type information
-	 * which would've otherwise been lost and helps Jackson in the conversion at runtime.
+	 * This is superior to using an {@link ArrayList} of {@link Customer} because it bakes
+	 * in the generic type information which would've otherwise been lost and helps
+	 * Jackson in the conversion at runtime.
 	 */
 	static class CustomerList extends ArrayList<Customer> {
+
+		private static final long serialVersionUID = 1L;
+
 	}
 }

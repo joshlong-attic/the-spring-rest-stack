@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.Collections;
 
 /**
- * simple client that posts files to the photo upload endpoint.
+ * Simple client that posts files to the photo upload endpoint.
  *
  * @author Josh Long
  */
@@ -52,9 +52,9 @@ public class ProfilePhotoUploadClient {
 	public URI postProfilePhoto(long userId, final String fileName, byte[] bytesForImage) throws IOException {
 
 		URI uri = UriComponentsBuilder.fromUri(this.baseUri)
-				            .path("/users/{user}/photo")
-				            .buildAndExpand(Collections.singletonMap("user", userId))
-				            .toUri();
+							.path("/users/{user}/photo")
+							.buildAndExpand(Collections.singletonMap("user", userId))
+							.toUri();
 
 		ByteArrayResource byteArrayResource = new ByteArrayResource(bytesForImage) {
 			@Override

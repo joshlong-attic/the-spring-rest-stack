@@ -58,7 +58,7 @@ public class TestCrmClientTemplate {
 		Customer customer = crmOperations.loadUserCustomer(customerIdToUpdate);
 		String oldFn = customer.getFirstName(), oldLn = customer.getLastName();
 		Customer newCustomer =
-				  crmOperations.updateCustomer(customerIdToUpdate, oldFn + "_updated", oldFn + "_updated");
+				crmOperations.updateCustomer(customerIdToUpdate, oldFn + "_updated", oldFn + "_updated");
 
 		assertNotEquals(newCustomer.getFirstName(), oldFn);
 		assertNotEquals(newCustomer.getLastName(), oldLn);
@@ -86,7 +86,7 @@ public class TestCrmClientTemplate {
 		MediaType mediaType = MediaType.IMAGE_JPEG;
 		byte[] localResourceBytes = IOUtils.toByteArray(inputStream);
 		crmOperations.setUserProfilePhoto(localResourceBytes, mediaType);
-		 ProfilePhoto profileData = crmOperations.getUserProfilePhoto();
+		ProfilePhoto profileData = crmOperations.getUserProfilePhoto();
 		byte[] bytesFromImage = profileData.getBytes();
 		assertEquals(bytesFromImage.length, localResourceBytes.length);
 		assertEquals(profileData.getMediaType().getSubtype(), mediaType.getSubtype());

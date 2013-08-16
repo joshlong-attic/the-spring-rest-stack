@@ -1,12 +1,13 @@
 package com.jl.crm.web;
 
 
-import com.jl.crm.services.User;
-import org.springframework.hateoas.*;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-
 import javax.inject.Inject;
+
+import org.springframework.hateoas.EntityLinks;
+import org.springframework.hateoas.Link;
+import org.springframework.stereotype.Component;
+
+import com.jl.crm.services.User;
 
 @Component
 public class UserLinks {
@@ -19,7 +20,6 @@ public class UserLinks {
 
 	@Inject
 	UserLinks(EntityLinks entityLinks) {
-		Assert.notNull(entityLinks, "EntityLinks must not be null!");
 		this.entityLinks = entityLinks;
 	}
 
@@ -34,5 +34,5 @@ public class UserLinks {
 	Link getPhotoLink(User user) {
 		return this.entityLinks.linkForSingleResource(User.class, user.getId()).slash(PHOTO).withRel(PHOTO_REL);
 	}
- 
+
 }

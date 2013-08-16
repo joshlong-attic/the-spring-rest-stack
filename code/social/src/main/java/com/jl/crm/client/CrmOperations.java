@@ -5,7 +5,7 @@ import org.springframework.http.MediaType;
 import java.util.*;
 
 /**
- * represents the client side view to the RESTful service.
+ * Represents the client side view to the RESTful service.
  *
  * @author Josh Long
  */

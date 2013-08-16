@@ -1,27 +1,27 @@
 package com.jl.crm.android.utils;
 
 import android.app.*;
+import android.content.*;
 import com.jl.crm.android.Crm;
-import com.jl.crm.android.activities.BaseActivity;
 
-/**
- * Convenience methods to simplify using Dagger for dependency injection in Android {@link Fragment fragments} and
- * {@link Activity acitivities}.
- *
- * @author josh long
- */
+
 public class DaggerInjectionUtils {
 
-	public static void inject(BaseActivity ac) {
-		doInjectionForTarget(ac, ac);
+	public static void inject(Activity baseActivity) {
+		Crm crm = forApplication(baseActivity.getApplication());
+		crm.inject(baseActivity);
 	}
 
-	private static void doInjectionForTarget(BaseActivity baseActivity, Object target) {
-		Application application = baseActivity.getApplication();
+	private static Crm forApplication(Application application) {
 		if (application instanceof Crm){
-			Crm crm = (Crm) application;
-			crm.inject(target);
+			return (Crm) application;
 		}
+		return null;
+	}
+
+	//todo
+	private void inject(ContentProvider contentProvider) {
+		Context ctx = contentProvider.getContext();
 	}
 
 

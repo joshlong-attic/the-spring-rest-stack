@@ -1,23 +1,25 @@
 package com.jl.crm.android.activities;
 
+import android.app.Activity;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 import com.jl.crm.android.R;
+import com.jl.crm.android.utils.DaggerInjectionUtils;
 import com.jl.crm.client.*;
 
 import javax.inject.Inject;
 
 /**
  * A simple {@code Activity} to demonstrate that we can work with a refreshed {@link com.jl.crm.client.CrmOperations}
- * instance with impunity anywhere in the application once they've gone through the initial {@link AuthenticationActivity
- * OAuth flow}.
+ * instance with impunity anywhere in the application once they've gone through the initial {@link
+ * AuthenticationActivity OAuth flow}.
  *
  * @author Josh Long
  */
-public class UserHomeActivity extends BaseActivity {
+public class UserHomeActivity extends Activity {
 
 	@Inject LocationManager locationManager;
 	@Inject CrmOperations crmOperations;
@@ -41,6 +43,8 @@ public class UserHomeActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		DaggerInjectionUtils.inject(this);
 
 		setContentView(R.layout.user_detail_activity);
 

@@ -1,9 +1,11 @@
 package com.jl.crm.android.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.*;
 import android.view.Window;
 import com.jl.crm.android.R;
+import com.jl.crm.android.utils.DaggerInjectionUtils;
 import com.jl.crm.android.widget.CrmOAuthFlowWebView;
 import com.jl.crm.client.*;
 import org.springframework.social.connect.Connection;
@@ -23,14 +25,11 @@ import java.util.List;
  *
  * @author Josh Long
  */
-public class AuthenticationActivity extends BaseActivity {
+public class AuthenticationActivity extends Activity {
 
 	@Inject SQLiteConnectionRepository sqLiteConnectionRepository;
-
 	@Inject CrmConnectionFactory connectionFactory;
-
 	CrmOAuthFlowWebView webView;
-
 	CrmOAuthFlowWebView.AccessTokenReceivedListener accessTokenReceivedListener = new CrmOAuthFlowWebView.AccessTokenReceivedListener() {
 
 		@Override
@@ -55,14 +54,12 @@ public class AuthenticationActivity extends BaseActivity {
 
 		}
 	};
-
 	Runnable connectionEstablishedRunnable = new Runnable() {
 		@Override
 		public void run() {
 			connectionEstablished();
 		}
 	};
-
 	AsyncTask<?, ?, Connection<CrmOperations>> asyncTaskToLoadCrmOperationsConnection =
 			  new AsyncTask<Object, Object, Connection<CrmOperations>>() {
 				  @Override
@@ -93,16 +90,19 @@ public class AuthenticationActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Window w = this.getWindow();
-		w.requestFeature(Window.FEATURE_PROGRESS);
-		w.setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
+
+		DaggerInjectionUtils.inject(this);
+
+		Window window = this.getWindow();
+		window.requestFeature(Window.FEATURE_PROGRESS);
+		window.setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
 
 		this.webView = webView();
 
 		setContentView(this.webView);
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	protected void clearAllConnections() {
 		MultiValueMap<String, Connection<?>> mvMapOfConnections = sqLiteConnectionRepository.findAllConnections();
 		for (String k : mvMapOfConnections.keySet()) {

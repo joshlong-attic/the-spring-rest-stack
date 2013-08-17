@@ -1,5 +1,6 @@
 package com.jl.crm.android;
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.LocationManager;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import static android.content.Context.LOCATION_SERVICE;
 @Module (injects = {UserHomeActivity.class, AuthenticationActivity.class, CustomerSearchActivity.class})
 public class CrmModule {
 	private Crm application;
+	private Activity activity;
 
 	public CrmModule(Crm crm) {
 		this.application = crm;

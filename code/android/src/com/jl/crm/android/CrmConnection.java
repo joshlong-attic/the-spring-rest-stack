@@ -1,37 +1,22 @@
-package com.jl.crm.android.activities;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.*;
-import android.view.*;
-import com.jl.crm.android.R;
-import com.jl.crm.android.widget.CrmOAuthFlowWebView;
-import com.jl.crm.client.*;
-import org.springframework.social.connect.Connection;
-import org.springframework.social.connect.sqlite.SQLiteConnectionRepository;
-import org.springframework.social.connect.sqlite.support.SQLiteConnectionRepositoryHelper;
-import org.springframework.social.oauth2.*;
-import org.springframework.util.*;
-
-import javax.inject.Inject;
-import java.util.List;
+package com.jl.crm.android;
 
 /**
- * this is designed to be the interface into the RESTful web service
- * <p/>
- * <p/>
- * TODO design this to be flexible enough to take the API type (T) (in the case of the CRM, this is {@code
- * CrmOperations}.)
+ * We need a central place to lookup information about the currrent ocnnection to the CRM A lot of the stuff that's
+ * happening in the {@link com.jl.crm.android.activities.AuthenticationActivity} can happen here instead. The nice part
+ * about this is that we can then test for things like current authentication status in other Android componentns where
+ * this class might be injected.
  *
  * @author Josh Long
  */
-public class AuthenticationActivity extends Activity {
+public class CrmConnection {
+/*
+	 SQLiteConnectionRepository sqLiteConnectionRepository;
+	 SQLiteConnectionRepositoryHelper repositoryHelper;
+	  CrmConnectionFactory connectionFactory;
+//	CrmOAuthFlowWebView webView;
 
-	@Inject SQLiteConnectionRepository sqLiteConnectionRepository;
-	@Inject SQLiteConnectionRepositoryHelper repositoryHelper;
-	@Inject CrmConnectionFactory connectionFactory;
-	CrmOAuthFlowWebView webView;
+
+
 	CrmOAuthFlowWebView.AccessTokenReceivedListener accessTokenReceivedListener = new CrmOAuthFlowWebView.AccessTokenReceivedListener() {
 
 		@Override
@@ -81,8 +66,8 @@ public class AuthenticationActivity extends Activity {
 					  }
 					  return null;
 				  }
-			  };
-	private boolean debug = true;
+			  };*/
+	/*private boolean debug = true;
 
 	@Override
 	public void onStart() {
@@ -105,8 +90,8 @@ public class AuthenticationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		Commons.onCreate(this, savedInstanceState);
 
-		// we don't want the ActionBar on this page, obviously,
-		// you shouldn't be able to view data if you're not authenticated.
+		 // we don't want the ActionBar on this page, obviously,
+		 // you shouldn't be able to view data if you're not authenticated.
 		getActionBar().hide();
 
 		if (debug){
@@ -159,5 +144,5 @@ public class AuthenticationActivity extends Activity {
 		}
 		return oAuth2Operations.buildAuthenticateUrl(GrantType.IMPLICIT_GRANT, oAuth2Parameters);
 	}
-
+*/
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jl.crm.android"
     android:versionCode="1"
     android:versionName="1.0">
@@ -9,7 +8,7 @@
     TODO add android:excludeFromRecents="true" android:noHistory="true" to each <activity>
     -->
     <uses-sdk
-        android:minSdkVersion="17"
+        android:minSdkVersion="14"
         android:targetSdkVersion="17" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -21,19 +20,23 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
 
-        <activity android:name=".activities.AuthenticationActivity" >
+        <activity android:name=".activities.AuthenticationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="x-com-jl-crm-android" android:host="crm-oauth-response" />
+
+                <data
+                    android:scheme="x-com-jl-crm-android"
+                    android:host="crm-oauth-response" />
             </intent-filter>
         </activity>
 
         <!-- Support Searching our Customer records
         -->
-        <activity android:name=".activities.CustomerSearchActivity" >
+        <activity android:name=".activities.CustomerSearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />

@@ -76,8 +76,7 @@ public class CustomerSearchActivity extends ListActivity {
 				id.setAlpha(.7f);
 				id.setText(Long.toString(customer.getDatabaseId()));
 
-				//			final TextView id = (TextView) view.findViewById(R.id.customer_id_label);
-//				id.setText(Long.toString(customer.getDatabaseId()));
+				//	view.setMinimumHeight(android.R.attr.listPreferredItemHeight);
 
 				return view;
 			}

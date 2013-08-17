@@ -9,5 +9,8 @@
     <string name="oauth_scope">read,write</string>
     <string name="shared_preferences">CrmPreferences</string>
 
-    <string name="base_uri">http://10.0.2.2:8080/</string>
+    <!--
+        <string name="base_uri">http://10.0.2.2:8080/</string>
+    -->
+    <string name="base_uri">http://192.168.2.9:8080/</string>
 </resources>

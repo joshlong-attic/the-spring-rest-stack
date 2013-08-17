@@ -7,6 +7,11 @@ import com.jl.crm.android.Crm;
 
 public class DaggerInjectionUtils {
 
+	public static void inject(Fragment fragment) {
+		Crm crm = forApplication(fragment.getActivity().getApplication());
+		crm.inject(fragment);
+	}
+
 	public static void inject(Activity baseActivity) {
 		Crm crm = forApplication(baseActivity.getApplication());
 		crm.inject(baseActivity);

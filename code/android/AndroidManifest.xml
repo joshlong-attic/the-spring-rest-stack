@@ -20,10 +20,26 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
 
-        <activity android:name=".activities.AuthenticationActivity">
+        <!-- <activity android:name=".activities.AuthenticationActivity">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+
+                 <category android:name="android.intent.category.LAUNCHER" />
+                 <category android:name="android.intent.category.DEFAULT" />
+                 <category android:name="android.intent.category.BROWSABLE" />
+
+                 <data
+                     android:scheme="x-com-jl-crm-android"
+                     android:host="crm-oauth-response" />
+             </intent-filter>
+         </activity>
+ -->
+        <activity android:name=".activities.CrmActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.SEARCH" />
 
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -32,27 +48,29 @@
                     android:scheme="x-com-jl-crm-android"
                     android:host="crm-oauth-response" />
             </intent-filter>
-        </activity>
-
-        <!-- Support Searching our Customer records
-        -->
-        <activity android:name=".activities.CustomerSearchActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+
+        <!-- Support Searching our Customer records
+        -->
+        <!--  <activity android:name=".activities.CrmActivity">
+              <intent-filter>
+
+              </intent-filter>
+              <meta-data
+                  android:name="android.app.searchable"
+                  android:resource="@xml/searchable" />
+          </activity>-->
 
         <!--
         <provider android:name="DictionaryProvider"
             android:authorities="dictionary"
             android:syncable="false" />-->
 
-        <activity android:name=".activities.UserHomeActivity" />
-
+        <!--  <activity android:name=".activities.UserHomeActivity" />
+  -->
         <!-- <activity android:name=".SearchableDictionary"
              android:launchMode="singleTop">
 
@@ -83,7 +101,7 @@
         -->
 
 
-        <!--<meta-data android:name="android.app.default_searchable" android:value=".activities.CustomerSearchActivity" />-->
+        <!--<meta-data android:name="android.app.default_searchable" android:value=".activities.CrmActivity" />-->
 
     </application>
 

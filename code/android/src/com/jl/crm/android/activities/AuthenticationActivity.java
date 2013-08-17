@@ -2,12 +2,11 @@ package com.jl.crm.android.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.*;
+import android.os.Bundle;
 import android.view.*;
 import com.jl.crm.android.*;
 import com.jl.crm.android.widget.CrmOAuthFlowWebView;
-import com.jl.crm.client.*;
-import org.springframework.social.connect.Connection;
+import com.jl.crm.client.CrmConnectionFactory;
 import org.springframework.social.connect.sqlite.SQLiteConnectionRepository;
 import org.springframework.social.connect.sqlite.support.SQLiteConnectionRepositoryHelper;
 
@@ -28,32 +27,10 @@ public class AuthenticationActivity extends Activity {
 	@Inject SQLiteConnectionRepositoryHelper repositoryHelper;
 	@Inject CrmConnectionFactory connectionFactory;
 	private CrmOAuthFlowWebView webView;
-	private CrmOAuthFlowWebView.AccessTokenReceivedListener accessTokenReceivedListener =
-			  new CrmOAuthFlowWebView.AccessTokenReceivedListener() {
-				  @Override
-				  public void accessTokenReceived(final String accessToken) {
-					  try {
-						  AsyncTask<?, ?, Connection<CrmOperations>> asyncTask = new AsyncTask<Object, Object, Connection<CrmOperations>>() {
-							  @Override
-							  protected Connection<CrmOperations> doInBackground(Object... params) {
-								  Connection<CrmOperations> crmOperationsConnection = crmConnectionState.installAccessToken(accessToken);
-								  runOnUiThread(connectionEstablishedRunnable);
-								  return crmOperationsConnection;
-							  }
-						  };
-
-						  asyncTask.execute(new Object[0]);
-					  }
-					  catch (Exception e) {
-						  throw new RuntimeException(e);
-					  }
-
-				  }
-			  };
 	private Runnable connectionEstablishedRunnable = new Runnable() {
 		@Override
 		public void run() {
-			Intent intent = new Intent(AuthenticationActivity.this, CustomerSearchActivity.class);
+			Intent intent = new Intent(AuthenticationActivity.this, CrmActivity.class);
 			startActivity(intent);
 		}
 	};
@@ -70,6 +47,13 @@ public class AuthenticationActivity extends Activity {
 	public void onStart() {
 		super.onStart();
 		crmConnectionState.start();
+		webView = crmConnectionState.webView();
+		this.setContentView(webView);
+
+		if (debug){    // todo make this a thing thats checked against some setting in
+			// todo local storage so we know if the application has been used and authenticated before.
+			crmConnectionState.resetLocalConnections();
+		}
 	}
 
 	@Override
@@ -98,19 +82,9 @@ public class AuthenticationActivity extends Activity {
 				                                                  this.connectionEstablishedRunnable,
 				                                                  this.connectionNotEstablishedRunnable,
 				                                                  getString(R.string.oauth_access_token_callback_uri));
-		if (debug){    // todo make this a thing thats checked against some setting in
-			// todo local storage so we know if the application has been used and authenticated before.
-			crmConnectionState.resetLocalConnections();
-		}
 
-		this.webView = webView();
-		this.setContentView(this.webView);
+
 	}
 
-	protected CrmOAuthFlowWebView webView() {
-		String authenticateUri = crmConnectionState.buildAuthenticationUrl();
-		String returnUri = getString(R.string.oauth_access_token_callback_uri);
-		return new CrmOAuthFlowWebView(this, authenticateUri, returnUri, this.accessTokenReceivedListener);
-	}
 
 }

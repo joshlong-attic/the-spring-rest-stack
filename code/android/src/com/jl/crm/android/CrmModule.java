@@ -1,10 +1,8 @@
 package com.jl.crm.android;
 
-import android.app.Activity;
 import android.content.Context;
-import android.location.LocationManager;
-import android.view.LayoutInflater;
-import com.jl.crm.android.activities.*;
+import com.jl.crm.android.activities.CrmActivity;
+import com.jl.crm.android.fragments.*;
 import com.jl.crm.android.utils.AndroidUiThreadUtils;
 import com.jl.crm.client.*;
 import dagger.*;
@@ -15,22 +13,21 @@ import org.springframework.social.connect.support.ConnectionFactoryRegistry;
 
 import javax.inject.Singleton;
 
-import static android.content.Context.LOCATION_SERVICE;
-
-@Module (injects = {UserHomeActivity.class, AuthenticationActivity.class, CustomerSearchActivity.class})
+@Module (injects = {/*UserHomeActivity.class, AuthenticationActivity.class,*/ AuthenticationFragment.class, CustomerSearchFragment.class, CrmActivity.class})
 public class CrmModule {
 	private Crm application;
-	private Activity activity;
 
 	public CrmModule(Crm crm) {
 		this.application = crm;
 	}
+/*
 
 	@Provides
 	@Singleton
 	LocationManager provideLocationManager() {
 		return (LocationManager) application.getSystemService(LOCATION_SERVICE);
 	}
+*/
 
 	@Provides
 	CrmOperations crmOperations(final SQLiteConnectionRepository sqLiteConnectionRepository) {
@@ -81,10 +78,10 @@ public class CrmModule {
 		return new CrmServiceProvider(baseUrl, clientId, clientSecret, authorizeUri, accessTokenUri);
 	}
 
-	@Provides
+/*	@Provides
 	LayoutInflater layoutInflater(@InjectAndroidApplicationContext Context context) {
 		return (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	}
+	}*/
 
 	@Provides
 	@Singleton

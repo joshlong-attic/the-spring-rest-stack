@@ -131,7 +131,7 @@ public abstract class Commons {
 
 	public static void launchSearchSelectedActivity(Activity activity) {
 		toast(activity, "launching home");
-		launchActivity(activity, CustomerSearchActivity.class);
+		launchActivity(activity, CrmActivity.class);
 	}
 
 	public static void launchUserProfileActivity(Activity activity) {

@@ -101,12 +101,15 @@ public class CustomerSearchActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Commons.onCreate(this, savedInstanceState);
-		this.handleIntent(getIntent());
+		this.handleIntent(this.getIntent());
 	}
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		// call detail activity for the clicked entry
+		Object selectedObject = l.getAdapter().getItem(position);
+		assert selectedObject != null : "the selected object can't be null";
+		Toast.makeText(this, "Selected " + selectedObject, 10);
 	}
 
 

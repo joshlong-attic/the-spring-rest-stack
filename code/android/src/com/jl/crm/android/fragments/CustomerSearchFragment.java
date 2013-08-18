@@ -33,6 +33,10 @@ public class CustomerSearchFragment extends ListFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
+
+
+		getActivity().getActionBar().show();
+
 		this.currentUser = crmService.currentUser();
 		loadAllCustomers();
 	}

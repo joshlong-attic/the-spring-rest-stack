@@ -1,9 +1,9 @@
 package com.jl.crm.android.activities;
 
 import android.app.*;
-import android.os.Bundle;
+import android.os.*;
 import android.util.Log;
-import android.view.*;
+import android.view.Window;
 import com.jl.crm.android.*;
 import com.jl.crm.android.fragments.*;
 import com.jl.crm.android.utils.DaggerInjectionUtils;
@@ -65,9 +65,20 @@ public class CrmActivity extends Activity {
 
 		DaggerInjectionUtils.inject(this);
 
+
+		// setup window features
 		Window window = getWindow();
 		window.requestFeature(Window.FEATURE_PROGRESS);
 		window.setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
+
+		// configure actionbar
+		ActionBar actionBar = getActionBar();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
+		actionBar.hide();
+
+		// activity UI
 
 		setContentView(R.layout.crm_activity);
 

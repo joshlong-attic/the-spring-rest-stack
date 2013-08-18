@@ -70,7 +70,13 @@ public class CrmModule {
 	@Provides
 	@Singleton
 	CrmServiceProvider serviceProvider(@InjectAndroidApplicationContext Context c) {
-		String baseUrl = c.getString(R.string.base_uri);
+
+		String baseUrl;
+		if (android.os.Build.MODEL.equals( "google_sdk")) {
+ 			 baseUrl = c.getString(R.string.base_uri_emulator);
+		} else {
+ 			 baseUrl = c.getString(R.string.base_uri_qa);
+		}
 		String clientId = c.getString(R.string.oauth_client_id);
 		String clientSecret = c.getString(R.string.oauth_client_secret);
 		String accessTokenUri = fullUrl(baseUrl, c.getString(R.string.oauth_token_uri));

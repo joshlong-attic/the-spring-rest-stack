@@ -9,6 +9,8 @@ import java.util.Collection;
  */
 public interface CrmService {
 
+	Collection<Customer> search( long userId, String token) ;
+
 	ProfilePhoto readUserProfilePhoto(long userId);
 
 	void writeUserProfilePhoto(long userId, MediaType mediaType, byte[] bytesForProfilePhoto);

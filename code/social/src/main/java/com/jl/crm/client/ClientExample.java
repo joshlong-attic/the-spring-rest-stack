@@ -76,6 +76,11 @@ public class ClientExample implements InitializingBean {
 		InputStream byteArrayInputStream = new ByteArrayInputStream(profilePhoto.getBytes());
 		OutputStream outputStream = new FileOutputStream(photoOutputFile);
 		IOUtils.copy(byteArrayInputStream, outputStream);
+		String query = "josh";
+		Collection<Customer> customerCollection = customerServiceOperations.search(query);
+		for (Customer c : customerCollection) {
+			logger.debug("searched for '" + query + "', found: " + c.toString());
+		}
 	}
 
 	@Override

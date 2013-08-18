@@ -37,17 +37,17 @@ INSERT INTO user_account (id, first_name, last_name, pass_word, signup_date, use
 INSERT INTO user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (NEXTVAL('hibernate_sequence'), 'Josh', 'Long', 'cowbell', '2013-06-02 15:33:51', 'joshlong', true, true, 'image/png');
 INSERT INTO user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (NEXTVAL('hibernate_sequence'), 'George', 'Jetson', 'sprockets', '2013-07-18 20:52:28', 'georgelee', true, false, null);
 
-INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'arjen', 'poutsma', '2013-06-12 22:37:22', 3);
-INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'mark', 'pollack', '2013-06-12 22:37:22', 4);
-INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'david', 'syer', '2013-06-12 22:37:22', 2);
-INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'gunnar', 'hillert', '2013-06-12 22:37:22', 5);
-INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'rossen', 'stoyanchev', '2013-06-12 22:37:22', 5);
-INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'josh', 'long', '2013-06-13 14:13:05', 5);
-INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'brian', 'dussault', '2013-06-13 17:07:21', 3);
-INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'phill', 'webb', '2013-06-26 03:54:53', 4);
-INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'scott', 'andrews', '2013-06-28 19:11:19', 2);
-INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'mark', 'fisher', '2013-06-28 19:54:14', 5);
-INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'josh', 'long', '2013-07-15 17:12:46', 6);
+INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Arjen', 'Poutsma', '2013-06-12 22:37:22', 3);
+INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Mark', 'Pollack', '2013-06-12 22:37:22', 4);
+INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'David', 'Syer', '2013-06-12 22:37:22', 2);
+INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Gunnar', 'Hillert', '2013-06-12 22:37:22', 5);
+INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Rossen', 'Stoyanchev', '2013-06-12 22:37:22', 5);
+INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Josh', 'Long', '2013-06-13 14:13:05', 5);
+INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Brian', 'Dussault', '2013-06-13 17:07:21', 3);
+INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Phill', 'Webb', '2013-06-26 03:54:53', 4);
+INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Scott', 'Andrews', '2013-06-28 19:11:19', 2);
+INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Mark', 'Fisher', '2013-06-28 19:54:14', 5);
+INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Mark', 'Pollack', '2013-06-28 19:54:14', 2);
 
 
 

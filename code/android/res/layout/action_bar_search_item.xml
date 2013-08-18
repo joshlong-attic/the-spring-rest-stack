@@ -4,8 +4,8 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="5dp"
-    android:paddingBottom="5dp">
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -17,25 +17,20 @@
         android:textAlignment="center"
         android:paddingStart="5dp"
         android:phoneNumber="false"
-        android:password="false" />
+        android:password="false"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp" />
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/first_name"
-        android:id="@+id/first_name_label"
+        android:id="@+id/name_label"
         android:layout_gravity="center|left"
-        android:paddingEnd="10dp" />
+        android:paddingEnd="10dp"
+        android:layout_marginRight="5dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/last_name"
-        android:id="@+id/last_name_label"
-        android:layout_gravity="center|left"
-
-        />
     <!-- android:textSize="@dimen/abs__action_bar_title_text_size" -->
 
 </LinearLayout>

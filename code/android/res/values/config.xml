@@ -12,5 +12,6 @@
     <!--
         <string name="base_uri">http://10.0.2.2:8080/</string>
     -->
-    <string name="base_uri">http://192.168.2.9:8080/</string>
+     <string name="base_uri_emulator">http://10.0.2.2:8080/</string>
+    <string name="base_uri_qa">http://192.168.2.9:8080/</string>
 </resources>

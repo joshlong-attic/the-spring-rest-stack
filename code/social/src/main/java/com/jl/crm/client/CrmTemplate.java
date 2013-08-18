@@ -39,6 +39,38 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 		return customer;
 	}
 
+	private static User unwrapUser(Resource<User> tResource) {
+		User user = tResource.getContent();
+		user.setId(tResource.getId().getHref());
+		return user;
+	}
+
+	@Override
+	public Collection<Customer> search(String token) {
+		User currentUser = currentUser();
+		Long dbId = currentUser.getDatabaseId();
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("userId", (Long.toString(dbId)));
+		params.put("q", ("%" + token + "%"));
+
+		UriComponentsBuilder uriToSearch = UriComponentsBuilder.fromUri(this.apiBaseUri).path("/customers/search/search");
+		for (String k : params.keySet()) {
+			uriToSearch.queryParam(k, params.get(k));
+		}
+
+//		for(String k : params.keySet())
+		//uriToSearch.getQueryParams().put( k, Arrays.asList( params.get(k)));
+
+
+		ResponseEntity<CustomerList> resources = this.getRestTemplate().getForEntity(uriToSearch.build().toUri(), CustomerList.class);
+		Resources<Resource<Customer>> customerResources = resources.getBody();
+		Collection<Customer> customerCollection = new ArrayList<Customer>();
+		for (Resource<Customer> customerResource : customerResources) {
+			customerCollection.add(unwrapCustomer(customerResource));
+		}
+		return customerCollection;
+	}
+
 	private Map<String, Object> customerMap(Customer customer) {
 		Map<String, Object> mapOfUserData = null;
 		if (customer.getUser() != null){
@@ -63,29 +95,12 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 		return unwrapCustomer(customerResource);
 	}
 
-	public static class CustomerList extends Resources<Resource<Customer>> {
-	}
-
-	public static class UserResource extends Resource<User> {
-	}
-
-	public static class CustomerResource extends Resource<Customer> {
-	}
-
-	private static User unwrapUser(Resource<User> tResource) {
-		User user = tResource.getContent();
-		user.setId(tResource.getId().getHref());
-		return user;
-	}
-
-
 	@Override
 	public User currentUser() {
 		ResponseEntity<UserResource> userResponse = this.getRestTemplate().getForEntity(uriFrom("/user"), UserResource.class);
 		Resource<User> userResource = userResponse.getBody();
 		return unwrapUser(userResource);
 	}
-
 
 	@Override
 	public Customer createCustomer(String firstName, String lastName, Date signupDate) {
@@ -106,7 +121,6 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 		return customer(newLocation);
 	}
 
-
 	@Override
 	public Collection<Customer> loadAllUserCustomers() {
 		User currentUser = currentUser();
@@ -126,7 +140,6 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 		URI uri = uriFrom("/customers/" + Long.toString(customer));
 		this.getRestTemplate().delete(uri);
 	}
-
 
 	@Override
 	public Customer loadUserCustomer(Long id) {
@@ -186,6 +199,15 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 
 	private URI uriFrom(String subUrl, Map<String, ?> params) {
 		return UriComponentsBuilder.fromUri(this.apiBaseUri).path(subUrl).buildAndExpand(params).toUri();
+	}
+
+	public static class CustomerList extends Resources<Resource<Customer>> {
+	}
+
+	public static class UserResource extends Resource<User> {
+	}
+
+	public static class CustomerResource extends Resource<Customer> {
 	}
 
 

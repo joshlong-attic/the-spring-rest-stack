@@ -32,7 +32,7 @@ public class AndroidUiThreadUtils {
 								  }
 							  }
 						  };
-				return valueReturningAsyncTask.execute().get();
+				return valueReturningAsyncTask.execute(new Object[0]).get();
 			}
 		};
 		Object objectProxy = Proxy.newProxyInstance(target.getClass().getClassLoader(), tClass, invocationHandler);

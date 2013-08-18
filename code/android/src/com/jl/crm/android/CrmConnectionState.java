@@ -3,6 +3,7 @@ package com.jl.crm.android;
 import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.util.Log;
 import com.jl.crm.android.widget.CrmOAuthFlowWebView;
 import com.jl.crm.client.*;
 import org.springframework.social.connect.Connection;
@@ -80,19 +81,31 @@ public class CrmConnectionState {
 
 	public void start() {
 		// todo extract this out to a configuration variable
-		resetLocalConnections();
+		//resetLocalConnections();
 
 		new AsyncTask<Object, Object, Connection<CrmOperations>>() {
 			@Override
 			protected Connection<CrmOperations> doInBackground(Object... params) {
 				Connection<CrmOperations> connection = sqLiteConnectionRepository.findPrimaryConnection(CrmOperations.class);
-				activity.runOnUiThread(connection != null ? connectionEstablishedRunnable : connectionNotEstablishedRunnable);
+				boolean connected = false;
+				try {
+					if (connection != null && connection.test()){
+						connected = true;
+					}
+				}
+				catch (Throwable t) {
+					// something goes wrong, its never set to true, we run the reconnect logic
+					Log.e(CrmConnectionState.class.getName(), "error when trying to ascertain an existing connection.", t);
+				}
+
+				activity.runOnUiThread( connected ? connectionEstablishedRunnable : connectionNotEstablishedRunnable);
 				return null;
 			}
-		}.execute(new Object[]{});
+		}.execute();
 	}
 
 	public void resetLocalConnections() {
+
 		SQLiteDatabase sqLiteDatabase = null;
 		try {
 			sqLiteDatabase = repositoryHelper.getWritableDatabase();

@@ -48,6 +48,17 @@ public class TestCustomerService {
 		Assert.assertNotNull(this.joshlong);
 	}
 
+	@Inject private CustomerRepository customerRepository ;
+
+	@Test public void testCustomerSearch  () throws Throwable {
+		long joshlongUserId = this.joshlong.getId();
+
+		Collection<Customer> customerCollection  = crmService.search(joshlongUserId,  "josh" )	;
+		Assert.assertTrue( "there should be at least" , customerCollection.size() > 0);
+
+
+	}
+
 	@Test
 	public void testCreatingCustomer() throws Throwable {
 

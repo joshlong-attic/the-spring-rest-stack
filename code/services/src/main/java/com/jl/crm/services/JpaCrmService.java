@@ -20,6 +20,10 @@ import java.util.*;
 @Service
 @Transactional
 public class JpaCrmService implements CrmService {
+	@Override
+	public Collection<Customer> search(long userId, String token) {
+	  return this.customerRepository.search( userId , "%" + token + "%") ;
+	}
 
 	private CustomerRepository customerRepository;
 	private UserRepository userRepository;

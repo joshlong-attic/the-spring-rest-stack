@@ -26,4 +26,6 @@ public interface CrmOperations {
 	Customer updateCustomer(Long id, String firstName, String lastName);
 
 	ProfilePhoto getUserProfilePhoto();
+
+	Collection<Customer> search(String token);
 }

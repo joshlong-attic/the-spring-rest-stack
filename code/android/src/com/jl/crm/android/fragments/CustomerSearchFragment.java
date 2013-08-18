@@ -1,6 +1,8 @@
 package com.jl.crm.android.fragments;
 
-import android.app.ListFragment;
+import android.app.*;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
@@ -28,63 +30,96 @@ public class CustomerSearchFragment extends ListFragment {
 		Log.d(CustomerSearchFragment.class.getName(), "the current user is " + this.currentUser + "");
 	}
 
-
 	@Override
 	public void onStart() {
 		super.onStart();
-
 		this.currentUser = crmService.currentUser();
-//		doSearch("Josh");
+		loadAllCustomers();
 	}
 
-	protected void doSearch(String query) {
+	private final static int ACTION_CUSTOMER_SEARCH = Menu.FIRST + 1;
 
-		assert this.currentUser != null : "the currentUser can't be null";
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-		// get a cursor, prepare the ListAdapter, and set it
-		Toast.makeText(getActivity(), "Searching for query '" + query + "'" + "and the current User is " + this.currentUser.toString(), 10);
 
-		String[] names = "John,Doe;Jane,Doe".split(";");
-		List<Customer> customerList = new ArrayList<Customer>();
+		// setup the SearchView
+		SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 
-		for (String n : names) {
-			customerList.add(new Customer(this.currentUser, n.split(",")[0], n.split(",")[1]) {
-				@Override
-				public Long getDatabaseId() {
-					return (long) (Math.random() * 1000L);
-				}
-			});
-		}
-
-		ArrayAdapter<Customer> listAdapter = new ArrayAdapter<Customer>(getActivity(), R.layout.action_bar_search_item, customerList) {
+		SearchView searchView = new SearchView( getActivity() );
+		searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+		searchView.setQueryHint(getString(R.string.search_hint));
+		searchView.setIconified(true);
+		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-
-				Customer customer = this.getItem(position);
-
-				final View view = View.inflate(getActivity(), R.layout.action_bar_search_item, null);
-
-				final TextView fn = (TextView) view.findViewById(R.id.first_name_label);
-				fn.setText(customer.getFirstName());
-
-				final TextView ln = (TextView) view.findViewById(R.id.last_name_label);
-				ln.setText(customer.getLastName());
-
-				final TextView id = (TextView) view.findViewById(R.id.customer_id);
-				id.setAlpha(.7f);
-				id.setText(Long.toString(customer.getDatabaseId()));
-
-				return view;
+			public boolean onQueryTextSubmit(String query) {
+				Log.d(getTag(),"query text submitted: "+ query);
+				search( query);
+				return true ;
 			}
-		};
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				Log.d(getTag(),"query text changed: "+ newText);
+				return false;
+			}
+		});
+
+		TextView textView = (TextView) searchView.findViewById(searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null));
+		textView.setTextColor(Color.WHITE);
+
+		MenuItem menuItem = menu.add(Menu.NONE, ACTION_CUSTOMER_SEARCH, 1, getString(R.string.search)) ;
+		menuItem.setIcon(android.R.drawable.ic_menu_search)
+				  .setActionView(searchView)
+				  .setTitle(R.string.search)
+				  .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+	}
+
+	/* this is what happens by default */
+	public void loadAllCustomers() {
+		redrawCustomersWithNewData(crmService.loadAllUserCustomers());
+	}
+
+	public void search(String query) {
+		redrawCustomersWithNewData(crmService.search(query));
+	}
+
+	private void redrawCustomersWithNewData(Collection<Customer> c) {
+		assert this.currentUser != null : "the currentUser can't be null";
+		List<Customer> customerCollection = new ArrayList<Customer>(c);
+		CustomerArrayAdapter listAdapter = new CustomerArrayAdapter(getActivity(), customerCollection);
 		setListAdapter(listAdapter);
 	}
-
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		DaggerInjectionUtils.inject(this);
+		setHasOptionsMenu(true);
+
+	}
+
+	public static class CustomerArrayAdapter extends ArrayAdapter<Customer> {
+		public CustomerArrayAdapter(Context context, List<Customer> objects) {
+			super(context, R.layout.action_bar_search_item, objects);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+
+			Customer customer = this.getItem(position);
+
+			final View view = View.inflate(this.getContext(), R.layout.action_bar_search_item, null);
+
+			final TextView name = (TextView) view.findViewById(R.id.name_label);
+			name.setText(customer.getFirstName() + " " + customer.getLastName());
+
+			final TextView id = (TextView) view.findViewById(R.id.customer_id);
+			id.setAlpha(.7f);
+			id.setText(Long.toString(customer.getDatabaseId()));
+
+			return view;
+		}
 	}
 /*
 

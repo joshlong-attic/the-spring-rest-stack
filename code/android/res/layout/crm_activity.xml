@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:id="@+id/crm_activity" />
+<!--
+<LinearLayout
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:id="@+id/crm_activity_linear_layout"
+    android:layout_width="fill_parent"
+    android:id="@+id/crm_activity"
     android:layout_height="fill_parent">
+-->
 
 
-</LinearLayout>
+    <!--
+
+    </LinearLayout>-->

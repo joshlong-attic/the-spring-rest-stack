@@ -97,7 +97,6 @@ public class ClientExample implements InitializingBean {
 			parameters.setRedirectUri(returnToUrl);
 		}
 
-
 		// figure out what the OAuth "authorize" endpoint should be and open it with
 		// the system's default HTTP browser
 		String authorizationUrl = oAuth2Operations.buildAuthenticateUrl(GrantType.IMPLICIT_GRANT, parameters);

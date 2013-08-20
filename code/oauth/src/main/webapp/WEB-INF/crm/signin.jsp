@@ -40,7 +40,7 @@
         <DIV>
             <label style="width: 100px; display: inline-block;" class="control-label" for="username"> User
                 Name: </label> <br/>
-            <input id="username" name="username" type="text"/>
+            <input id="username" value="joshlong" name="username" type="text"/>
 
         </DIV>
 

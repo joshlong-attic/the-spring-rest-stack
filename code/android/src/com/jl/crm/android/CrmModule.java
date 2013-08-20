@@ -1,19 +1,29 @@
 package com.jl.crm.android;
 
 import android.content.Context;
-import com.jl.crm.android.activities.CrmActivity;
-import com.jl.crm.android.fragments.*;
+import com.jl.crm.android.activities.MainActivity;
+import com.jl.crm.android.activities.fragments.CustomerSearchFragment;
+import com.jl.crm.android.activities.fragments.SignInFragment;
+import com.jl.crm.android.activities.fragments.SignOutFragment;
 import com.jl.crm.android.utils.AndroidUiThreadUtils;
-import com.jl.crm.client.*;
-import dagger.*;
-import org.springframework.security.crypto.encrypt.*;
+import com.jl.crm.client.CrmApiAdapter;
+import com.jl.crm.client.CrmConnectionFactory;
+import com.jl.crm.client.CrmOperations;
+import com.jl.crm.client.CrmServiceProvider;
+import dagger.Module;
+import dagger.Provides;
+import org.springframework.security.crypto.encrypt.AndroidEncryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.social.connect.sqlite.SQLiteConnectionRepository;
 import org.springframework.social.connect.sqlite.support.SQLiteConnectionRepositoryHelper;
 import org.springframework.social.connect.support.ConnectionFactoryRegistry;
 
 import javax.inject.Singleton;
 
-@Module (injects = {/*UserHomeActivity.class, AuthenticationActivity.class,*/ AuthenticationFragment.class, CustomerSearchFragment.class, CrmActivity.class})
+@Module ( library = true ,
+        injects = {     CustomerSearchFragment.class,
+        MainActivity.class , SignInFragment.class, SignOutFragment.class
+/*SignOutFragment.class, AuthenticationFragment.class, CustomerSearchFragment.class, UserProfileFragment.class, CrmActivity.class*/})
 public class CrmModule {
 	private Crm application;
 
@@ -72,10 +82,11 @@ public class CrmModule {
 	CrmServiceProvider serviceProvider(@InjectAndroidApplicationContext Context c) {
 
 		String baseUrl;
-		if (android.os.Build.MODEL.equals( "google_sdk")) {
- 			 baseUrl = c.getString(R.string.base_uri_emulator);
-		} else {
- 			 baseUrl = c.getString(R.string.base_uri_qa);
+		if (android.os.Build.MODEL.equals("google_sdk")){
+			baseUrl = c.getString(R.string.base_uri_emulator);
+		}
+		else {
+			baseUrl = c.getString(R.string.base_uri_qa);
 		}
 		String clientId = c.getString(R.string.oauth_client_id);
 		String clientSecret = c.getString(R.string.oauth_client_secret);

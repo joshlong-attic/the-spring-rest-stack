@@ -142,7 +142,8 @@ public class CrmConnectionState {
 
 	public Connection<CrmOperations> installAccessToken(String accessToken) {
 		AccessGrant accessGrant = new AccessGrant(accessToken);
-		Connection<CrmOperations> crmOperationsConnection = connectionFactory.createConnection(accessGrant);
+        resetLocalConnections();
+        Connection<CrmOperations> crmOperationsConnection = connectionFactory.createConnection(accessGrant);
 		sqLiteConnectionRepository.addConnection(crmOperationsConnection);
 		return crmOperationsConnection;
 	}

@@ -2,6 +2,7 @@ package com.jl.crm.android.utils;
 
 import android.app.*;
 import android.content.*;
+import android.support.v4.app.Fragment;
 import com.jl.crm.android.Crm;
 
 

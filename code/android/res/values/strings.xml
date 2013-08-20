@@ -160,5 +160,13 @@
     <string name="last_name">Last Name</string>
     <string name="first_name">First Name</string>
     <string name="customer_id">#</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="your_user_profile">Your Profile</string>
+    <string name="your_user_profile_introduction">You can update your profile easily:</string>
+    <string name="save">Save</string>
+    <string name="password">Password:</string>
+    <string name="your_user_profile_photo">Your Photo</string>
+    <string name="sign_in">Sign In</string>
+    <string name="welcome_content_description">Welcome to the Spring CRM</string>
 
 </resources>

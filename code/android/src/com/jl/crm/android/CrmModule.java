@@ -20,106 +20,93 @@ import org.springframework.social.connect.support.ConnectionFactoryRegistry;
 
 import javax.inject.Singleton;
 
-@Module ( library = true ,
-        injects = {     CustomerSearchFragment.class,
-        MainActivity.class , SignInFragment.class, SignOutFragment.class
-/*SignOutFragment.class, AuthenticationFragment.class, CustomerSearchFragment.class, UserProfileFragment.class, CrmActivity.class*/})
+@Module(  injects = {CustomerSearchFragment.class, MainActivity.class, SignInFragment.class, SignOutFragment.class})
 public class CrmModule {
-	private Crm application;
+    private Crm application;
 
-	public CrmModule(Crm crm) {
-		this.application = crm;
-	}
-/*
+    public CrmModule(Crm crm) {
+        this.application = crm;
+    }
 
-	@Provides
-	@Singleton
-	LocationManager provideLocationManager() {
-		return (LocationManager) application.getSystemService(LOCATION_SERVICE);
-	}
-*/
+    @Provides
+    CrmOperations crmOperations(final SQLiteConnectionRepository sqLiteConnectionRepository) {
+        try {
+            Class<CrmOperations> crmOperationsClass = CrmOperations.class;
+            CrmOperations ops = sqLiteConnectionRepository.getPrimaryConnection(crmOperationsClass).getApi();
+            return AndroidUiThreadUtils.runOffUiThread(ops, crmOperationsClass);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	@Provides
-	CrmOperations crmOperations(final SQLiteConnectionRepository sqLiteConnectionRepository) {
-		try {
-			Class<CrmOperations> crmOperationsClass = CrmOperations.class;
-			CrmOperations ops = sqLiteConnectionRepository.getPrimaryConnection(crmOperationsClass).getApi();
-			return AndroidUiThreadUtils.runOffUiThread(ops, crmOperationsClass);
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Provides
+    @Singleton
+    SQLiteConnectionRepository sqLiteConnectionRepository(SQLiteConnectionRepositoryHelper sqLiteConnectionRepositoryHelper,
+                                                          ConnectionFactoryRegistry connectionFactoryRegistry) {
+        TextEncryptor textEncryptor = AndroidEncryptors.text("password", "5c0744940b5c369b");
+        return new SQLiteConnectionRepository(sqLiteConnectionRepositoryHelper, connectionFactoryRegistry, textEncryptor);
+    }
 
-	@Provides
-	@Singleton
-	SQLiteConnectionRepository sqLiteConnectionRepository(SQLiteConnectionRepositoryHelper sqLiteConnectionRepositoryHelper,
-			                                                       ConnectionFactoryRegistry connectionFactoryRegistry) {
-		TextEncryptor textEncryptor = AndroidEncryptors.text("password", "5c0744940b5c369b");
-		return new SQLiteConnectionRepository(sqLiteConnectionRepositoryHelper, connectionFactoryRegistry, textEncryptor);
-	}
+    @Provides
+    @Singleton
+    ConnectionFactoryRegistry connectionFactoryRegistry() {
+        return new ConnectionFactoryRegistry();
+    }
 
-	@Provides
-	@Singleton
-	ConnectionFactoryRegistry connectionFactoryRegistry() {
-		return new ConnectionFactoryRegistry();
-	}
+    @Provides
+    @Singleton
+    SQLiteConnectionRepositoryHelper repositoryHelper(@InjectAndroidApplicationContext Context context) {
+        return new SQLiteConnectionRepositoryHelper(context);
+    }
 
-	@Provides
-	@Singleton
-	SQLiteConnectionRepositoryHelper repositoryHelper(@InjectAndroidApplicationContext Context context) {
-		return new SQLiteConnectionRepositoryHelper(context);
-	}
+    @Provides
+    @Singleton
+    CrmApiAdapter apiAdapter() {
+        return new CrmApiAdapter();
+    }
 
-	@Provides
-	@Singleton
-	CrmApiAdapter apiAdapter() {
-		return new CrmApiAdapter();
-	}
+    @Provides
+    @Singleton
+    CrmServiceProvider serviceProvider(@InjectAndroidApplicationContext Context c) {
 
-	@Provides
-	@Singleton
-	CrmServiceProvider serviceProvider(@InjectAndroidApplicationContext Context c) {
-
-		String baseUrl;
-		if (android.os.Build.MODEL.equals("google_sdk")){
-			baseUrl = c.getString(R.string.base_uri_emulator);
-		}
-		else {
-			baseUrl = c.getString(R.string.base_uri_qa);
-		}
-		String clientId = c.getString(R.string.oauth_client_id);
-		String clientSecret = c.getString(R.string.oauth_client_secret);
-		String accessTokenUri = fullUrl(baseUrl, c.getString(R.string.oauth_token_uri));
-		String authorizeUri = fullUrl(baseUrl, c.getString(R.string.oauth_authorize_uri));
-		return new CrmServiceProvider(baseUrl, clientId, clientSecret, authorizeUri, accessTokenUri);
-	}
+        String baseUrl;
+        if (android.os.Build.MODEL.equals("google_sdk")) {
+            baseUrl = c.getString(R.string.base_uri_emulator);
+        } else {
+            baseUrl = c.getString(R.string.base_uri_qa);
+        }
+        String clientId = c.getString(R.string.oauth_client_id);
+        String clientSecret = c.getString(R.string.oauth_client_secret);
+        String accessTokenUri = fullUrl(baseUrl, c.getString(R.string.oauth_token_uri));
+        String authorizeUri = fullUrl(baseUrl, c.getString(R.string.oauth_authorize_uri));
+        return new CrmServiceProvider(baseUrl, clientId, clientSecret, authorizeUri, accessTokenUri);
+    }
 
 /*	@Provides
-	LayoutInflater layoutInflater(@InjectAndroidApplicationContext Context context) {
+    LayoutInflater layoutInflater(@InjectAndroidApplicationContext Context context) {
 		return (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}*/
 
-	@Provides
-	@Singleton
-	CrmConnectionFactory crmConnectionFactory(ConnectionFactoryRegistry connectionFactoryRegistry,
-			                                           CrmServiceProvider crmServiceProvider,
-			                                           CrmApiAdapter crmApiAdapter) {
-		CrmConnectionFactory crmConnectionFactory = new CrmConnectionFactory(crmServiceProvider, crmApiAdapter);
-		connectionFactoryRegistry.addConnectionFactory(crmConnectionFactory);
-		return crmConnectionFactory;
-	}
+    @Provides
+    @Singleton
+    CrmConnectionFactory crmConnectionFactory(ConnectionFactoryRegistry connectionFactoryRegistry,
+                                              CrmServiceProvider crmServiceProvider,
+                                              CrmApiAdapter crmApiAdapter) {
+        CrmConnectionFactory crmConnectionFactory = new CrmConnectionFactory(crmServiceProvider, crmApiAdapter);
+        connectionFactoryRegistry.addConnectionFactory(crmConnectionFactory);
+        return crmConnectionFactory;
+    }
 
-	@Provides
-	@Singleton
-	@InjectAndroidApplicationContext
-	Context provideApplicationContext() {
-		return this.application.getApplicationContext();
-	}
+    @Provides
+    @Singleton
+    @InjectAndroidApplicationContext
+    Context provideApplicationContext() {
+        return this.application.getApplicationContext();
+    }
 
-	private String fullUrl(String baseUrl, String end) {
-		String base = !baseUrl.endsWith("/") ? baseUrl + "/" : baseUrl;
-		String newEnd = end.startsWith("/") ? end.substring(1) : end;
-		return base + newEnd;
-	}
+    private String fullUrl(String baseUrl, String end) {
+        String base = !baseUrl.endsWith("/") ? baseUrl + "/" : baseUrl;
+        String newEnd = end.startsWith("/") ? end.substring(1) : end;
+        return base + newEnd;
+    }
 }

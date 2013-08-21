@@ -10,6 +10,8 @@
     <style type="text/css">
     .error { color: #FF0000; }
     .success { color: #00FF00; }
+
+        body { font-size: larger }
     </style>
 </head>
 <body>
@@ -40,7 +42,7 @@
         <DIV>
             <label style="width: 100px; display: inline-block;" class="control-label" for="username"> User
                 Name: </label> <br/>
-            <input id="username" value="joshlong" name="username" type="text"/>
+            <input id="username"  name="username" type="text"/>
 
         </DIV>
 
@@ -52,7 +54,7 @@
         </DIV>
         <input type="submit"/>
 
-        <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>" value="<c:out value="${_csrf.token}"/>"/>
+         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>
     <p style="background-color: ActiveBorder; padding: 10px;">The preloaded (demonstration!) usernames and passwords are
         in the file <code>/services/src/main/resources/crm-schema-*.sql</code>, where

@@ -1,13 +1,20 @@
 package com.jl.crm.android.activities;
 
 
+import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.widget.SearchView;
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.jl.crm.android.CrmConnectionState;
 import com.jl.crm.android.R;
 import com.jl.crm.android.activities.fragments.*;
@@ -18,6 +25,7 @@ import com.jl.crm.client.CrmOperations;
 import com.jl.crm.client.User;
 import org.springframework.social.connect.sqlite.SQLiteConnectionRepository;
 import org.springframework.social.connect.sqlite.support.SQLiteConnectionRepositoryHelper;
+import org.springframework.util.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -34,6 +42,7 @@ import java.util.List;
 public class MainActivity extends SherlockFragmentActivity {
 
     FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+
         @Override
         public Fragment getItem(int position) {
             return allFragments.get(position);
@@ -45,7 +54,7 @@ public class MainActivity extends SherlockFragmentActivity {
             if (fragment instanceof NamedFragment) {
                 return ((NamedFragment) fragment).getTitle();
             }
-            return null;
+            return "No Title Given for " + fragment.getClass().getSimpleName();
         }
 
         @Override
@@ -84,12 +93,12 @@ public class MainActivity extends SherlockFragmentActivity {
             signin(currentUser);
         }
     };
-    // fragment s
+    // fragments
     SignInFragment signInFragment;
     CustomerSearchFragment searchFragment;
     SignOutFragment signOutFragment;
     WelcomeFragment welcomeFragment;
-    UserProfileFragment  userProfileFragment;
+    UserProfileFragment userAccountFragment;
 
     // todo
     public void signout() {
@@ -137,13 +146,15 @@ public class MainActivity extends SherlockFragmentActivity {
         setContentView(R.layout.main_activity);
 
         Log.d(MainActivity.class.getName(), "onCreate()");
-        setupCommonInfrastructure();
 
+        setupCommonInfrastructure();
         setupFragments();
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(fragmentPagerAdapter);
 
+        // do this once
+        show(this.welcomeFragment); // we want this displaying no matter what...
     }
 
     public void setupFragments() {
@@ -153,10 +164,10 @@ public class MainActivity extends SherlockFragmentActivity {
 
         addFragments(this.welcomeFragment, this.signInFragment);
 
-        this.userProfileFragment =new UserProfileFragment( this,getString(R.string.user_account));
+        this.userAccountFragment = new UserProfileFragment(this, getString(R.string.user_account));
         this.searchFragment = new CustomerSearchFragment(this, this.crmOperationsProvider, getString(R.string.search), getString(R.string.search_hint));
         this.signOutFragment = new SignOutFragment(this, getString(R.string.sign_out));
-        addSecuredFragments(this.searchFragment, this.signOutFragment);
+        addSecuredFragments(this.searchFragment,this.userAccountFragment, this.signOutFragment);
 
 
     }
@@ -164,21 +175,73 @@ public class MainActivity extends SherlockFragmentActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.clear();
-        for (Fragment f : this.allFragments) {
-            if (f instanceof MenuContributingFragment) {
-                MenuContributingFragment menuContributingFragment = (MenuContributingFragment) f;
-                menuContributingFragment.contributeToMenu(menu);
-            }
-        }
 
-        return true;
+        final Activity activity = this;
+        final String tag = getClass().getSimpleName();
+
+        // search
+        SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = new SearchView(activity);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
+        searchView.setQueryHint(getString(R.string.search_hint));
+        searchView.setIconified(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d(tag, "query text submitted: " + query);
+                if (!StringUtils.hasText(query)) {
+                    searchFragment.loadAllCustomers();
+                } else {
+                    searchFragment.search(query);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d(tag, "query text changed: " + newText);
+                if (!StringUtils.hasText(newText)) {
+                    searchFragment.loadAllCustomers();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        TextView textView = (TextView) searchView.findViewById(searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null));
+        textView.setTextColor(Color.WHITE);
+
+        // menu items
+
+        MenuItem searchMenuItem = MenuItemUtils.menuItem(menu, this, getString(R.string.search), searchView, null, MenuItem.SHOW_AS_ACTION_ALWAYS);
+        MenuItem signOutMenuItem = MenuItemUtils.menuItem(menu, this, getString(R.string.sign_out), null, new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                signout();
+                return true;
+            }
+        });
+        MenuItem userAccountMenuItem = MenuItemUtils.menuItem(menu, this, getString(R.string.user_account), null, new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                showUserAccount();
+                return true;
+            }
+        });
+
+        return super.onPrepareOptionsMenu(menu);
     }
+
+    public void showUserAccount() {
+         show( this.userAccountFragment);
+    }
+
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.d(MainActivity.class.getName(), "onStart()");
-        show(this.welcomeFragment); // we want this displaying no matter what...
+
         this.crmConnectionState.start();
     }
 

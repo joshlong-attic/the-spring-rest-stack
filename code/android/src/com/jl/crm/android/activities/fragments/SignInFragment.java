@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
 import com.jl.crm.android.CrmConnectionState;
 import com.jl.crm.android.activities.MainActivity;
 import com.jl.crm.android.activities.MenuContributingFragment;
@@ -59,10 +58,8 @@ public class SignInFragment extends SherlockFragment implements NamedFragment, M
         wb.noAccessToken();
 
     }
-    @Override
-    public void contributeToMenu(Menu menu) {
-        // no need to contribute anything to the menus since we're only visible when nothing else is.
-    }
+
+
 
     @Override
     public String getTitle() {

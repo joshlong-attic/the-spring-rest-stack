@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.jl.crm.android.R;
 import com.jl.crm.android.activities.MainActivity;
@@ -58,32 +59,26 @@ public class CustomerSearchFragment extends SherlockListFragment implements Menu
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
         this.crmOperations = this.crmOperationsProvider.get();
-
-
-        if (!isAdded()) {
-            onceAttached = new Runnable() {
-                @Override
-                public void run() {
-                    loadAllCustomers();
-                }
-            };
-        } else {
-            loadAllCustomers();
-        }
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (onceAttached != null) activity.runOnUiThread(this.onceAttached);
+    public void onStart() {
+        super.onStart();
+
+        if (isAuthenticated())
+            loadAllCustomers();
+
     }
 
     /* this is what happens by default */
     public void loadAllCustomers() {
+        Log.d(getClass().getName(), "loading all the CRM customers.");
         redrawCustomersWithNewData(crmOperations.loadAllUserCustomers());
     }
 
     public void search(String query) {
+        Log.d(getClass().getName(), "loading only the CRM customers " +
+                "that match a particular query.");
         redrawCustomersWithNewData(crmOperations.search(query));
     }
 
@@ -108,46 +103,9 @@ public class CustomerSearchFragment extends SherlockListFragment implements Menu
     }
 
     @Override
-    public void contributeToMenu(com.actionbarsherlock.view.Menu menu) {
-        if (!isAuthenticated())
-            return;
+    public void onPrepareOptionsMenu(Menu menu) {
 
 
-        // setup the SearchView
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-
-        SearchView searchView = new SearchView(getActivity());
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setQueryHint(hint);
-        searchView.setIconified(true);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.d(getTag(), "query text submitted: " + query);
-                if (!StringUtils.hasText(query)) {
-                    loadAllCustomers();
-                } else {
-                    search(query);
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                Log.d(getTag(), "query text changed: " + newText);
-                if (!StringUtils.hasText(newText)) {
-                    loadAllCustomers();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        TextView textView = (TextView) searchView.findViewById(searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null));
-        textView.setTextColor(Color.WHITE);
-
-        menu.add(getTitle() ).setTitle(getTitle() ).setActionView(searchView).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
     public static class CustomerArrayAdapter extends ArrayAdapter<Customer> {

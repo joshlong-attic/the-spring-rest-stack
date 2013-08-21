@@ -168,5 +168,6 @@
     <string name="your_user_profile_photo">Your Photo</string>
     <string name="sign_in">Sign In</string>
     <string name="welcome_content_description">Welcome to the Spring CRM</string>
+    <string name="profile_photo_description">Your current profile photo</string>
 
 </resources>

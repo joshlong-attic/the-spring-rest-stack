@@ -2,26 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>com.joshlong.restfuliterations</groupId>
     <artifactId>core</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
         <m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
-        <spring-security.version>3.2.0.CI-SNAPSHOT</spring-security.version>
+        <spring-security.version>3.2.0.RC1</spring-security.version>
     </properties>
     <packaging>pom</packaging>
     <modules>
         <module>services</module>
         <module>social</module>
-        <!--
-					 <module>android</module> 
-					TODO 	should this be included in the main build? 
-								it would mean that everyone who wants to consume this
-								would need to have the Android SDK setup. And it would have to work with the 
-								build configuration specified in the Android module's pom.xml, which is
-								not nearly the same certainty a given version working with a previous version of the JVM is.
-						
-				-->
+        <!-- <module>android</module> TODO should this be included in the main build? it would mean that everyone who wants 
+            to consume this would need to have the Android SDK setup. And it would have to work with the build configuration specified 
+            in the Android module's pom.xml, which is not nearly the same certainty a given version working with a previous version of 
+            the JVM is. -->
         <module>rest</module>
         <module>hateoas</module>
         <module>hateoas-data</module>
@@ -265,7 +261,7 @@
             <dependency>
                 <groupId>postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <!--<version>8.3-603.jdbc3</version>-->
+                <!--<version>8.3-603.jdbc3</version> -->
                 <version>9.1-901-1.jdbc4</version>
             </dependency>
             <dependency>
@@ -292,8 +288,8 @@
             <dependency>
                 <groupId>org.springframework.security.oauth</groupId>
                 <artifactId>spring-security-oauth2-javaconfig</artifactId>
-                  <version>1.0.0.CI-SNAPSHOT</version>
-                 <!-- <version>1.0.0.SNAPSHOT</version>-->
+                <version>1.0.0.CI-SNAPSHOT</version>
+                <!-- <version>1.0.0.SNAPSHOT</version> -->
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
@@ -326,50 +322,28 @@
                 <artifactId>spring-security-web</artifactId>
                 <version>${spring-security.version}</version>
             </dependency>
-
-
         </dependencies>
     </dependencyManagement>
 
     <repositories>
         <repository>
-            <id>org.springframework.maven.snapshot</id>
+            <id>spring-snapshot</id>
             <name>Spring Maven Snapshot Repository</name>
-            <url>http://maven.springframework.org/snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>org.springframework.maven.milestone</id>
-            <name>Spring Maven Milestone Repository</name>
-            <url>http://maven.springframework.org/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+            <url>http://repo.springsource.org/libs-snapshot</url>
         </repository>
         <repository>
             <id>JBoss repository</id>
             <url>http://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repository.springframework.maven.milestone</id>
-            <name>Spring Framework Maven Milestone Repository</name>
-            <url>http://maven.springframework.org/milestone</url>
-        </pluginRepository>
-    </pluginRepositories>
+
 
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.0</version>
+                    <version>3.1</version>
                     <configuration>
                         <compilerVersion>1.6</compilerVersion>
                         <source>1.6</source>
@@ -389,15 +363,19 @@
                     <artifactId>jetty-maven-plugin</artifactId>
                     <version>9.0.3.v20130506</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.tomcat.maven</groupId>
+                    <artifactId>tomcat7-maven-plugin</artifactId>
+                    <version>2.1</version>
+                </plugin>
             </plugins>
-
         </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
-
         </plugins>
     </build>
+
 </project>

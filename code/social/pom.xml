@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-
         <groupId>com.joshlong.restfuliterations</groupId>
         <version>1.0-SNAPSHOT</version>
         <artifactId>core</artifactId>
     </parent>
+
     <artifactId>social</artifactId>
     <packaging>jar</packaging>
 
@@ -48,7 +48,6 @@
             <artifactId>h2</artifactId>
             <optional>true</optional>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -60,9 +59,7 @@
             <version>${project.version}</version>
             <optional>true</optional>
         </dependency>
-
     </dependencies>
-
 
     <build>
         <plugins>

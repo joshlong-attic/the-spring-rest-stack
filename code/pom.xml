@@ -35,6 +35,22 @@
             <organization>SpringSource, by Pivotal</organization>
             <organizationUrl>http://www.springsource.org</organizationUrl>
         </contributor>
+        <contributor>
+             <name>Rob Winch</name>
+            <organization>SpringSource, by Pivotal</organization>
+            <organizationUrl>http://www.springsource.org</organizationUrl>
+        </contributor>
+        <contributor>
+            <name>Phill Webb</name>
+            <organization>SpringSource, by Pivotal</organization>
+            <organizationUrl>http://www.springsource.org</organizationUrl>
+        </contributor>
+        <contributor>
+            <name>Roy Clarkson</name>
+            <organization>SpringSource, by Pivotal</organization>
+            <organizationUrl>http://www.springsource.org</organizationUrl>
+        </contributor>
+
     </contributors>
 
     <dependencyManagement>

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import com.jl.crm.android.R;
 import com.jl.crm.android.activities.MainActivity;
 
@@ -15,36 +16,36 @@ import com.jl.crm.android.activities.MainActivity;
  */
 public class UserProfileFragment extends SecuredCrmFragment {
 
-    private EditText username, fn, ln;
-    private ImageView imageView;
+    private TextView welcomeTextView;
+    private EditText firstNameEditText, lastNameEditText;
+    private ImageView userProfileImageView;
 
     public UserProfileFragment(MainActivity mainActivity, String title) {
         super(mainActivity, title);
     }
 
-    private EditText editText(View v, int fieldId) {
-        return (EditText) v.findViewById(fieldId);
+    private EditText editText(View view, int fieldId) {
+        return (EditText) view.findViewById(fieldId);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.user_detail_fragment ,container,false);
-       if(v instanceof GridLayout){
-           GridLayout gridLayout  = (GridLayout) v;
-           gridLayout.setOrientation(GridLayout.HORIZONTAL);
-       }
-        username = editText(v, R.id.username);
-        fn = editText(v, R.id.first_name);
-        ln = editText(v, R.id.last_name);
-        imageView = (ImageView) v.findViewById(R.id.profile_photo);
+        View view = inflater.inflate(R.layout.user_detail_fragment, container, false);
+        if (view instanceof GridLayout) {
+            GridLayout gridLayout = (GridLayout) view;
+            gridLayout.setPadding(10,0,10,0);
+            gridLayout.setOrientation(GridLayout.HORIZONTAL);
+        }
+        welcomeTextView = (TextView) view.findViewById(R.id.user_profile_description);
+        firstNameEditText = editText(view, R.id.first_name);
+        lastNameEditText = editText(view, R.id.last_name);
+        userProfileImageView = (ImageView) view.findViewById(R.id.profile_photo);
 
 
-        // set the current user information
-        username.setText(getCurrentUser().getUsername());
-        fn.setText(getCurrentUser().getFirstName());
-        ln.setText(getCurrentUser().getLastName());
+        firstNameEditText.setText(getCurrentUser().getFirstName());
+        lastNameEditText.setText(getCurrentUser().getLastName());
 
-        return v;
+        return view;
     }
 
 }

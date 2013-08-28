@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.joshlong.restfuliterations</groupId>
     <version>1.0-SNAPSHOT</version>
     <artifactId>android</artifactId>
     <packaging>apk</packaging>
 
-
     <properties>
-        <dagger.version>1.0.0</dagger.version>
+        <dagger.version>1.1.0</dagger.version>
         <spring-android.version>1.0.1.RELEASE</spring-android.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <android.version>4.1.1.4</android.version>
         <jackson.version>2.2.1</jackson.version>
     </properties>
-    <dependencyManagement>
 
+    <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.squareup.dagger</groupId>
@@ -52,7 +52,7 @@
             <dependency>
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-core</artifactId>
-                <version>1.1.0.BUILD-SNAPSHOT</version>
+                <version>1.1.0.M4</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -121,7 +121,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-crypto</artifactId>
-                <version>3.2.0.CI-SNAPSHOT</version>
+                <version>3.2.0.RC1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>aopalliance</groupId>
@@ -244,7 +244,7 @@
         <dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-core</artifactId>
-            <version>1.1.0.BUILD-SNAPSHOT</version>
+            <version>1.1.0.M4</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -313,7 +313,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
-            <version>3.2.0.CI-SNAPSHOT</version>
+            <version>3.2.0.RC1</version>
             <exclusions>
                 <exclusion>
                     <groupId>aopalliance</groupId>
@@ -382,15 +382,16 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.viewpagerindicator</groupId>
+            <artifactId>library</artifactId>
+            <version>2.3.1</version>
+            <type>apklib</type>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.android</groupId>
             <artifactId>spring-android-core</artifactId>
             <version>${spring-android.version}</version>
-        </dependency>     <dependency>
-        <groupId>com.viewpagerindicator</groupId>
-        <artifactId>library</artifactId>
-        <version>2.3.1</version>
-        <type>apklib</type>
-    </dependency>
+        </dependency>
         <dependency>
             <groupId>org.springframework.android</groupId>
             <artifactId>spring-android-auth</artifactId>
@@ -402,8 +403,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
     </dependencies>
+
     <build>
         <finalName>${project.artifactId}</finalName>
         <sourceDirectory>src</sourceDirectory>
@@ -423,8 +424,7 @@
                 <artifactId>android-maven-plugin</artifactId>
                 <configuration>
                     <sdk>
-                        <!-- platform or api level (api level 16 = platform 4.1)-->
-                        <platform>17</platform>
+                        <platform>18</platform>
                     </sdk>
                 </configuration>
             </plugin>
@@ -441,23 +441,8 @@
         <repository>
             <id>org.springframework.maven.snapshot</id>
             <name>Spring Maven Snapshot Repository</name>
-            <url>http://maven.springframework.org/snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>org.springframework.maven.milestone</id>
-            <name>Spring Maven Milestone Repository</name>
-            <url>http://maven.springframework.org/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+            <url>http://repo.springsource.org/libs-snapshot</url>
         </repository>
     </repositories>
-
 
 </project>

@@ -27,16 +27,15 @@ public class CrmUserDetailsService implements UserDetailsService {
 	}
 
 	@SuppressWarnings("serial")
-	public static class CrmUserDetails implements UserDetails {
+	public static class CrmUserDetails extends com.jl.crm.services.User implements UserDetails {
 		public static final String SCOPE_READ = "read";
 		public static final String SCOPE_WRITE = "write";
 		public static final String ROLE_USER = "ROLE_USER";
 		private Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-		private com.jl.crm.services.User user;
 
 		public CrmUserDetails(com.jl.crm.services.User user) {
+			super(user);
 			Assert.notNull(user, "the provided user reference can't be null");
-			this.user = user;
 			for (String ga : Arrays.asList(ROLE_USER, SCOPE_READ, SCOPE_WRITE)) {
 				this.grantedAuthorities.add(new SimpleGrantedAuthority(ga));
 			}
@@ -45,16 +44,6 @@ public class CrmUserDetailsService implements UserDetailsService {
 		@Override
 		public Collection<? extends GrantedAuthority> getAuthorities() {
 			return this.grantedAuthorities;
-		}
-
-		@Override
-		public String getPassword() {
-			return user.getPassword();
-		}
-
-		@Override
-		public String getUsername() {
-			return user.getUsername();
 		}
 
 		@Override
@@ -71,15 +60,5 @@ public class CrmUserDetailsService implements UserDetailsService {
 		public boolean isCredentialsNonExpired() {
 			return isEnabled();
 		}
-
-		@Override
-		public boolean isEnabled() {
-			return user.isEnabled();
-		}
-
-		public com.jl.crm.services.User getUser() {
-			return this.user;
-		}
 	}
-
 }

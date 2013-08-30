@@ -29,7 +29,7 @@ public class CurrentUserController {
 	}
 
 	@RequestMapping (value = "/user", method = RequestMethod.GET)
-	public HttpEntity<Resource<User>> currentUser(@ModelAttribute User self) {
+	public HttpEntity<Resource<User>> currentUser(@CurrentUser User self) {
 		List<Link> linkList = new ArrayList<Link>();
 		linkList.add(this.userLinks.getSelfLink(self));
 		linkList.add(this.userLinks.getPhotoLink(self));

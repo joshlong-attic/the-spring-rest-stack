@@ -10,14 +10,6 @@
             android:columnCount="2" android:orientation="horizontal">
 
 
-    <!-- username   -->
-    <!--
-        <TextView
-                android:text="@string/username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                />-->
 
     <TextView android:layout_columnSpan="2"
               android:layout_width="match_parent"
@@ -25,7 +17,7 @@
               android:layout_gravity="left"
               android:id="@+id/user_profile_description"/>
 
-    <!-- first name   -->
+
 
     <TextView
             android:text="@string/first_name"
@@ -39,7 +31,6 @@
               android:ems="10"
               android:inputType="text" android:layout_gravity="left"
               android:id="@+id/first_name" android:hint="@string/first_name"/>
-    <!--  last name   -->
 
     <TextView
             android:text="@string/last_name"
@@ -54,7 +45,12 @@
               android:ems="10"
               android:inputType="text" android:layout_gravity="left"
               android:id="@+id/last_name" android:hint="@string/last_name"/>
-
+    <TextView
+            android:text="@string/profile_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            />
     <ImageView
             android:layout_columnSpan="2"
             android:layout_width="match_parent"
@@ -62,7 +58,7 @@
             android:contentDescription="@string/profile_photo_description"
             android:id="@+id/profile_photo"
 
-            />
+            android:src="@drawable/springsource_welcome_transparent_bg"/>
 
     <Button android:layout_width="wrap_content"
             android:layout_column="0"
@@ -71,14 +67,5 @@
             android:text="@string/save"
             android:enabled="false"/>
 
-    <!--
 
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/save"
-
-            android:layout_row="5"
-            android:layout_column="3" />-->
 </GridLayout>

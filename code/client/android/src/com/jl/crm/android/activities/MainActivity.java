@@ -105,9 +105,10 @@ public class MainActivity extends SherlockFragmentActivity {
         runOnUiThread(this.connectionNotEstablishedRunnable);
     }
 
-    public void signin(final User user) {
-
-        for (AuthenticatedFragment f : securedFragments) {
+    public void signin(final User user)
+    {
+        for (AuthenticatedFragment f : securedFragments)
+        {
             f.setCurrentUser(user);
         }
         show(searchFragment);
@@ -138,6 +139,10 @@ public class MainActivity extends SherlockFragmentActivity {
                 this.connectionNotEstablishedRunnable,
                 getString(R.string.oauth_access_token_callback_uri));
     }
+    public void showSearch()
+    {
+        show(this.searchFragment);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +157,7 @@ public class MainActivity extends SherlockFragmentActivity {
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(fragmentPagerAdapter);
+        viewPager.setOffscreenPageLimit( this.allFragments.size());
 
         // do this once
         show(this.welcomeFragment); // we want this displaying no matter what...
@@ -164,7 +170,7 @@ public class MainActivity extends SherlockFragmentActivity {
 
         addFragments(this.welcomeFragment, this.signInFragment);
 
-        this.userAccountFragment = new UserProfileFragment(this, getString(R.string.user_account));
+        this.userAccountFragment = new UserProfileFragment(this, this.crmOperationsProvider, getString(R.string.user_account));
         this.searchFragment = new CustomerSearchFragment(this, this.crmOperationsProvider, getString(R.string.search), getString(R.string.search_hint));
         this.signOutFragment = new SignOutFragment(this, getString(R.string.sign_out));
         addSecuredFragments(this.searchFragment,this.userAccountFragment, this.signOutFragment);

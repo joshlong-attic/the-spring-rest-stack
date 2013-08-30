@@ -169,5 +169,6 @@
     <string name="sign_in">Sign In</string>
     <string name="welcome_content_description">Welcome to the Spring CRM</string>
     <string name="profile_photo_description">Your current profile photo</string>
+    <string name="profile_photo">Your Profile Photo</string>
 
 </resources>

@@ -16,14 +16,11 @@ import java.util.Collection;
 @TransactionConfiguration
 public class TestCustomerService {
 
-	private CrmService crmService;
+
 
 	private User joshlong;
 
-	@Inject
-	public void setCrmService(CrmService crmService) {
-		this.crmService = crmService;
-	}
+	@Inject private CrmService crmService ;
 
 	@Before
 	public void begin() throws Throwable {
@@ -53,6 +50,8 @@ public class TestCustomerService {
 	@Test public void testCustomerSearch  () throws Throwable {
 		long joshlongUserId = this.joshlong.getId();
 
+        crmService.addAccount( joshlongUserId, "josh","long");
+
 		Collection<Customer> customerCollection  = crmService.search(joshlongUserId,  "josh" )	;
 		Assert.assertTrue( "there should be at least" , customerCollection.size() > 0);
 
@@ -73,7 +72,7 @@ public class TestCustomerService {
 		Assert.assertNotNull(johnDoe);
 
 		customerCollection = crmService.loadCustomerAccounts(this.joshlong.getId());
-		Assert.assertEquals(customerCollection.size(), 2);
+		Assert.assertTrue(customerCollection.size() >= 2);
 
 	}
 }

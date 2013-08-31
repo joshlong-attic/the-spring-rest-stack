@@ -8,27 +8,27 @@ import com.jl.crm.android.Crm;
 
 public class DaggerInjectionUtils {
 
-	public static void inject(Fragment fragment) {
-		Crm crm = forApplication(fragment.getActivity().getApplication());
-		crm.inject(fragment);
-	}
+    public static void inject(Fragment fragment) {
+        Crm crm = forApplication(fragment.getActivity().getApplication());
+        crm.inject(fragment);
+    }
 
-	public static void inject(Activity baseActivity) {
-		Crm crm = forApplication(baseActivity.getApplication());
-		crm.inject(baseActivity);
-	}
+    public static void inject(Activity baseActivity) {
+        Crm crm = forApplication(baseActivity.getApplication());
+        crm.inject(baseActivity);
+    }
 
-	private static Crm forApplication(Application application) {
-		if (application instanceof Crm){
-			return (Crm) application;
-		}
-		return null;
-	}
+    private static Crm forApplication(Application application) {
+        if (application instanceof Crm){
+            return (Crm) application;
+        }
+        return null;
+    }
 
-	//todo
-	private void inject(ContentProvider contentProvider) {
-		Context ctx = contentProvider.getContext();
-	}
+    //todo
+    private void inject(ContentProvider contentProvider) {
+        Context ctx = contentProvider.getContext();
+    }
 
 
 }

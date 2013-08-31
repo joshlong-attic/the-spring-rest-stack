@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.joshlong.restfuliterations</groupId>
@@ -112,12 +112,24 @@
                 <version>4.10</version>
                 <scope>test</scope>
             </dependency>
+            <!--<dependency>
+            <groupId>com.actionbarsherlock</groupId>
+            <artifactId>library</artifactId>
+            <version>4.1.0</version>
+            <type>apklib</type>
+        </dependency>  -->
             <dependency>
                 <groupId>com.actionbarsherlock</groupId>
-                <artifactId>library</artifactId>
+                <artifactId>actionbarsherlock</artifactId>
                 <version>4.4.0</version>
                 <type>apklib</type>
             </dependency>
+            <!--  <dependency>
+                  <groupId>com.actionbarsherlock</groupId>
+                  <artifactId>actionbarsherlock</artifactId>
+                  <version>4.4.0</version>
+                  <type>apklib</type>
+              </dependency>-->
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-crypto</artifactId>
@@ -206,10 +218,17 @@
                 </exclusions>
             </dependency>
 
+
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.actionbarsherlock</groupId>
+            <artifactId>actionbarsherlock</artifactId>
+            <version>4.4.0</version>
+            <type>apklib</type>
+        </dependency>
         <dependency>
             <groupId>com.squareup.dagger</groupId>
             <artifactId>dagger</artifactId>
@@ -324,7 +343,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+        <dependency>
+            <groupId>com.viewpagerindicator</groupId>
+            <artifactId>library</artifactId>
+            <version>2.3.1</version>
+            <type>apklib</type>
+        </dependency>
         <dependency>
             <groupId>com.joshlong.restfuliterations</groupId>
             <version>1.0-SNAPSHOT</version>
@@ -376,12 +400,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-      <!--  <dependency>
-            <groupId>com.viewpagerindicator</groupId>
-            <artifactId>library</artifactId>
-            <version>2.4.1</version>
-            <type>apklib</type>
-        </dependency>-->
+        <!--  <dependency>
+              <groupId>com.viewpagerindicator</groupId>
+              <artifactId>library</artifactId>
+              <version>2.4.1</version>
+              <type>apklib</type>
+          </dependency>-->
         <dependency>
             <groupId>org.springframework.android</groupId>
             <artifactId>spring-android-core</artifactId>
@@ -416,7 +440,10 @@
         <plugins>
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <version>3.6.1</version>
                 <artifactId>android-maven-plugin</artifactId>
+                <extensions>true</extensions>
+
                 <configuration>
                     <sdk>
                         <platform>18</platform>

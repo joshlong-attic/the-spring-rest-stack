@@ -2,7 +2,6 @@ package com.jl.crm.android;
 
 import android.content.Context;
 import com.jl.crm.android.activities.MainActivity;
-import com.jl.crm.android.activities.fragments.CustomerSearchFragment;
 import com.jl.crm.android.activities.fragments.SignInFragment;
 import com.jl.crm.android.activities.fragments.SignOutFragment;
 import com.jl.crm.android.utils.AndroidUiThreadUtils;
@@ -20,7 +19,7 @@ import org.springframework.social.connect.support.ConnectionFactoryRegistry;
 
 import javax.inject.Singleton;
 
-@Module(  injects = {CustomerSearchFragment.class, MainActivity.class, SignInFragment.class, SignOutFragment.class})
+@Module(injects = {MainActivity.class, SignInFragment.class, SignOutFragment.class})
 public class CrmModule {
     private Crm application;
 

@@ -40,7 +40,6 @@ public class SecuredCrmFragment extends SherlockFragment implements NamedFragmen
     }
 
 
-
     protected User getCurrentUser() {
         return this.currentUser;
     }

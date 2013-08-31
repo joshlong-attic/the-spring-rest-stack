@@ -20,10 +20,10 @@ public class SignInFragment extends SherlockFragment implements NamedFragment, M
     Runnable connectionEstablishedRunnable;
     CrmConnectionState crmConnectionState;
     CrmOAuthFlowWebView webView;
-    String signInTitle  ;
-    MainActivity mainActivity ;
+    String signInTitle;
+    MainActivity mainActivity;
 
-    public SignInFragment(MainActivity mainActivity ,CrmConnectionState crmConnectionState, Runnable connectionEstablishedRunnable, String signInTitle) {
+    public SignInFragment(MainActivity mainActivity, CrmConnectionState crmConnectionState, Runnable connectionEstablishedRunnable, String signInTitle) {
         super();
         this.mainActivity = mainActivity;
         this.crmConnectionState = crmConnectionState;
@@ -44,7 +44,7 @@ public class SignInFragment extends SherlockFragment implements NamedFragment, M
         setWebView(crmConnectionState.webView());
     }
 
-    public  void setWebView(CrmOAuthFlowWebView wb) {
+    public void setWebView(CrmOAuthFlowWebView wb) {
         this.webView = wb;
         // cookies
         CookieSyncManager.createInstance(getActivity());
@@ -60,9 +60,8 @@ public class SignInFragment extends SherlockFragment implements NamedFragment, M
     }
 
 
-
     @Override
     public String getTitle() {
-        return signInTitle ;
+        return signInTitle;
     }
 }

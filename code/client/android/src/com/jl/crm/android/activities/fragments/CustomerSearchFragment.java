@@ -14,7 +14,6 @@ import com.jl.crm.android.activities.MainActivity;
 import com.jl.crm.android.activities.MenuContributingFragment;
 import com.jl.crm.android.activities.NamedFragment;
 import com.jl.crm.android.activities.secure.AuthenticatedFragment;
-import com.jl.crm.android.utils.DaggerInjectionUtils;
 import com.jl.crm.client.CrmOperations;
 import com.jl.crm.client.Customer;
 import com.jl.crm.client.User;
@@ -44,21 +43,18 @@ public class CustomerSearchFragment extends SherlockListFragment
     }
 
     @Override
-    public boolean isAuthenticated()
-    {
+    public boolean isAuthenticated() {
         return this.currentUser != null;
     }
 
     @Override
-    public void setCurrentUser(User currentUser)
-    {
+    public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
         this.crmOperations = this.crmOperationsProvider.get();
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
 
         listAdapter = new CustomerArrayAdapter(getSherlockActivity(), customers);
@@ -70,24 +66,21 @@ public class CustomerSearchFragment extends SherlockListFragment
     }
 
     /* this is what happens by default */
-    public void loadAllCustomers()
-    {
+    public void loadAllCustomers() {
         Log.d(getClass().getName(), "loading all the CRM customers.");
         redrawCustomersWithNewData(crmOperations.loadAllUserCustomers());
     }
 
-    public void search(String query)
-    {
+    public void search(String query) {
         Log.d(getClass().getName(), "loading only the CRM customers that match a particular query.");
         redrawCustomersWithNewData(crmOperations.search(query));
     }
 
-    private void redrawCustomersWithNewData(Collection<Customer> c)
-    {
+    private void redrawCustomersWithNewData(Collection<Customer> c) {
         assert this.currentUser != null : "the currentUser can't be null";
 
         this.customers.clear();
-        this.customers.addAll( c);
+        this.customers.addAll(c);
 
         listAdapter.notifyDataSetChanged();
 
@@ -95,24 +88,22 @@ public class CustomerSearchFragment extends SherlockListFragment
 
     }
 
-    private CustomerArrayAdapter listAdapter ;
-    private List<Customer> customers  = new ArrayList<Customer>() ;
+    private CustomerArrayAdapter listAdapter;
+    private List<Customer> customers = new ArrayList<Customer>();
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerInjectionUtils.inject(this);
         setHasOptionsMenu(true);
     }
+
 
     @Override
     public String getTitle() {
         return this.title;
     }
 
-    public static class CustomerArrayAdapter extends ArrayAdapter<Customer>
-    {
+    public static class CustomerArrayAdapter extends ArrayAdapter<Customer> {
         private List<Customer> records;
 
         public CustomerArrayAdapter(Context context, List<Customer> objects) {

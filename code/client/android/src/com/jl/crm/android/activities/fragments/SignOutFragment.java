@@ -14,6 +14,7 @@ public class SignOutFragment extends SecuredCrmFragment {
     public SignOutFragment(MainActivity mainActivity, String title) {
         super(mainActivity, title);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return null;

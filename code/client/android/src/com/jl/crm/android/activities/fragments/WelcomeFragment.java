@@ -21,7 +21,7 @@ public class WelcomeFragment extends SherlockFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ImageView imageView = new ImageView(getActivity());
         imageView.setImageResource(R.drawable.springsource_welcome_transparent_bg);
-        imageView.setBackgroundColor( Color.parseColor("#69d54c") );//R.color.spring_welcome_bg_color);
+        imageView.setBackgroundColor(Color.parseColor("#69d54c"));//R.color.spring_welcome_bg_color);
         return imageView;
     }
 }

@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
 
             android:useDefaultMargins="true"
             android:alignmentMode="alignBounds"
             android:columnOrderPreserved="false"
-
-            android:columnCount="2" android:orientation="horizontal">
-
-
-
-    <TextView android:layout_columnSpan="2"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_gravity="left"
-              android:id="@+id/user_profile_description"/>
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:columnCount="2"
+            android:orientation="horizontal">
 
 
 
@@ -23,49 +17,56 @@
             android:text="@string/first_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            />
+            android:layout_gravity="left" />
+
     <EditText android:layout_columnSpan="2"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:ems="10"
-              android:inputType="text" android:layout_gravity="left"
-              android:id="@+id/first_name" android:hint="@string/first_name"/>
+              android:inputType="text"
+              android:layout_gravity="left"
+              android:id="@+id/first_name"
+              android:hint="@string/first_name"/>
 
     <TextView
             android:text="@string/last_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            />
+            android:layout_gravity="left" />
 
     <EditText android:layout_columnSpan="2"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:ems="10"
-              android:inputType="text" android:layout_gravity="left"
-              android:id="@+id/last_name" android:hint="@string/last_name"/>
+              android:inputType="text"
+              android:layout_gravity="left"
+              android:id="@+id/last_name"
+              android:hint="@string/last_name"/>
     <TextView
-            android:text="@string/profile_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            />
+        android:text="@string/profile_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+     />
+
     <ImageView
-            android:layout_columnSpan="2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/profile_photo_description"
-            android:id="@+id/profile_photo"
+        android:layout_columnSpan="2"
+        android:layout_rowSpan="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/profile_photo_description"
+        android:id="@+id/profile_photo"
+        android:src="@drawable/springsource_welcome_transparent_bg"
+    />
 
-            android:src="@drawable/springsource_welcome_transparent_bg"/>
-
-    <Button android:layout_width="wrap_content"
-            android:layout_column="0"
-            android:layout_height="wrap_content"
-            android:id="@+id/save"
-            android:text="@string/save"
-            android:enabled="false"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_column="0"
+        android:layout_height="wrap_content"
+        android:id="@+id/save"
+        android:text="@string/save"
+        android:enabled="false"
+    />
 
 
 </GridLayout>

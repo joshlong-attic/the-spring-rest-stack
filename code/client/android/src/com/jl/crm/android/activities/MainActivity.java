@@ -40,6 +40,23 @@ import java.util.List;
  * @author Josh Long
  */
 public class MainActivity extends SherlockFragmentActivity {
+/*
+      FragmentManager improvedFragmentManager () {
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager() ;
+       Object newImprovedFragmentManager =
+           Proxy.newProxyInstance(getClassLoader(), android.support.v4.app.FragmentManager.class ,new InvocationHandler() {
+              @Override
+              public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                  //todo make sure that whatever method it is that android is calling on exit doesnt blow up any more by wrapping the method
+
+              }
+          })   ;
+        }*/
+@Override
+protected void onSaveInstanceState(Bundle outState) {
+  //  super.onSaveInstanceState(outState);
+//    getSherlock().dispatchSaveInstanceState(outState);
+}
 
     FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
 

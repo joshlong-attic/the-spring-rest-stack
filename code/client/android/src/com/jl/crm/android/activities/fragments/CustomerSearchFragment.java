@@ -61,6 +61,9 @@ public class CustomerSearchFragment extends SherlockListFragment
     {
         super.onStart();
 
+        listAdapter = new CustomerArrayAdapter(getSherlockActivity(), customers);
+        setListAdapter(listAdapter);
+
         if (isAuthenticated())
             loadAllCustomers();
 
@@ -75,19 +78,25 @@ public class CustomerSearchFragment extends SherlockListFragment
 
     public void search(String query)
     {
-        Log.d(getClass().getName(), "loading only the CRM customers " +
-                "that match a particular query.");
+        Log.d(getClass().getName(), "loading only the CRM customers that match a particular query.");
         redrawCustomersWithNewData(crmOperations.search(query));
     }
 
     private void redrawCustomersWithNewData(Collection<Customer> c)
     {
         assert this.currentUser != null : "the currentUser can't be null";
+
+        this.customers.clear();
+        this.customers.addAll( c);
+
+        listAdapter.notifyDataSetChanged();
+
         mainActivity.showSearch();
-        List<Customer> customerCollection = new ArrayList<Customer>(c);
-        CustomerArrayAdapter listAdapter = new CustomerArrayAdapter(getSherlockActivity(), customerCollection);
-        setListAdapter(listAdapter);
+
     }
+
+    private CustomerArrayAdapter listAdapter ;
+    private List<Customer> customers  = new ArrayList<Customer>() ;
 
     @Override
     public void onCreate(Bundle savedInstanceState)

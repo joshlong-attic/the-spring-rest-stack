@@ -99,19 +99,19 @@ public class MainActivity extends SherlockFragmentActivity {
     SignOutFragment signOutFragment;
     WelcomeFragment welcomeFragment;
     UserProfileFragment userAccountFragment;
+    TextView searchTextView;
 
     // todo
     public void signout() {
         runOnUiThread(this.connectionNotEstablishedRunnable);
     }
 
-    public void signin(final User user)
-    {
-        for (AuthenticatedFragment f : securedFragments)
-        {
+    public void signin(final User user) {
+        for (AuthenticatedFragment f : securedFragments) {
             f.setCurrentUser(user);
         }
         show(searchFragment);
+        searchFragment.loadAllCustomers();
     }
 
     private void addFragments(Fragment... fragments) {
@@ -139,8 +139,8 @@ public class MainActivity extends SherlockFragmentActivity {
                 this.connectionNotEstablishedRunnable,
                 getString(R.string.oauth_access_token_callback_uri));
     }
-    public void showSearch()
-    {
+
+    public void showSearch() {
         show(this.searchFragment);
     }
 
@@ -157,10 +157,9 @@ public class MainActivity extends SherlockFragmentActivity {
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(fragmentPagerAdapter);
-        viewPager.setOffscreenPageLimit( this.allFragments.size());
+        viewPager.setOffscreenPageLimit(this.allFragments.size());
 
-        // do this once
-        show(this.welcomeFragment); // we want this displaying no matter what...
+        show(this.welcomeFragment);
     }
 
     public void setupFragments() {
@@ -173,9 +172,15 @@ public class MainActivity extends SherlockFragmentActivity {
         this.userAccountFragment = new UserProfileFragment(this, this.crmOperationsProvider, getString(R.string.user_account));
         this.searchFragment = new CustomerSearchFragment(this, this.crmOperationsProvider, getString(R.string.search), getString(R.string.search_hint));
         this.signOutFragment = new SignOutFragment(this, getString(R.string.sign_out));
-        addSecuredFragments(this.searchFragment,this.userAccountFragment, this.signOutFragment);
+        addSecuredFragments(this.searchFragment, this.userAccountFragment, this.signOutFragment);
+    }
 
-
+    protected void runQuery(String query) {
+        if (!StringUtils.hasText(query)) {
+            searchFragment.loadAllCustomers();
+        } else {
+            searchFragment.search(query);
+        }
     }
 
     @Override
@@ -191,31 +196,38 @@ public class MainActivity extends SherlockFragmentActivity {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setQueryHint(getString(R.string.search_hint));
         searchView.setIconified(true);
+        searchManager.setOnCancelListener(new SearchManager.OnCancelListener() {
+            @Override
+            public void onCancel() {
+                runQuery(searchTextView.getText().toString());
+            }
+        });
+        searchManager.setOnDismissListener(new SearchManager.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                runQuery(searchTextView.getText().toString());
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(tag, "query text submitted: " + query);
-                if (!StringUtils.hasText(query)) {
-                    searchFragment.loadAllCustomers();
-                } else {
-                    searchFragment.search(query);
-                }
+                runQuery(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.d(tag, "query text changed: " + newText);
-                if (!StringUtils.hasText(newText)) {
-                    searchFragment.loadAllCustomers();
-                    return true;
+                if (searchFragment.isAdded() && searchFragment.isResumed()) {
+                    runQuery(newText);
                 }
-                return false;
+                return true;
             }
         });
 
-        TextView textView = (TextView) searchView.findViewById(searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null));
-        textView.setTextColor(Color.WHITE);
+        searchTextView = (TextView) searchView.findViewById(searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null));
+        searchTextView.setTextColor(Color.WHITE);
 
         // menu items
 
@@ -239,9 +251,8 @@ public class MainActivity extends SherlockFragmentActivity {
     }
 
     public void showUserAccount() {
-         show( this.userAccountFragment);
+        show(this.userAccountFragment);
     }
-
 
     @Override
     protected void onStart() {

@@ -115,7 +115,7 @@
             <dependency>
                 <groupId>com.actionbarsherlock</groupId>
                 <artifactId>library</artifactId>
-                <version>4.1.0</version>
+                <version>4.4.0</version>
                 <type>apklib</type>
             </dependency>
             <dependency>
@@ -304,12 +304,7 @@
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.actionbarsherlock</groupId>
-            <artifactId>library</artifactId>
-            <version>4.1.0</version>
-            <type>apklib</type>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
@@ -381,12 +376,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
+      <!--  <dependency>
             <groupId>com.viewpagerindicator</groupId>
             <artifactId>library</artifactId>
-            <version>2.3.1</version>
+            <version>2.4.1</version>
             <type>apklib</type>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.springframework.android</groupId>
             <artifactId>spring-android-core</artifactId>

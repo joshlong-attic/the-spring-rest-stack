@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,11 +21,11 @@ import com.jl.crm.android.activities.MainActivity;
 import com.jl.crm.client.CrmOperations;
 import com.jl.crm.client.ProfilePhoto;
 import com.jl.crm.client.User;
+import org.springframework.http.MediaType;
+import org.springframework.util.Assert;
 
 import javax.inject.Provider;
-import java.util.Arrays;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.io.*;
 
 /**
  * @author Josh Long
@@ -31,11 +33,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class UserProfileFragment
         extends SecuredCrmFragment {
 
-
-    // queue through which updates to the profile are serialized and written in order
-    private final Queue<ProfileUpdate> writeProfileUpdateQueue = new ConcurrentLinkedQueue<ProfileUpdate>();
     private final int PICTURE_RESULT = 13232;
-    private byte[] newProfilePhotoBytes;
     private EditText firstNameEditText, lastNameEditText;
     private TextWatcher syncNameFieldsTextWatcher = new TextWatcher() {
         @Override
@@ -48,21 +46,67 @@ public class UserProfileFragment
 
         @Override
         public void afterTextChanged(Editable s) {
-            submitChanges();
+            // todo  submitChanges();
         }
 
     };
     private Provider<CrmOperations> crmOperationsProvider;
     private ImageView userProfileImageView;
+    private File tmpProfilePhotoFile = writableFile("profile.jpg");
 
     public UserProfileFragment(MainActivity mainActivity, Provider<CrmOperations> crmOperationsProvider, String title) {
         super(mainActivity, title);
         this.crmOperationsProvider = crmOperationsProvider;
     }
 
+    private static File writableFile(String fileName) {
+        File tmpFile = new File(new File(Environment.getExternalStorageDirectory(), "spring-crm"), fileName),
+                parent = tmpFile.getParentFile();
+        String tmpFilePath = tmpFile.getAbsolutePath();
+        Assert.isTrue(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()), "the external SD card must be writable to write to '" + tmpFilePath + "'.");
+        Assert.isTrue(parent.exists() || parent.mkdirs(), "the parent directory required to write to the SD card ('" + tmpFilePath + "') does not exist and could not be created.");
+        return tmpFile;
+    }
+
+    private static void copyStreams(InputStream is, OutputStream os)
+            throws IOException {
+        Assert.notNull(is);
+        Assert.notNull(os);
+        byte[] b = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = is.read(b)) != -1) {
+            os.write(b, 0, bytesRead);
+        }
+        try {
+            is.close();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        try {
+            os.close();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
+    }
+
     protected void submitChanges() {
-        ProfileUpdate profileUpdate = new ProfileUpdate(firstNameEditText.toString(), lastNameEditText.toString(), this.newProfilePhotoBytes);
-        writeProfileUpdateQueue.offer(profileUpdate);
+        CrmOperations crmOperations = crmOperationsProvider.get();
+        if (tmpProfilePhotoFile != null && tmpProfilePhotoFile.exists() && tmpProfilePhotoFile.length() > 0) {
+            try {
+                byte[] profilePhotoBytes;
+                InputStream inputStream = new FileInputStream(tmpProfilePhotoFile);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                copyStreams(inputStream, outputStream);
+                profilePhotoBytes = outputStream.toByteArray();
+                crmOperations.setUserProfilePhoto(profilePhotoBytes, MediaType.IMAGE_JPEG);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        String fN = firstNameEditText.toString(), lN = lastNameEditText.toString();
+        Assert.hasText(fN, "you can't set the first name to an empty string");
+        Assert.hasText(lN, "you can't set the last name to an empty string");
     }
 
     @Override
@@ -76,9 +120,6 @@ public class UserProfileFragment
             if (user.isProfilePhotoImported()) {
                 ProfilePhoto profilePhoto = crmOperations.getUserProfilePhoto();
                 byte[] profilePhotoBytes = profilePhoto.getBytes();
-
-
-
                 Bitmap bitmap = BitmapFactory.decodeByteArray(profilePhotoBytes, 0, profilePhotoBytes.length);
                 userProfileImageView.setImageBitmap(bitmap);
             }
@@ -116,32 +157,44 @@ public class UserProfileFragment
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        // todo
         if (requestCode == PICTURE_RESULT) {
-            if (resultCode == Activity.RESULT_OK) {
-                Bundle b = data.getExtras();
+            // then make sure were looking at the profile fragment
+            getMainActivity().showUserAccount(); // JUST in case!
+            if (resultCode == Activity.RESULT_OK) {   // make sure the action wasn't cancelled
+              /*  Bundle b = data.getExtras();
                 Bitmap pic = (Bitmap) b.get("data");
                 if (pic != null) {
+                    userProfileImageView.destroyDrawingCache();
                     userProfileImageView.setImageBitmap(pic);
-                }
+                }*/
+
+
+                submitChanges();
             }
         }
 
-        if (resultCode == Activity.RESULT_CANCELED) {
-            // then we don't do anything because there's no new photo so just leave things alone!
 
+    }
+
+    protected void capturePhoto() {
+        try {
+            Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+            Uri uri = Uri.fromFile(tmpProfilePhotoFile);
+
+            camera.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            camera.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+            camera.putExtra("return-data", false);
+
+            this.startActivityForResult(camera, PICTURE_RESULT);
         }
-
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void capturePhoto() {
-        // Toast.makeText(getMainActivity(), "Showing the toast for the image selection thingy!", 100).show();
-        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        this.startActivityForResult(camera, PICTURE_RESULT);
-
-    }
-
-    public static class ProfileUpdate {
+   /* public static class ProfileUpdate {
         private String firstName, lastName;
         private byte[] profilePhotoBytes;  // optional
 
@@ -182,7 +235,7 @@ public class UserProfileFragment
         public byte[] getProfilePhotoBytes() {
             return profilePhotoBytes;
         }
-    }
+    }*/
 
 
 }

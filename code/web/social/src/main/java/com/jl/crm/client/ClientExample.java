@@ -4,20 +4,27 @@ import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.logging.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.*;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.*;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
-import org.springframework.jdbc.datasource.embedded.*;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFactoryBean;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.social.connect.*;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
 import org.springframework.social.connect.support.ConnectionFactoryRegistry;
-import org.springframework.social.oauth2.*;
+import org.springframework.social.oauth2.AccessGrant;
+import org.springframework.social.oauth2.GrantType;
+import org.springframework.social.oauth2.OAuth2Parameters;
+import org.springframework.social.oauth2.OAuth2Template;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
@@ -26,7 +33,10 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.sql.Driver;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Exercises the OAuth 2 API with our Spring Social-powered client.
@@ -81,7 +91,13 @@ public class ClientExample implements InitializingBean {
 		for (Customer c : customerCollection) {
 			logger.debug("searched for '" + query + "', found: " + c.toString());
 		}
-	}
+        // let's finally update the profile photo
+        File desktopPhoto = new File(new File( SystemUtils.getUserHome() ,"Desktop") , "pic.jpg") ;
+        InputStream inputStream = new FileInputStream(desktopPhoto);
+        Assert.isTrue( desktopPhoto.exists());
+        byte[] imageFromDesktop = IOUtils.toByteArray( inputStream) ;
+        customerServiceOperations.setUserProfilePhoto(imageFromDesktop, MediaType.IMAGE_JPEG);
+    }
 
 	@Override
 	public void afterPropertiesSet() throws Exception {

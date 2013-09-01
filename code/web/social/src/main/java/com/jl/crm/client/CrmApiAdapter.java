@@ -14,7 +14,7 @@ public class CrmApiAdapter implements ApiAdapter<CrmOperations> {
 		}
 		catch (HttpStatusCodeException e) {
 			// ignore since we're just trying to test for connectivity.
-			System.err.println( "HttpStatusCodeException : Something very wrong happened here. " + e);
+			System.err.println( "HttpStatusCodeException : something very wrong happened here. " + e);
 		}
 		catch ( Error r) {
 			 System.err.println( "Error : Something very wrong happened here. " + r );

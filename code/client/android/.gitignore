@@ -1,0 +1,5 @@
+target/
+classes/
+gen/
+gen-external-apklibs/
+.idea/

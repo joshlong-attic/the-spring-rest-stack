@@ -280,6 +280,12 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
     public static class CustomerResource extends Resource<Customer> {
     }
 
+    /**
+     * The {@link ResourceHttpMessageConverter} ultimately defaults to using the
+     * <A href= "http://www.oracle.com/technetwork/java/javase/downloads/index-135046.html">Java Activation Framework (JAF)</A> to guess
+     * the mime type (content-type) of the uploaded image. Because JAF does not exist on Android, we instead use a few heuristics
+     * to determine the extension on Android.
+     */
     public class DefaultContentTypeGuessingResourceHttpMessageConverter extends ResourceHttpMessageConverter {
 
         @Override

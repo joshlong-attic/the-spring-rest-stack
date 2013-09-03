@@ -28,6 +28,7 @@ public class CrmModule {
     }
 
     @Provides
+    @Singleton
     CrmOperations crmOperations(final SQLiteConnectionRepository sqLiteConnectionRepository) {
         try {
             Class<CrmOperations> crmOperationsClass = CrmOperations.class;

@@ -14,6 +14,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <android.version>4.1.1.4</android.version>
         <jackson.version>2.2.1</jackson.version>
+        <spring-social.version>1.1.0.M4</spring-social.version>
+
+        <!--<spring-social.version>1.1.0.M4</spring-social.version>-->
     </properties>
 
     <dependencyManagement>
@@ -52,7 +55,7 @@
             <dependency>
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-core</artifactId>
-                <version>1.1.0.M4</version>
+                <version>${spring-social.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -263,7 +266,7 @@
         <dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-core</artifactId>
-            <version>1.1.0.M4</version>
+            <version>${spring-social.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>

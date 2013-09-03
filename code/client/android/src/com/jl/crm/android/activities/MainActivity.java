@@ -104,8 +104,8 @@ public class MainActivity extends SherlockFragmentActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         // todo there's a major NPE being caused here on shutdown.
-        //  super.onSaveInstanceState(outState);
-        //    getSherlock().dispatchSaveInstanceState(outState);
+        // super.onSaveInstanceState(outState);
+        // getSherlock().dispatchSaveInstanceState(outState);
     }
 
     public void signout() {
@@ -116,7 +116,13 @@ public class MainActivity extends SherlockFragmentActivity {
         for (AuthenticatedFragment f : securedFragments) {
             f.setCurrentUser(user);
         }
-        show(  this.searchFragment);
+
+        // todo we should showDefaultSearch();
+        showUserAccount();
+    }
+
+    protected void showDefaultSearch() {
+        showSearch();
         searchFragment.loadAllCustomers();
     }
 

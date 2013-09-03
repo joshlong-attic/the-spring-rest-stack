@@ -4,6 +4,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
 import org.springframework.social.support.ClientHttpRequestFactorySelector;
 import org.springframework.util.LinkedMultiValueMap;
@@ -38,7 +39,12 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         super(accessToken);
         try {
             this.apiBaseUri = new URI(apiUrl);
-            setRequestFactory(ClientHttpRequestFactorySelector.bufferRequests(getRestTemplate().getRequestFactory()));
+
+            SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+            setRequestFactory(
+                ClientHttpRequestFactorySelector.bufferRequests(
+                    simpleClientHttpRequestFactory));
+//            setRequestFactory(ClientHttpRequestFactorySelector.bufferRequests(getRestTemplate().getRequestFactory()));
         } catch (Exception e) {
             throw new RuntimeException("could not initialize the " + CrmTemplate.class.getName(), e);
         }
@@ -159,9 +165,7 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         return customer(uri);
     }
 
-
-//     you should come over
-    @Override
+     @Override
     public void setUserProfilePhoto(byte[] bytesOfImage, final MediaType mediaType) {
         ByteArrayResource byteArrayResource = new ByteArrayResource(bytesOfImage) {
             @Override

@@ -1,6 +1,8 @@
 package com.jl.crm.android;
 
 import android.content.Context;
+import android.os.Build;
+
 import com.jl.crm.android.activities.MainActivity;
 import com.jl.crm.android.activities.fragments.SignInFragment;
 import com.jl.crm.android.activities.fragments.SignOutFragment;
@@ -70,7 +72,8 @@ public class CrmModule {
     CrmServiceProvider serviceProvider(@InjectAndroidApplicationContext Context c) {
 
         String baseUrl;
-        if (android.os.Build.MODEL.equals("google_sdk")) {
+        // "google_sdk" OR "sdk" are emulators
+        if (Build.PRODUCT.contains("sdk") || Build.PRODUCT.equals("full_x86")) {
             baseUrl = c.getString(R.string.base_uri_emulator);
         } else {
             baseUrl = c.getString(R.string.base_uri_qa);

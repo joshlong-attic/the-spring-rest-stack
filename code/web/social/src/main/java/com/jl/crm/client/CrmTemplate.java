@@ -159,6 +159,8 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         return customer(uri);
     }
 
+
+//     you should come over
     @Override
     public void setUserProfilePhoto(byte[] bytesOfImage, final MediaType mediaType) {
         ByteArrayResource byteArrayResource = new ByteArrayResource(bytesOfImage) {

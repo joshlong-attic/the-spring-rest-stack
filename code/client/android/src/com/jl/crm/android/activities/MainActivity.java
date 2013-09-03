@@ -116,7 +116,7 @@ public class MainActivity extends SherlockFragmentActivity {
         for (AuthenticatedFragment f : securedFragments) {
             f.setCurrentUser(user);
         }
-        show(searchFragment);
+        show(  this.searchFragment);
         searchFragment.loadAllCustomers();
     }
 

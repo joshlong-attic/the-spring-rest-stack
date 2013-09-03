@@ -8,9 +8,7 @@
     <string name="oauth_authorize_uri">/oauth/authorize</string>
     <string name="oauth_scope">read,write</string>
     <string name="shared_preferences">CrmPreferences</string>
-
     <color name="spring_welcome_bg_color">#69d54c</color>
-
-     <string name="base_uri_emulator">http://10.0.2.2:8080/</string>
+    <string name="base_uri_emulator">http://10.0.2.2:8080/</string>
     <string name="base_uri_qa">http://192.168.2.9:8080/</string>
 </resources>

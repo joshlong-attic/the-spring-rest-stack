@@ -5,147 +5,155 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.jl.crm.android.widget.CrmOAuthFlowWebView;
-import com.jl.crm.client.*;
+import com.jl.crm.client.CrmConnectionFactory;
+import com.jl.crm.client.CrmOperations;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.sqlite.SQLiteConnectionRepository;
 import org.springframework.social.connect.sqlite.support.SQLiteConnectionRepositoryHelper;
 import org.springframework.social.oauth2.*;
-import org.springframework.util.*;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 /**
- * We need a central place to lookup information about the currrent ocnnection to the CRM A lot of the stuff that's
- * happening in the {@link com.jl.crm.android.activities.AuthenticationActivity} can happen here instead. The nice part
- * about this is that we can then test for things like current authentication status in other Android componentns where
- * this class might be injected.
+ * A central place to lookup information about the currrent state of the connection with the CRM.
  *
  * @author Josh Long
  */
 public class CrmConnectionState {
 
-	private OAuth2Operations oAuth2Operations;
-	private String oauthAccessTokenCallbackUri;
-	private SQLiteConnectionRepository sqLiteConnectionRepository;
-	private CrmConnectionFactory connectionFactory;
-	private SQLiteConnectionRepositoryHelper repositoryHelper;
-	private Runnable connectionNotEstablishedRunnable;
-	private Runnable connectionEstablishedRunnable;
-	private Activity activity;
+    private volatile boolean started;
+    private OAuth2Operations oAuth2Operations;
+    private String oauthAccessTokenCallbackUri;
+    private SQLiteConnectionRepository sqLiteConnectionRepository;
+    private CrmConnectionFactory connectionFactory;
+    private SQLiteConnectionRepositoryHelper repositoryHelper;
+    private Activity activity;
 
-	public CrmConnectionState(Activity context,
-			                           CrmConnectionFactory connectionFactory,
-			                           SQLiteConnectionRepositoryHelper repositoryHelper,
-			                           SQLiteConnectionRepository sqLiteConnectionRepository,
-			                           Runnable connectionEstablishedRunnable,
-			                           Runnable connectionNotEstablishedRunnable,
-			                           String oauthAccessTokenCallbackUri) {
-		this.activity = context;
-		this.repositoryHelper = repositoryHelper;
-		this.sqLiteConnectionRepository = sqLiteConnectionRepository;
-		this.connectionFactory = connectionFactory;
-		this.oAuth2Operations = connectionFactory.getOAuthOperations();
-		this.connectionEstablishedRunnable = connectionEstablishedRunnable;
-		this.connectionNotEstablishedRunnable = connectionNotEstablishedRunnable;
-		this.oauthAccessTokenCallbackUri = oauthAccessTokenCallbackUri;
-	}
+    public CrmConnectionState(Activity context,
+                              CrmConnectionFactory connectionFactory,
+                              SQLiteConnectionRepositoryHelper repositoryHelper,
+                              SQLiteConnectionRepository sqLiteConnectionRepository,
+                              String oauthAccessTokenCallbackUri) {
+        this.activity = context;
+        this.repositoryHelper = repositoryHelper;
+        this.sqLiteConnectionRepository = sqLiteConnectionRepository;
+        this.connectionFactory = connectionFactory;
+        this.oAuth2Operations = connectionFactory.getOAuthOperations();
+        this.oauthAccessTokenCallbackUri = oauthAccessTokenCallbackUri;
+    }
 
-	public CrmOAuthFlowWebView webView() {
+    public boolean isStarted() {
+        return this.started;
+    }
 
-		CrmOAuthFlowWebView.AccessTokenReceivedListener accessTokenReceivedListener =
-				  new CrmOAuthFlowWebView.AccessTokenReceivedListener() {
-					  @Override
-					  public void accessTokenReceived(final String accessToken) {
-						  try {
-							  AsyncTask<?, ?, Connection<CrmOperations>> asyncTask = new AsyncTask<Object, Object, Connection<CrmOperations>>() {
-								  @Override
-								  protected Connection<CrmOperations> doInBackground(Object... params) {
-									  Connection<CrmOperations> crmOperationsConnection = installAccessToken(accessToken);
-									  activity.runOnUiThread(connectionEstablishedRunnable);
-									  return crmOperationsConnection;
-								  }
-							  };
+    public CrmOAuthFlowWebView webView() {
 
-							  asyncTask.execute(new Object[0]);
-						  }
-						  catch (Exception e) {
-							  throw new RuntimeException(e);
-						  }
+        CrmOAuthFlowWebView.AccessTokenReceivedListener accessTokenReceivedListener =
+                new CrmOAuthFlowWebView.AccessTokenReceivedListener() {
+                    @Override
+                    public void accessTokenReceived(final String accessToken) {
+                        try {
+                            AsyncTask<?, ?, Connection<CrmOperations>> asyncTask = new AsyncTask<Object, Object, Connection<CrmOperations>>() {
+                                @Override
+                                protected Connection<CrmOperations> doInBackground(Object... params) {
+                                    Connection<CrmOperations> crmOperationsConnection = installAccessToken(accessToken);
+                                    return crmOperationsConnection;
+                                }
+                            };
 
-					  }
-				  };
-		String authenticateUri = buildAuthenticationUrl();
-		String returnUri = activity.getString(R.string.oauth_access_token_callback_uri);
-		return new CrmOAuthFlowWebView(this.activity, authenticateUri, returnUri, accessTokenReceivedListener);
-	}
+                            asyncTask.execute(new Object[0]);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
 
-	public void start() {
-		// todo extract this out to a configuration variable
-		//resetLocalConnections();
+                    }
+                };
+        String authenticateUri = buildAuthenticationUrl();
+        String returnUri = activity.getString(R.string.oauth_access_token_callback_uri);
+        return new CrmOAuthFlowWebView(this.activity, authenticateUri, returnUri, accessTokenReceivedListener);
+    }
 
-		new AsyncTask<Object, Object, Connection<CrmOperations>>() {
-			@Override
-			protected Connection<CrmOperations> doInBackground(Object... params) {
-				Connection<CrmOperations> connection = sqLiteConnectionRepository.findPrimaryConnection(CrmOperations.class);
-				boolean connected = false;
-				try {
-					if (connection != null && connection.test()){
-						connected = true;
-					}
-				}
-				catch (Throwable t) {
-					// something goes wrong, its never set to true, we run the reconnect logic
-					Log.e(CrmConnectionState.class.getName(), "error when trying to ascertain an existing connection.", t);
-				}
+    public void start(final Runnable yes, final Runnable no) {
+        if (isStarted()) // NB: no need to start the engine again if its already running.
+            return;
+        // todo extract this out to a configuration variable
+        //resetLocalConnections();
 
-				activity.runOnUiThread( connected ? connectionEstablishedRunnable : connectionNotEstablishedRunnable);
-				return null;
-			}
-		}.execute();
-	}
+        new AsyncTask<Object, Object, Connection<CrmOperations>>() {
+            @Override
+            protected Connection<CrmOperations> doInBackground(Object... params) {
+                Connection<CrmOperations> connection = sqLiteConnectionRepository.findPrimaryConnection(CrmOperations.class);
+                boolean connected = false;
+                try {
+                    if (connection != null && connection.test()) {
+                        connected = true;
+                    }
+                } catch (Throwable t) {
+                    // something goes wrong, its never set to true, we run the reconnect logic
+                    Log.e(CrmConnectionState.class.getName(),
+                            "error when trying to ascertain an existing connection.", t);
+                }
 
-	public void resetLocalConnections() {
+                activity.runOnUiThread(connected ? startNotifyingRunnableWrapper(yes) : startNotifyingRunnableWrapper(no));
+                return null;
+            }
+        }.execute();
+    }
 
-		SQLiteDatabase sqLiteDatabase = null;
-		try {
-			sqLiteDatabase = repositoryHelper.getWritableDatabase();
-			clearAllConnections();
-		}
-		finally {
-			if (null != sqLiteDatabase){
-				sqLiteDatabase.close();
-			}
-		}
-	}
+    public void resetLocalConnections() {
 
-	private void clearAllConnections() {
-		MultiValueMap<String, Connection<?>> mvMapOfConnections =
-				  sqLiteConnectionRepository.findAllConnections();
-		for (String k : mvMapOfConnections.keySet()) {
-			List<Connection<?>> connectionList = mvMapOfConnections.get(k);
-			for (Connection<?> c : connectionList) {
-				sqLiteConnectionRepository.removeConnection(c.getKey());
-			}
-		}
-	}
+        SQLiteDatabase sqLiteDatabase = null;
+        try {
+            sqLiteDatabase = repositoryHelper.getWritableDatabase();
+            clearAllConnections();
+        } finally {
+            if (null != sqLiteDatabase) {
+                sqLiteDatabase.close();
+            }
+        }
+    }
 
-	public String buildAuthenticationUrl() {
-		OAuth2Template oAuth2Template = (OAuth2Template) oAuth2Operations;
-		oAuth2Template.setUseParametersForClientAuthentication(false);
-		OAuth2Parameters oAuth2Parameters = new OAuth2Parameters();
-		oAuth2Parameters.setScope("read,write");
-		if (StringUtils.hasText(oauthAccessTokenCallbackUri)){
-			oAuth2Parameters.setRedirectUri(oauthAccessTokenCallbackUri);
-		}
-		return oAuth2Operations.buildAuthenticateUrl(GrantType.IMPLICIT_GRANT, oAuth2Parameters);
-	}
+    private void clearAllConnections() {
+        MultiValueMap<String, Connection<?>> mvMapOfConnections =
+                sqLiteConnectionRepository.findAllConnections();
+        for (String k : mvMapOfConnections.keySet()) {
+            List<Connection<?>> connectionList = mvMapOfConnections.get(k);
+            for (Connection<?> c : connectionList) {
+                sqLiteConnectionRepository.removeConnection(c.getKey());
+            }
+        }
+    }
 
-	public Connection<CrmOperations> installAccessToken(String accessToken) {
-		AccessGrant accessGrant = new AccessGrant(accessToken);
+    private Runnable startNotifyingRunnableWrapper(final Runnable r) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                r.run();
+                started = true;
+            }
+        };
+        return runnable;
+    }
+
+    public String buildAuthenticationUrl() {
+        OAuth2Template oAuth2Template = (OAuth2Template) oAuth2Operations;
+        oAuth2Template.setUseParametersForClientAuthentication(false);
+        OAuth2Parameters oAuth2Parameters = new OAuth2Parameters();
+        oAuth2Parameters.setScope("read,write");
+        if (StringUtils.hasText(oauthAccessTokenCallbackUri)) {
+            oAuth2Parameters.setRedirectUri(oauthAccessTokenCallbackUri);
+        }
+        return oAuth2Operations.buildAuthenticateUrl(GrantType.IMPLICIT_GRANT, oAuth2Parameters);
+    }
+
+    public Connection<CrmOperations> installAccessToken(String accessToken) {
+        AccessGrant accessGrant = new AccessGrant(accessToken);
         resetLocalConnections();
         Connection<CrmOperations> crmOperationsConnection = connectionFactory.createConnection(accessGrant);
-		sqLiteConnectionRepository.addConnection(crmOperationsConnection);
-		return crmOperationsConnection;
-	}
+        sqLiteConnectionRepository.addConnection(crmOperationsConnection);
+        return crmOperationsConnection;
+    }
 
 }

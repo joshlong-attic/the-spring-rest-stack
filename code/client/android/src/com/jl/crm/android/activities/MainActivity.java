@@ -100,6 +100,7 @@ public class MainActivity extends SherlockFragmentActivity {
     WelcomeFragment welcomeFragment;
     UserProfileFragment userAccountFragment;
     TextView searchTextView;
+    private Fragment currentlySelectedFragment;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -116,9 +117,8 @@ public class MainActivity extends SherlockFragmentActivity {
         for (AuthenticatedFragment f : securedFragments) {
             f.setCurrentUser(user);
         }
-
         // todo we should showDefaultSearch();
-        showUserAccount();
+         showUserAccount();
     }
 
     protected void showDefaultSearch() {
@@ -147,8 +147,6 @@ public class MainActivity extends SherlockFragmentActivity {
                 connectionFactory,
                 repositoryHelper,
                 sqLiteConnectionRepository,
-                this.connectionEstablishedRunnable,
-                this.connectionNotEstablishedRunnable,
                 getString(R.string.oauth_access_token_callback_uri));
     }
 
@@ -270,13 +268,27 @@ public class MainActivity extends SherlockFragmentActivity {
     protected void onStart() {
         super.onStart();
         Log.d(MainActivity.class.getName(), "onStart()");
+        this.crmConnectionState.start(this.connectionEstablishedRunnable, this.connectionNotEstablishedRunnable);
+        restoreLastSelectedFragment();
+    }
 
-        this.crmConnectionState.start();
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        restoreLastSelectedFragment();
+    }
+
+    private void restoreLastSelectedFragment() {
+        if (null != this.currentlySelectedFragment)
+            show(this.currentlySelectedFragment);
     }
 
     public void show(Fragment f) {
         int position = this.allFragments.indexOf(f);
         viewPager.setCurrentItem(position, true);
+
+        this.currentlySelectedFragment = f;
+
     }
 
 

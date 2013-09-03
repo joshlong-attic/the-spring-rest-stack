@@ -5,13 +5,17 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
-import org.springframework.social.support.ClientHttpRequestFactorySelector;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,8 +29,7 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 
     private final File rootFile = new File(System.getProperty("java.io.tmpdir"));
     private URI apiBaseUri;
-    private Map<String, String> mapOfExtensions =
-            new ConcurrentHashMap<String, String>();
+    private Map<String, String> mapOfExtensions = new ConcurrentHashMap<String, String>();
 
     {
         mapOfExtensions.put("jpeg", "jpg");
@@ -35,16 +38,22 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         mapOfExtensions.put("png", "png");
     }
 
+    private Map<String, MediaType> mapOfMediaTypesToExtensions = new ConcurrentHashMap<String, MediaType>();
+
+    {
+        mapOfMediaTypesToExtensions.put("png", MediaType.IMAGE_PNG);
+        mapOfMediaTypesToExtensions.put("jpg", MediaType.IMAGE_JPEG);
+        mapOfMediaTypesToExtensions.put("gif", MediaType.IMAGE_GIF);
+    }
+
     public CrmTemplate(String accessToken, String apiUrl) {
         super(accessToken);
         try {
             this.apiBaseUri = new URI(apiUrl);
 
             SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
-            setRequestFactory(
-                ClientHttpRequestFactorySelector.bufferRequests(
-                    simpleClientHttpRequestFactory));
-//            setRequestFactory(ClientHttpRequestFactorySelector.bufferRequests(getRestTemplate().getRequestFactory()));
+            setRequestFactory(simpleClientHttpRequestFactory);
+
         } catch (Exception e) {
             throw new RuntimeException("could not initialize the " + CrmTemplate.class.getName(), e);
         }
@@ -62,6 +71,25 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         return user;
     }
 
+    private static Field field(Class<?> cl, String fieldName) {
+        Field field = null;
+        try {
+            field =  cl.getDeclaredField (fieldName);
+            if (!field.isAccessible())
+                field.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+        return field;
+    }
+
+    @Override
+    protected ByteArrayHttpMessageConverter getByteArrayMessageConverter() {
+        ByteArrayHttpMessageConverter converter = new ByteArrayHttpMessageConverter();
+        converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.IMAGE_JPEG, MediaType.IMAGE_GIF, MediaType.IMAGE_PNG));
+        return converter;
+    }
+
     @Override
     public Collection<Customer> search(String token) {
         User currentUser = currentUser();
@@ -74,10 +102,6 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         for (String k : params.keySet()) {
             uriToSearch.queryParam(k, params.get(k));
         }
-
-//		for(String k : params.keySet())
-        //uriToSearch.getQueryParams().put( k, Arrays.asList( params.get(k)));
-
 
         ResponseEntity<CustomerList> resources = this.getRestTemplate().getForEntity(uriToSearch.build().toUri(), CustomerList.class);
         Resources<Resource<Customer>> customerResources = resources.getBody();
@@ -165,7 +189,7 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         return customer(uri);
     }
 
-     @Override
+    @Override
     public void setUserProfilePhoto(byte[] bytesOfImage, final MediaType mediaType) {
         ByteArrayResource byteArrayResource = new ByteArrayResource(bytesOfImage) {
             @Override
@@ -182,6 +206,34 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         if (!series.equals(HttpStatus.Series.SUCCESSFUL)) {
             throw new RuntimeException("couldn't write the profile photo!");
         }
+    }
+
+    @Override
+    protected FormHttpMessageConverter getFormMessageConverter() {
+        FormHttpMessageConverter formHttpMessageConverter = super.getFormMessageConverter();
+        List<HttpMessageConverter<?>> partConverters;
+        try {
+            // todo fix FieldUtils doesnt exist on Android
+
+            Field partConvertersField =  field(FormHttpMessageConverter.class, "partConverters" );
+            partConverters = (List<HttpMessageConverter<?>>) partConvertersField.get(formHttpMessageConverter);
+            ResourceHttpMessageConverter remove = null;
+            for (HttpMessageConverter<?> hmc : partConverters) {
+                if (hmc instanceof ResourceHttpMessageConverter) {
+                    remove = (ResourceHttpMessageConverter) hmc;
+                }
+            }
+            if (null != remove) {
+                partConverters.remove(remove);
+            }
+
+            partConverters.add(new DefaultContentTypeGuessingResourceHttpMessageConverter());
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return formHttpMessageConverter;
+
     }
 
     @Override
@@ -226,6 +278,28 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
     }
 
     public static class CustomerResource extends Resource<Customer> {
+    }
+
+    public class DefaultContentTypeGuessingResourceHttpMessageConverter extends ResourceHttpMessageConverter {
+
+        @Override
+        protected MediaType getDefaultContentType(org.springframework.core.io.Resource resource) {
+            try {
+                MediaType ifAllElseFails = super.getDefaultContentType(resource);
+                String fileName = resource.getFilename();
+                int lastPeriod;
+                if (fileName != null && (fileName = fileName.toLowerCase()) != null && ((lastPeriod = fileName.lastIndexOf(".")) != -1)) {
+                    String ext = fileName.substring(lastPeriod + 1);
+                    if (mapOfExtensions.containsKey(ext)) {
+                        String canonicalExt = mapOfExtensions.get(ext);
+                        return mapOfMediaTypesToExtensions.get(canonicalExt);
+                    }
+                }
+                return ifAllElseFails;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 

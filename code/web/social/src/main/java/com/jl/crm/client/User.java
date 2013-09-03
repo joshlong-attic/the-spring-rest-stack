@@ -33,9 +33,38 @@ public class User {
 		this.signupDate = signupDate;
 	}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
 
+        User user = (User) o;
 
-	public Long getDatabaseId(){
+        if (profilePhotoImported != user.profilePhotoImported) return false;
+        if (!firstName.equals(user.firstName)) return false;
+        if (!lastName.equals(user.lastName)) return false;
+        if (profilePhotoMediaType != null ? !profilePhotoMediaType.equals(user.profilePhotoMediaType) : user.profilePhotoMediaType != null)
+            return false;
+        if (selfLink != null ? !selfLink.equals(user.selfLink) : user.selfLink != null) return false;
+        if (signupDate != null ? !signupDate.equals(user.signupDate) : user.signupDate != null) return false;
+        if (!username.equals(user.username)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = selfLink != null ? selfLink.hashCode() : 0;
+        result = 31 * result + firstName.hashCode();
+        result = 31 * result + lastName.hashCode();
+        result = 31 * result + username.hashCode();
+        result = 31 * result + (profilePhotoMediaType != null ? profilePhotoMediaType.hashCode() : 0);
+        result = 31 * result + (profilePhotoImported ? 1 : 0);
+        result = 31 * result + (signupDate != null ? signupDate.hashCode() : 0);
+        return result;
+    }
+
+    public Long getDatabaseId(){
 		String href = this.selfLink ;
 		return Long.parseLong(href.substring(href.lastIndexOf("/")+1) );
 	}

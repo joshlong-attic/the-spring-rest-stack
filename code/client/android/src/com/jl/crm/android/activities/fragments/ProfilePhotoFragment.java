@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +25,8 @@ import org.springframework.util.Assert;
 import javax.inject.Provider;
 import java.io.*;
 
-import static com.jl.crm.android.activities.fragments.Utils.copyStreams;
-import static com.jl.crm.android.activities.fragments.Utils.writableFile;
+import static com.jl.crm.android.utils.IoUtils.copyStreams;
+import static com.jl.crm.android.utils.IoUtils.writableFile;
 
 /**
  * @author Josh Long
@@ -77,7 +76,6 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
                 File fi = fileFromUri(selectedImageUri);
                 profilePhotoFileChanged(fi);
             }
-
         }
     }
 
@@ -106,7 +104,10 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
             if (user.isProfilePhotoImported()) {
                 ProfilePhoto profilePhoto = crmOperations.getUserProfilePhoto();
                 byte[] profilePhotoBytes = profilePhoto.getBytes();
+
                 Bitmap bm = BitmapFactory.decodeByteArray(profilePhotoBytes, 0, profilePhotoBytes.length);
+
+
                 userProfileImageView.setImageBitmap(bm);
             }
         }
@@ -154,37 +155,5 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
             }
         });
         return view;
-    }
-}
-
-abstract class Utils {
-    public static File writableFile(String fileName) {
-        File tmpFile = new File(new File(Environment.getExternalStorageDirectory(), "spring-crm"), fileName),
-                parent = tmpFile.getParentFile();
-        String tmpFilePath = tmpFile.getAbsolutePath();
-        Assert.isTrue(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()), "the external SD card must be writable to write to '" + tmpFilePath + "'.");
-        Assert.isTrue(parent.exists() || parent.mkdirs(), "the parent directory required to write to the SD card ('" + tmpFilePath + "') does not exist and could not be created.");
-        return tmpFile;
-    }
-
-    public static void copyStreams(InputStream is, OutputStream os) throws IOException {
-        Assert.notNull(is);
-        Assert.notNull(os);
-        byte[] b = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = is.read(b)) != -1) {
-            os.write(b, 0, bytesRead);
-        }
-        try {
-            is.close();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        try {
-            os.close();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-
     }
 }

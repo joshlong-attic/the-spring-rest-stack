@@ -100,7 +100,7 @@ public class MainActivity extends SherlockFragmentActivity {
     WelcomeFragment welcomeFragment;
     ProfilePhotoFragment userAccountFragment;
     TextView searchTextView;
-    private Fragment selectedFragment;
+    Fragment selectedFragment;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -114,15 +114,12 @@ public class MainActivity extends SherlockFragmentActivity {
     }
 
     public void signin(final User user) {
+        restoreSelectedFragment();
+
         for (AuthenticatedFragment f : securedFragments) {
             f.setCurrentUser(user);
         }
-        // todo we should showDefaultSearch();
-       // restoreSelectedFragment();
-     //   if (this.selectedFragment.equals(this.welcomeFragment))
-   //         showUserAccount();
- /*       else
-            restoreSelectedFragment();*/
+
     }
 
     protected void showDefaultSearch() {
@@ -189,13 +186,6 @@ public class MainActivity extends SherlockFragmentActivity {
         addSecuredFragments(this.searchFragment, this.userAccountFragment, this.signOutFragment);
     }
 
-/*
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        restoreSelectedFragment();
-    }
-*/
 
     protected void runQuery(String query) {
         if (!StringUtils.hasText(query)) {
@@ -282,16 +272,8 @@ public class MainActivity extends SherlockFragmentActivity {
         super.onStart();
         Log.d(MainActivity.class.getName(), "onStart()");
         this.crmConnectionState.start(this.connectionEstablishedRunnable, this.connectionNotEstablishedRunnable);
-        //restoreSelectedFragment();
     }
 
-/*
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        restoreSelectedFragment();
-    }
-*/
 
     private void restoreSelectedFragment() {
         Fragment current = this.selectedFragment;

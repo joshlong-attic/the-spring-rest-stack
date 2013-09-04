@@ -127,14 +127,13 @@ public class CrmConnectionState {
     }
 
     private Runnable startNotifyingRunnableWrapper(final Runnable r) {
-        Runnable runnable = new Runnable() {
+        return new Runnable() {
             @Override
             public void run() {
                 r.run();
                 started = true;
             }
         };
-        return runnable;
     }
 
     public String buildAuthenticationUrl() {

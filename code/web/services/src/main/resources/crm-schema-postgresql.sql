@@ -51,6 +51,7 @@ INSERT INTO public.customer (id, first_name, last_name, signup_date, customer_us
 INSERT INTO public.customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Mark', 'Pollack', '2013-06-28 19:54:14', 2);
 INSERT INTO public.customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Roy', 'Clarkson', '2013-06-28 19:54:14', 5);
 
+ -- postgresql
 DROP TABLE IF EXISTS oauth_access_token;
 
 CREATE TABLE public.oauth_access_token (

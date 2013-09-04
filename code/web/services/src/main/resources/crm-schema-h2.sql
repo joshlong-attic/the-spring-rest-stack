@@ -52,8 +52,6 @@ INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_f
 INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Roy', 'Clarkson', '2013-06-28 19:54:14', 5);
 
 
-
-
 -- insert into oauth_access_token (token_id, token, authentication_id, user_name, client_id, authentication, refresh_token) values (?, ?, ?, ?, ?, ?, ?)
 create table oauth_access_token (
   token_id varchar ,

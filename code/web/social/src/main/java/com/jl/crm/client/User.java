@@ -66,8 +66,8 @@ public class User {
 
     public Long getDatabaseId(){
 		String href = this.selfLink ;
-		return Long.parseLong(href.substring(href.lastIndexOf("/")+1) );
-	}
+ 		return Long.parseLong(href.substring(href.lastIndexOf("/")+1) );
+ 	}
 
 	public void setId( String  l) {
 		this.selfLink = l;

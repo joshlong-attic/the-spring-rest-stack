@@ -71,12 +71,16 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         return user;
     }
 
+    /* this is here because its not worth trying to make Spring or Apache's FieldUtils work on Android. */
     private static Field field(Class<?> cl, String fieldName) {
         Field field = null;
         try {
-            field =  cl.getDeclaredField (fieldName);
-            if (!field.isAccessible())
-                field.setAccessible(true);
+            field = cl.getDeclaredField(fieldName);
+            if (null != field) {
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);
+                }
+            }
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
@@ -146,7 +150,8 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
     @Override
     public Customer createCustomer(String firstName, String lastName, Date signupDate) {
 
-        Customer customer = new Customer(currentUser(), null, firstName, lastName, signupDate);
+        Customer customer = new Customer(
+                currentUser(), null, firstName, lastName, signupDate);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -157,7 +162,7 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         Map<String, Object> mapOfCutomerData = customerMap(customer);
         HttpEntity<Map<String, Object>> customerHttpEntity = new HttpEntity<Map<String, Object>>(mapOfCutomerData, httpHeaders);
 
-        ResponseEntity<?> responseEntity = this.getRestTemplate().postForEntity(uriFrom("/customers"), customerHttpEntity, ResponseEntity.class);
+        ResponseEntity<?> responseEntity = getRestTemplate().postForEntity(uriFrom("/customers"), customerHttpEntity, ResponseEntity.class);
         URI newLocation = responseEntity.getHeaders().getLocation();
         return customer(newLocation);
     }
@@ -183,6 +188,26 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
     }
 
     @Override
+    public Customer updateCustomer(Long id, String firstName, String lastName) {
+        Customer customer = this.loadUserCustomer(id);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        // build up a representation of the domain model and transmit it
+        // as JSON no need to use the actual objects. this is simpler and more predictable.
+
+        Map<String, Object> mapOfCutomerData = customerMap(customer);
+        mapOfCutomerData.put("firstName", firstName);
+        mapOfCutomerData.put("lastName", lastName);
+        HttpEntity<Map<String, Object>> customerHttpEntity = new HttpEntity<Map<String, Object>>(mapOfCutomerData, httpHeaders);
+
+        URI uri = uriFrom("/customers/" + id);
+        this.getRestTemplate().put(uri.toString(), customerHttpEntity, ResponseEntity.class);
+
+        return customer(uri);
+    }
+
+    @Override
     public Customer loadUserCustomer(Long id) {
         Long currentUser = this.currentUser().getDatabaseId();
         URI uri = uriFrom("/users/" + currentUser + "/customers/" + id);
@@ -190,7 +215,7 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
     }
 
     @Override
-    public void setUserProfilePhoto(byte[] bytesOfImage, final MediaType mediaType) {
+    public void setProfilePhoto(byte[] bytesOfImage, final MediaType mediaType) {
         ByteArrayResource byteArrayResource = new ByteArrayResource(bytesOfImage) {
             @Override
             public String getFilename() {
@@ -213,9 +238,8 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         FormHttpMessageConverter formHttpMessageConverter = super.getFormMessageConverter();
         List<HttpMessageConverter<?>> partConverters;
         try {
-            // todo fix FieldUtils doesnt exist on Android
 
-            Field partConvertersField =  field(FormHttpMessageConverter.class, "partConverters" );
+            Field partConvertersField = field(FormHttpMessageConverter.class, "partConverters");
             partConverters = (List<HttpMessageConverter<?>>) partConvertersField.get(formHttpMessageConverter);
             ResourceHttpMessageConverter remove = null;
             for (HttpMessageConverter<?> hmc : partConverters) {
@@ -234,26 +258,6 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         }
         return formHttpMessageConverter;
 
-    }
-
-    @Override
-    public Customer updateCustomer(Long id, String firstName, String lastName) {
-        Customer customer = this.loadUserCustomer(id);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        // build up a representation of the domain model and transmit it
-        // as JSON no need to use the actual objects. this is simpler and more predictable.
-
-        Map<String, Object> mapOfCutomerData = customerMap(customer);
-        mapOfCutomerData.put("firstName", firstName);
-        mapOfCutomerData.put("lastName", lastName);
-        HttpEntity<Map<String, Object>> customerHttpEntity = new HttpEntity<Map<String, Object>>(mapOfCutomerData, httpHeaders);
-
-        URI uri = uriFrom("/customers/" + id);
-        this.getRestTemplate().put(uri.toString(), customerHttpEntity, ResponseEntity.class);
-
-        return customer(uri);
     }
 
     @Override

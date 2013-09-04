@@ -72,13 +72,13 @@ public class ClientExample implements InitializingBean {
     }
 
     public void workWithClient() throws Throwable {
+        // return our API-specific binding
+        CrmOperations customerServiceOperations = connection.getApi(); /* obtain our own User */
 
         // obtain the current user profile from the Spring Social API
         UserProfile userProfile = connection.fetchUserProfile();
         logger.info("obtained connection: " + userProfile.getUsername() + ".");
 
-        // return our API-specific binding
-        CrmOperations customerServiceOperations = connection.getApi(); /* obtain our own User */
 
         // fetch the current (CRM-specific) user profile identity
         User self = customerServiceOperations.currentUser();
@@ -109,8 +109,7 @@ public class ClientExample implements InitializingBean {
         ClassPathResource classPathResource = new ClassPathResource("/s2-logo.jpg");
         InputStream readEmAll = classPathResource.getInputStream();
         byte[] profilePhotoBytes = IOUtils.toByteArray(readEmAll);
-        customerServiceOperations.setUserProfilePhoto(profilePhotoBytes, MediaType.IMAGE_JPEG);
-
+        customerServiceOperations.setProfilePhoto(profilePhotoBytes, MediaType.IMAGE_JPEG);
     }
 
     @Override

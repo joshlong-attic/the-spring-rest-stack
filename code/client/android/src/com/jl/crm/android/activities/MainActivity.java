@@ -98,9 +98,9 @@ public class MainActivity extends SherlockFragmentActivity {
     CustomerSearchFragment searchFragment;
     SignOutFragment signOutFragment;
     WelcomeFragment welcomeFragment;
-    UserProfileFragment userAccountFragment;
+    ProfilePhotoFragment userAccountFragment;
     TextView searchTextView;
-    private Fragment currentlySelectedFragment;
+    private Fragment selectedFragment;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -118,7 +118,11 @@ public class MainActivity extends SherlockFragmentActivity {
             f.setCurrentUser(user);
         }
         // todo we should showDefaultSearch();
-         showUserAccount();
+       // restoreSelectedFragment();
+     //   if (this.selectedFragment.equals(this.welcomeFragment))
+   //         showUserAccount();
+ /*       else
+            restoreSelectedFragment();*/
     }
 
     protected void showDefaultSearch() {
@@ -179,11 +183,19 @@ public class MainActivity extends SherlockFragmentActivity {
 
         addFragments(this.welcomeFragment, this.signInFragment);
 
-        this.userAccountFragment = new UserProfileFragment(this, this.crmOperationsProvider, getString(R.string.user_account));
+        this.userAccountFragment = new ProfilePhotoFragment(this, this.crmOperationsProvider, getString(R.string.user_account));
         this.searchFragment = new CustomerSearchFragment(this, this.crmOperationsProvider, getString(R.string.search), getString(R.string.search_hint));
         this.signOutFragment = new SignOutFragment(this, getString(R.string.sign_out));
         addSecuredFragments(this.searchFragment, this.userAccountFragment, this.signOutFragment);
     }
+
+/*
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        restoreSelectedFragment();
+    }
+*/
 
     protected void runQuery(String query) {
         if (!StringUtils.hasText(query)) {
@@ -191,6 +203,7 @@ public class MainActivity extends SherlockFragmentActivity {
         } else {
             searchFragment.search(query);
         }
+
     }
 
     @Override
@@ -269,25 +282,31 @@ public class MainActivity extends SherlockFragmentActivity {
         super.onStart();
         Log.d(MainActivity.class.getName(), "onStart()");
         this.crmConnectionState.start(this.connectionEstablishedRunnable, this.connectionNotEstablishedRunnable);
-        restoreLastSelectedFragment();
+        //restoreSelectedFragment();
     }
 
+/*
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        restoreLastSelectedFragment();
+        restoreSelectedFragment();
     }
+*/
 
-    private void restoreLastSelectedFragment() {
-        if (null != this.currentlySelectedFragment)
-            show(this.currentlySelectedFragment);
+    private void restoreSelectedFragment() {
+        Fragment current = this.selectedFragment;
+        if (null != current) {
+            show(current);
+        } else {
+            showUserAccount();
+        }
     }
 
     public void show(Fragment f) {
         int position = this.allFragments.indexOf(f);
         viewPager.setCurrentItem(position, true);
 
-        this.currentlySelectedFragment = f;
+        this.selectedFragment = f;
 
     }
 

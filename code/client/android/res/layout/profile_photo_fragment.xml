@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/profile_photo_description"
+            android:id="@+id/profile_photo"
+            android:src="@drawable/springsource_welcome_transparent_bg"
+            />
+
+</LinearLayout>

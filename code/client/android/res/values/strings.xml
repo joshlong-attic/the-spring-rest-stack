@@ -170,5 +170,9 @@
     <string name="welcome_content_description">Welcome to the Spring CRM</string>
     <string name="profile_photo_description">Your current profile photo</string>
     <string name="profile_photo">Your Profile Photo</string>
+    <string name="take_photo">Take a Photo</string>
+    <string name="choose_from_library">Choose from Gallery</string>
+    <string name="cancel">I\'ll Do It Later...</string>
+    <string name="select_profile_photo">Choose a New Profile Photo</string>
 
 </resources>

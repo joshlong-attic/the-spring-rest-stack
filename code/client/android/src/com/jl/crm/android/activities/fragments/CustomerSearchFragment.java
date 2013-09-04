@@ -30,6 +30,8 @@ public class CustomerSearchFragment extends SherlockListFragment
     MainActivity mainActivity;
     String hint, title;
     CrmOperations crmOperations;
+    private CustomerArrayAdapter listAdapter;
+    private List<Customer> customers = new ArrayList<Customer>();
 
     public CustomerSearchFragment(MainActivity mainActivity,
                                   Provider<CrmOperations> crmOperationsProvider,
@@ -60,9 +62,9 @@ public class CustomerSearchFragment extends SherlockListFragment
         listAdapter = new CustomerArrayAdapter(getSherlockActivity(), customers);
         setListAdapter(listAdapter);
 
-        if (isAuthenticated())
+       /* if (isAuthenticated())
             loadAllCustomers();
-
+*/
     }
 
     /* this is what happens by default */
@@ -88,15 +90,11 @@ public class CustomerSearchFragment extends SherlockListFragment
 
     }
 
-    private CustomerArrayAdapter listAdapter;
-    private List<Customer> customers = new ArrayList<Customer>();
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
-
 
     @Override
     public String getTitle() {

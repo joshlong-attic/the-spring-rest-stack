@@ -21,7 +21,7 @@ public interface CrmOperations {
 
 	void removeCustomer(Long id);
 
-	void  setUserProfilePhoto(byte[] bytesOfImage, MediaType mediaType);
+	void setProfilePhoto(byte[] bytesOfImage, MediaType mediaType);
 
 	Customer updateCustomer(Long id, String firstName, String lastName);
 

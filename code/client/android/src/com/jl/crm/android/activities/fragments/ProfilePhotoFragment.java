@@ -89,7 +89,7 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             copyStreams(inputStream, outputStream);
             profilePhotoBytes = outputStream.toByteArray();
-            crmOperations.setUserProfilePhoto(profilePhotoBytes, MediaType.IMAGE_JPEG);    // we know that we asked for jpg back from the camera
+            crmOperations.setProfilePhoto(profilePhotoBytes, MediaType.IMAGE_JPEG);    // we know that we asked for jpg back from the camera
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

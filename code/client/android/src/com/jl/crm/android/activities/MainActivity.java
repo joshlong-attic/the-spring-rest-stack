@@ -83,6 +83,7 @@ public class MainActivity extends SherlockFragmentActivity {
                     " To reset everything, we're removing existing (stale) connection information");
             crmConnectionState.resetLocalConnections();
             Log.d(tag, "loading the authentication fragment.");
+            signInFragment.signout();
             show(signInFragment);
         }
     };
@@ -96,7 +97,6 @@ public class MainActivity extends SherlockFragmentActivity {
     // fragments
     SignInFragment signInFragment;
     CustomerSearchFragment searchFragment;
-    SignOutFragment signOutFragment;
     WelcomeFragment welcomeFragment;
     ProfilePhotoFragment userAccountFragment;
     TextView searchTextView;
@@ -182,8 +182,8 @@ public class MainActivity extends SherlockFragmentActivity {
 
         this.userAccountFragment = new ProfilePhotoFragment(this, this.crmOperationsProvider, getString(R.string.user_account));
         this.searchFragment = new CustomerSearchFragment(this, this.crmOperationsProvider, getString(R.string.search), getString(R.string.search_hint));
-        this.signOutFragment = new SignOutFragment(this, getString(R.string.sign_out));
-        addSecuredFragments(this.searchFragment, this.userAccountFragment, this.signOutFragment);
+
+        addSecuredFragments(this.searchFragment, this.userAccountFragment);
     }
 
 
@@ -271,7 +271,9 @@ public class MainActivity extends SherlockFragmentActivity {
     protected void onStart() {
         super.onStart();
         Log.d(MainActivity.class.getName(), "onStart()");
-        this.crmConnectionState.start(this.connectionEstablishedRunnable, this.connectionNotEstablishedRunnable);
+        this.crmConnectionState.start(
+                this.connectionEstablishedRunnable,
+                this.connectionNotEstablishedRunnable);
     }
 
 

@@ -104,10 +104,7 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
             if (user.isProfilePhotoImported()) {
                 ProfilePhoto profilePhoto = crmOperations.getUserProfilePhoto();
                 byte[] profilePhotoBytes = profilePhoto.getBytes();
-
                 Bitmap bm = BitmapFactory.decodeByteArray(profilePhotoBytes, 0, profilePhotoBytes.length);
-
-
                 userProfileImageView.setImageBitmap(bm);
             }
         }

@@ -55,13 +55,16 @@ public class SignInFragment extends SherlockFragment implements NamedFragment, M
         wb.getSettings().setSaveFormData(false);
 
         // prompt for login
-        wb.noAccessToken();
-
+        signout();
     }
 
 
     @Override
     public String getTitle() {
         return signInTitle;
+    }
+
+    public void signout() {
+        this.webView.noAccessToken();
     }
 }

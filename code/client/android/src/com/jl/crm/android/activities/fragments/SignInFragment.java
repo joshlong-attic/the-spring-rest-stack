@@ -47,7 +47,6 @@ public class SignInFragment extends SherlockFragment implements NamedFragment, M
 
     public void signout(){
         this.webView.noAccessToken();
-
     }
 
     @Override

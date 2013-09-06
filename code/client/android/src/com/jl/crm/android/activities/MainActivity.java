@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,6 +42,7 @@ import java.util.List;
  */
 public class MainActivity extends SherlockFragmentActivity {
 
+    final String tag = getClass().getSimpleName();
     FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
 
         @Override
@@ -87,6 +89,8 @@ public class MainActivity extends SherlockFragmentActivity {
 
             show(signInFragment);
             signInFragment.signout();
+             invalidateOptionsMenu();
+            menu.clear();
         }
     };
     Runnable connectionEstablishedRunnable = new Runnable() {
@@ -94,16 +98,18 @@ public class MainActivity extends SherlockFragmentActivity {
         public void run() {
             User currentUser = crmOperationsProvider.get().currentUser();
             signin(currentUser);
+            invalidateOptionsMenu();
+            onPrepareOptionsMenu(menu);
         }
     };
     // fragments
     SignInFragment signInFragment;
     CustomerSearchFragment searchFragment;
-    //    SignOutFragment signOutFragment;
     WelcomeFragment welcomeFragment;
     ProfilePhotoFragment userAccountFragment;
     TextView searchTextView;
     Fragment selectedFragment;
+    MenuItem userAccountMenuItem, signOutMenuItem, searchMenuItem;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -117,21 +123,13 @@ public class MainActivity extends SherlockFragmentActivity {
     }
 
     public void signin(final User user) {
-//        restoreSelectedFragment();
-
-
         for (AuthenticatedFragment f : this.securedFragments) {
             f.setCurrentUser(user);
         }
-
-
+        /* this will trigger the redraw of the menus when we have a signed in user */
+        //
+       // invalidateOptionsMenu();
         showUserAccount();
-
-    }
-
-    protected void showDefaultSearch() {
-        showSearch();
-        searchFragment.loadAllCustomers();
     }
 
     private void addFragments(Fragment... fragments) {
@@ -171,7 +169,7 @@ public class MainActivity extends SherlockFragmentActivity {
                 sqLiteConnectionRepository,
                 getString(R.string.oauth_access_token_callback_uri));
 
-        this.signInFragment = new SignInFragment(this, this.crmConnectionState , getString(R.string.sign_in));
+        this.signInFragment = new SignInFragment(this, this.crmConnectionState, getString(R.string.sign_in));
         this.welcomeFragment = new WelcomeFragment();
 
         addFragments(this.welcomeFragment, this.signInFragment);
@@ -197,12 +195,17 @@ public class MainActivity extends SherlockFragmentActivity {
 
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.clear();
+    protected void searchCurrentQuery() {
+        runQuery(searchTextView.getText().toString());
+    }
 
-        final Activity activity = this;
-        final String tag = getClass().getSimpleName();
+    Menu menu ;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
+        boolean showMenus = true;
+        Activity activity = this;
 
         // search
         SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
@@ -210,32 +213,37 @@ public class MainActivity extends SherlockFragmentActivity {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setQueryHint(getString(R.string.search_hint));
         searchView.setIconified(true);
+
         searchManager.setOnCancelListener(new SearchManager.OnCancelListener() {
             @Override
             public void onCancel() {
-                runQuery(searchTextView.getText().toString());
+                searchCurrentQuery();
             }
         });
         searchManager.setOnDismissListener(new SearchManager.OnDismissListener() {
             @Override
             public void onDismiss() {
-                runQuery(searchTextView.getText().toString());
+                searchCurrentQuery();
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                searchCurrentQuery();
+                return false;
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d(tag, "query text submitted: " + query);
+                Log.d((tag), "query text submitted: " + query);
                 runQuery(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d(tag, "query text changed: " + newText);
-                if (searchFragment.isAdded() && searchFragment.isResumed()) {
-                    runQuery(newText);
-                }
+                Log.d((tag), "query text changed: " + newText);
                 return true;
             }
         });
@@ -244,16 +252,19 @@ public class MainActivity extends SherlockFragmentActivity {
         searchTextView.setTextColor(Color.WHITE);
 
         // menu items
+        searchMenuItem = MenuItemUtils.menuItem(menu, this, getString(R.string.search), searchView, null, MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-        MenuItem searchMenuItem = MenuItemUtils.menuItem(menu, this, getString(R.string.search), searchView, null, MenuItem.SHOW_AS_ACTION_ALWAYS);
-        MenuItem signOutMenuItem = MenuItemUtils.menuItem(menu, this, getString(R.string.sign_out), null, new MenuItem.OnMenuItemClickListener() {
+
+        signOutMenuItem = MenuItemUtils.menuItem(menu, this, getString(R.string.sign_out), null, new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 signout();
                 return true;
             }
         });
-        MenuItem userAccountMenuItem = MenuItemUtils.menuItem(menu, this, getString(R.string.user_account), null, new MenuItem.OnMenuItemClickListener() {
+
+
+        userAccountMenuItem = MenuItemUtils.menuItem(menu, this, getString(R.string.user_account), null, new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 showUserAccount();
@@ -261,7 +272,18 @@ public class MainActivity extends SherlockFragmentActivity {
             }
         });
 
-        return super.onPrepareOptionsMenu(menu);
+        return showMenus;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean isConnected = crmConnectionState.isConnected();
+        List<MenuItem> menuItemList = Arrays.asList(userAccountMenuItem, signOutMenuItem, searchMenuItem);
+        for (MenuItem mi : menuItemList) {
+            mi.setVisible(isConnected);
+            mi.setEnabled(isConnected);
+        }
+        return true;
     }
 
     public void showUserAccount() {
@@ -284,17 +306,17 @@ public class MainActivity extends SherlockFragmentActivity {
         }
     }
 
-    public void show( final Fragment f) {
-       runOnUiThread(new Runnable() {
-           @Override
-           public void run() {
-               int position =  allFragments.indexOf(f);
-               viewPager.setCurrentItem(position, true);
+    public void show(final Fragment f) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                int position = allFragments.indexOf(f);
+                viewPager.setCurrentItem(position, true);
 
                 selectedFragment = f;
 
-           }
-       });
+            }
+        });
     }
 
 

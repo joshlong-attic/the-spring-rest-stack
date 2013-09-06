@@ -23,6 +23,7 @@ import java.util.List;
  */
 public class CrmConnectionState {
 
+    private final Runnable yes, no;
     private volatile boolean started;
     private OAuth2Operations oAuth2Operations;
     private String oauthAccessTokenCallbackUri;
@@ -30,7 +31,7 @@ public class CrmConnectionState {
     private CrmConnectionFactory connectionFactory;
     private SQLiteConnectionRepositoryHelper repositoryHelper;
     private Activity activity;
-    private final  Runnable yes, no;
+    private volatile boolean connected;
 
     public CrmConnectionState(Activity context,
                               Runnable y, Runnable n,
@@ -66,8 +67,8 @@ public class CrmConnectionState {
                                     resetLocalConnections();
                                     Connection<CrmOperations> connection = connectionFactory.createConnection(accessGrant);
                                     sqLiteConnectionRepository.addConnection(connection);
-                                    if( connection != null  ) {
-                                       activity.runOnUiThread(yes);
+                                    if (connection != null) {
+                                        activity.runOnUiThread(yes);
                                     }
                                     return null;
                                 }
@@ -84,17 +85,19 @@ public class CrmConnectionState {
         return new CrmOAuthFlowWebView(this.activity, authenticateUri, returnUri, accessTokenReceivedListener);
     }
 
+    public boolean isConnected() {
+        return this.connected;
+    }
+
     public void start() {
         if (isStarted()) // NB: no need to start the engine again if its already running.
             return;
-        // todo extract this out to a configuration variable
-        //resetLocalConnections();
 
         new AsyncTask<Object, Object, Connection<CrmOperations>>() {
             @Override
             protected Connection<CrmOperations> doInBackground(Object... params) {
                 Connection<CrmOperations> connection = sqLiteConnectionRepository.findPrimaryConnection(CrmOperations.class);
-                boolean connected = false;
+                connected = false;
                 try {
                     if (connection != null && connection.test()) {
                         connected = true;
@@ -105,7 +108,23 @@ public class CrmConnectionState {
                             "error when trying to ascertain an existing connection.", t);
                 }
 
-                activity.runOnUiThread(connected ? startNotifyingRunnableWrapper(yes) : startNotifyingRunnableWrapper(no));
+                Runnable haveConnected = new Runnable() {
+                    @Override
+                    public void run() {
+                        yes.run();
+                        started = true;
+                        connected = true;
+                    }
+
+                };
+                Runnable haveNotConnected = new Runnable() {
+                    @Override
+                    public void run() {
+                        no.run();
+                        started = true;
+                    }
+                };
+                activity.runOnUiThread(connected ? haveConnected : haveNotConnected);
                 return null;
             }
         }.execute();
@@ -133,16 +152,6 @@ public class CrmConnectionState {
                 sqLiteConnectionRepository.removeConnection(c.getKey());
             }
         }
-    }
-
-    private Runnable startNotifyingRunnableWrapper(final Runnable r) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                r.run();
-                started = true;
-            }
-        };
     }
 
     public String buildAuthenticationUrl() {

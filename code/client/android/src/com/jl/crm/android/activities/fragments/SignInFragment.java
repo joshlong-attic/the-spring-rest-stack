@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.jl.crm.android.CrmConnectionState;
 import com.jl.crm.android.activities.MainActivity;
@@ -17,18 +15,16 @@ import com.jl.crm.android.widget.CrmOAuthFlowWebView;
 
 public class SignInFragment extends SherlockFragment implements NamedFragment, MenuContributingFragment {
 
-    Runnable connectionEstablishedRunnable;
-    CrmConnectionState crmConnectionState;
+     CrmConnectionState crmConnectionState;
     CrmOAuthFlowWebView webView;
     String signInTitle;
     MainActivity mainActivity;
 
-    public SignInFragment(MainActivity mainActivity, CrmConnectionState crmConnectionState, Runnable connectionEstablishedRunnable, String signInTitle) {
+    public SignInFragment(MainActivity mainActivity, CrmConnectionState crmConnectionState,  String signInTitle) {
         super();
         this.mainActivity = mainActivity;
         this.crmConnectionState = crmConnectionState;
-        this.connectionEstablishedRunnable = connectionEstablishedRunnable;
-        this.signInTitle = signInTitle;
+         this.signInTitle = signInTitle;
     }
 
     @Override
@@ -46,19 +42,13 @@ public class SignInFragment extends SherlockFragment implements NamedFragment, M
 
     public void setWebView(CrmOAuthFlowWebView wb) {
         this.webView = wb;
-        // cookies
-        CookieSyncManager.createInstance(getActivity());
-        CookieManager.getInstance().removeAllCookie();
-
-        // settings
-        wb.getSettings().setSavePassword(false);
-        wb.getSettings().setSaveFormData(false);
-
-        // prompt for login
-        wb.noAccessToken();
-
+         signout();
     }
 
+    public void signout(){
+        this.webView.noAccessToken();
+
+    }
 
     @Override
     public String getTitle() {

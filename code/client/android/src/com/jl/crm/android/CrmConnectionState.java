@@ -30,8 +30,10 @@ public class CrmConnectionState {
     private CrmConnectionFactory connectionFactory;
     private SQLiteConnectionRepositoryHelper repositoryHelper;
     private Activity activity;
+    private final  Runnable yes, no;
 
     public CrmConnectionState(Activity context,
+                              Runnable y, Runnable n,
                               CrmConnectionFactory connectionFactory,
                               SQLiteConnectionRepositoryHelper repositoryHelper,
                               SQLiteConnectionRepository sqLiteConnectionRepository,
@@ -42,6 +44,8 @@ public class CrmConnectionState {
         this.connectionFactory = connectionFactory;
         this.oAuth2Operations = connectionFactory.getOAuthOperations();
         this.oauthAccessTokenCallbackUri = oauthAccessTokenCallbackUri;
+        this.yes = y;
+        this.no = n;
     }
 
     public boolean isStarted() {
@@ -55,15 +59,20 @@ public class CrmConnectionState {
                     @Override
                     public void accessTokenReceived(final String accessToken) {
                         try {
-                            AsyncTask<?, ?, Connection<CrmOperations>> asyncTask = new AsyncTask<Object, Object, Connection<CrmOperations>>() {
+                            new AsyncTask<Object, Object, Object>() {
                                 @Override
-                                protected Connection<CrmOperations> doInBackground(Object... params) {
-                                    Connection<CrmOperations> crmOperationsConnection = installAccessToken(accessToken);
-                                    return crmOperationsConnection;
+                                protected Object doInBackground(Object... params) {
+                                    AccessGrant accessGrant = new AccessGrant(accessToken);
+                                    resetLocalConnections();
+                                    Connection<CrmOperations> connection = connectionFactory.createConnection(accessGrant);
+                                    sqLiteConnectionRepository.addConnection(connection);
+                                    if( connection != null  ) {
+                                       activity.runOnUiThread(yes);
+                                    }
+                                    return null;
                                 }
-                            };
+                            }.execute();
 
-                            asyncTask.execute(new Object[0]);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -75,7 +84,7 @@ public class CrmConnectionState {
         return new CrmOAuthFlowWebView(this.activity, authenticateUri, returnUri, accessTokenReceivedListener);
     }
 
-    public void start(final Runnable yes, final Runnable no) {
+    public void start() {
         if (isStarted()) // NB: no need to start the engine again if its already running.
             return;
         // todo extract this out to a configuration variable
@@ -145,14 +154,6 @@ public class CrmConnectionState {
             oAuth2Parameters.setRedirectUri(oauthAccessTokenCallbackUri);
         }
         return oAuth2Operations.buildAuthenticateUrl(GrantType.IMPLICIT_GRANT, oAuth2Parameters);
-    }
-
-    public Connection<CrmOperations> installAccessToken(String accessToken) {
-        AccessGrant accessGrant = new AccessGrant(accessToken);
-        resetLocalConnections();
-        Connection<CrmOperations> crmOperationsConnection = connectionFactory.createConnection(accessGrant);
-        sqLiteConnectionRepository.addConnection(crmOperationsConnection);
-        return crmOperationsConnection;
     }
 
 }

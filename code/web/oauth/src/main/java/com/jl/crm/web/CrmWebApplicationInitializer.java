@@ -103,6 +103,7 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 				  .anyRequest().authenticated();
 
 		http.apply(new OAuth2ServerConfigurer())
+
 				  .tokenStore(new JdbcTokenStore(this.dataSource))
 				  .resourceId(applicationName);
 	}

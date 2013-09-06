@@ -83,7 +83,10 @@ public class MainActivity extends SherlockFragmentActivity {
                     " To reset everything, we're removing existing (stale) connection information");
             crmConnectionState.resetLocalConnections();
             Log.d(tag, "loading the authentication fragment.");
+//            show(signInFragment);
+
             show(signInFragment);
+            signInFragment.signout();
         }
     };
     Runnable connectionEstablishedRunnable = new Runnable() {
@@ -96,7 +99,7 @@ public class MainActivity extends SherlockFragmentActivity {
     // fragments
     SignInFragment signInFragment;
     CustomerSearchFragment searchFragment;
-    SignOutFragment signOutFragment;
+    //    SignOutFragment signOutFragment;
     WelcomeFragment welcomeFragment;
     ProfilePhotoFragment userAccountFragment;
     TextView searchTextView;
@@ -114,11 +117,15 @@ public class MainActivity extends SherlockFragmentActivity {
     }
 
     public void signin(final User user) {
-        restoreSelectedFragment();
+//        restoreSelectedFragment();
 
-        for (AuthenticatedFragment f : securedFragments) {
+
+        for (AuthenticatedFragment f : this.securedFragments) {
             f.setCurrentUser(user);
         }
+
+
+        showUserAccount();
 
     }
 
@@ -143,14 +150,6 @@ public class MainActivity extends SherlockFragmentActivity {
         Collections.addAll(this.allFragments, ts);
     }
 
-    protected void setupCommonInfrastructure() {
-        this.crmConnectionState = new CrmConnectionState(this,
-                connectionFactory,
-                repositoryHelper,
-                sqLiteConnectionRepository,
-                getString(R.string.oauth_access_token_callback_uri));
-    }
-
     public void showSearch() {
         show(this.searchFragment);
     }
@@ -163,29 +162,31 @@ public class MainActivity extends SherlockFragmentActivity {
 
         Log.d(MainActivity.class.getName(), "onCreate()");
 
-        setupCommonInfrastructure();
-        setupFragments();
+        this.crmConnectionState = new CrmConnectionState(
+                this,
+                this.connectionEstablishedRunnable,
+                this.connectionNotEstablishedRunnable,
+                connectionFactory,
+                repositoryHelper,
+                sqLiteConnectionRepository,
+                getString(R.string.oauth_access_token_callback_uri));
 
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setAdapter(fragmentPagerAdapter);
-        viewPager.setOffscreenPageLimit(this.allFragments.size());
-
-        show(this.welcomeFragment);
-    }
-
-    public void setupFragments() {
-
-        this.signInFragment = new SignInFragment(this, this.crmConnectionState, this.connectionEstablishedRunnable, getString(R.string.sign_in));
+        this.signInFragment = new SignInFragment(this, this.crmConnectionState , getString(R.string.sign_in));
         this.welcomeFragment = new WelcomeFragment();
 
         addFragments(this.welcomeFragment, this.signInFragment);
 
         this.userAccountFragment = new ProfilePhotoFragment(this, this.crmOperationsProvider, getString(R.string.user_account));
         this.searchFragment = new CustomerSearchFragment(this, this.crmOperationsProvider, getString(R.string.search), getString(R.string.search_hint));
-        this.signOutFragment = new SignOutFragment(this, getString(R.string.sign_out));
-        addSecuredFragments(this.searchFragment, this.userAccountFragment, this.signOutFragment);
-    }
+        //   this.signOutFragment = new SignOutFragment(this, getString(R.string.sign_out));
+        addSecuredFragments(this.searchFragment, this.userAccountFragment);
 
+        this.viewPager = (ViewPager) findViewById(R.id.pager);
+        this.viewPager.setAdapter(fragmentPagerAdapter);
+        this.viewPager.setOffscreenPageLimit(this.allFragments.size());
+
+        show(this.welcomeFragment);
+    }
 
     protected void runQuery(String query) {
         if (!StringUtils.hasText(query)) {
@@ -271,25 +272,29 @@ public class MainActivity extends SherlockFragmentActivity {
     protected void onStart() {
         super.onStart();
         Log.d(MainActivity.class.getName(), "onStart()");
-        this.crmConnectionState.start(this.connectionEstablishedRunnable, this.connectionNotEstablishedRunnable);
+        this.crmConnectionState.start();
     }
-
 
     private void restoreSelectedFragment() {
         Fragment current = this.selectedFragment;
-        if (null != current) {
+        if (null != current && current != this.welcomeFragment) {
             show(current);
         } else {
             showUserAccount();
         }
     }
 
-    public void show(Fragment f) {
-        int position = this.allFragments.indexOf(f);
-        viewPager.setCurrentItem(position, true);
+    public void show( final Fragment f) {
+       runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+               int position =  allFragments.indexOf(f);
+               viewPager.setCurrentItem(position, true);
 
-        this.selectedFragment = f;
+                selectedFragment = f;
 
+           }
+       });
     }
 
 

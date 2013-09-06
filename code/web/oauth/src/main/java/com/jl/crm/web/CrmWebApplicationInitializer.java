@@ -79,25 +79,41 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 	@Inject
 	private DataSource dataSource;
 
+    @Inject
+    private UserDetailsService userDetailsService;
+
 	@Inject
 	private ContentNegotiationStrategy contentNegotiationStrategy;
 
 	@Override
 	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
 
-		auth.apply(new InMemoryClientDetailsServiceConfigurer())
-				.withClient("android-crm")
-				.resourceIds(applicationName)
-				.scopes("read", "write")
-				.authorities("ROLE_USER")
-				.authorizedGrantTypes("authorization_code", "implicit", "password")
-				.secret("123456");
+        auth
+                .userDetailsService(userDetailsService)
+                .and()
+                .apply(new InMemoryClientDetailsServiceConfigurer())
+                .withClient("android-crm")
+                .resourceIds(applicationName)
+                .scopes("read", "write")
+                .authorities("ROLE_USER")
+                .authorizedGrantTypes("authorization_code", "implicit", "password")
+                .secret("123456")
+                .and()
+                .withClient("ios-crm")
+                .resourceIds(applicationName)
+                .scopes("read", "write")
+                .authorities("ROLE_USER")
+                .authorizedGrantTypes("password")
+                .secret("123456");
 
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.requestMatcher(oauthRequestMatcher());
+
+//        http.authorizeRequests()
+//                .antMatchers("/oauth/token").fullyAuthenticated();
 
 		http.authorizeRequests()
 				  .anyRequest().authenticated();
@@ -147,6 +163,7 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+
 		http.formLogin()
 				.loginPage("/crm/signin.html")
 				.defaultSuccessUrl("/crm/welcome.html")
@@ -168,6 +185,7 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				};
 
 		http.authorizeRequests()
+//                .antMatchers("/oauth/**").hasRole("USER")
 				.antMatchers(filesToLetThroughUnAuthorized).permitAll()
 				.antMatchers("/users/*").denyAll()
 				.anyRequest().authenticated();

@@ -34,4 +34,12 @@ public class SecurityControllerAdvice {
 		return this.service.findById(userId);
 	}
 
+//    @ModelAttribute
+//    public Object currentUser(Authentication authentication) {
+//        if (null == authentication){
+//            return null;
+//        }
+//        return authentication.getPrincipal();
+//    }
+
 }

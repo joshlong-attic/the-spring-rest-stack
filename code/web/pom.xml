@@ -62,9 +62,9 @@
                 <artifactId>spring-data-redis</artifactId>
                 <version>1.0.5.RELEASE</version>
             </dependency>
-            <dependency>
+          <!--  <dependency>
                 <groupId>org.apache.httpcomponents</groupId><artifactId>httpclient</artifactId><version>4.2.5</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>

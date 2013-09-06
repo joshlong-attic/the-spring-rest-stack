@@ -112,9 +112,6 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.requestMatcher(oauthRequestMatcher());
 
-//        http.authorizeRequests()
-//                .antMatchers("/oauth/token").fullyAuthenticated();
-
 		http.authorizeRequests()
 				  .anyRequest().authenticated();
 
@@ -185,7 +182,6 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				};
 
 		http.authorizeRequests()
-//                .antMatchers("/oauth/**").hasRole("USER")
 				.antMatchers(filesToLetThroughUnAuthorized).permitAll()
 				.antMatchers("/users/*").denyAll()
 				.anyRequest().authenticated();

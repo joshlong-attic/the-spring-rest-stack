@@ -1,7 +1,7 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.*;
-import com.jl.crm.services.security.CrmUserDetailsService;
+import com.jl.crm.services.security.CrmUserDetailsService.CrmUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,17 +29,12 @@ public class SecurityControllerAdvice {
 		if (null == authentication){
 			return null;
 		}
-		CrmUserDetailsService.CrmUserDetails crmUserDetails = (CrmUserDetailsService.CrmUserDetails) authentication.getPrincipal();
-		long userId = crmUserDetails.getUser().getId();
-		return this.service.findById(userId);
+        if(authentication.getPrincipal() instanceof CrmUserDetails) {
+            CrmUserDetails crmUserDetails = (CrmUserDetails) authentication.getPrincipal();
+            long userId = crmUserDetails.getUser().getId();
+            return this.service.findById(userId);
+        }
+        return null;
 	}
-
-//    @ModelAttribute
-//    public Object currentUser(Authentication authentication) {
-//        if (null == authentication){
-//            return null;
-//        }
-//        return authentication.getPrincipal();
-//    }
 
 }

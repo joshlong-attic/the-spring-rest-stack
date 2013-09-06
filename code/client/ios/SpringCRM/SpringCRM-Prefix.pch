@@ -1,0 +1,31 @@
+//
+// Prefix header for all source files of the 'SpringCRM' target in the 'SpringCRM' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iPhone SDK 5.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import <CoreData/CoreData.h>
+
+	// Debug Logging
+	#import "DLog.h"
+
+	// Categories
+	#import "NSString+Encoding.h"
+	#import "NSDictionary+Helpers.h"
+	#import "UIColor+CustomColors.h"
+
+    // App Delegate
+    #import "SpringCRMAppDelegate.h"
+
+    // Application Settings
+    #import "CRMAppSettings.h"
+    #import "CRMUserSettings.h"
+    #import "CRMConnectionSettings.h"
+#endif

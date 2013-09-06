@@ -1,0 +1,908 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		2892E4100DC94CBA00A64D0F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2892E40F0DC94CBA00A64D0F /* CoreGraphics.framework */; };
+		810FD30D15D9A0AE00A9B3B3 /* CRMSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 810FD30B15D9A0AE00A9B3B3 /* CRMSignInViewController.m */; };
+		811471B4160CB1C500878ACD /* CRMFormTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 811471B3160CB1C400878ACD /* CRMFormTextFieldCell.m */; };
+		815004E115EEFF5100972ACE /* CRMAuthorizedRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 815004E015EEFF5100972ACE /* CRMAuthorizedRequest.m */; };
+		81790DE317D7AB3D00C836B5 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 81790DE217D7AB3D00C836B5 /* Default-568h@2x.png */; };
+		818BD9CD15DC949A00BD7842 /* OA2SignInRequestParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 818BD9CC15DC949A00BD7842 /* OA2SignInRequestParameters.m */; };
+		818BD9D415DCBF0C00BD7842 /* CRMURLRequestParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 818BD9D315DCBF0C00BD7842 /* CRMURLRequestParameters.m */; };
+		81963AE015E2B88B002C1BC6 /* CRMKeychainManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 81963ADF15E2B88B002C1BC6 /* CRMKeychainManager.m */; };
+		8196752215DD388F0056A806 /* CRMURLPostRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8196752115DD388F0056A806 /* CRMURLPostRequest.m */; };
+		8196752615DD7B820056A806 /* OA2AccessGrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 8196752515DD7B820056A806 /* OA2AccessGrant.m */; };
+		81A2492315D9A6BF00C84332 /* CRMSignInViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 81A2492515D9A6BF00C84332 /* CRMSignInViewController.xib */; };
+		81A2492815DA948600C84332 /* CRMAuthController.m in Sources */ = {isa = PBXBuildFile; fileRef = 81A2492715DA948600C84332 /* CRMAuthController.m */; };
+		81C3139C15E82372004ADD53 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 81C3139B15E82371004ADD53 /* NSData+Base64.m */; };
+		81C313A015E9DC12004ADD53 /* CRMURLRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 81C3139F15E9DC12004ADD53 /* CRMURLRequest.m */; };
+		81C313A315EBE1AE004ADD53 /* OA2AuthorizedRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 81C313A215EBE1AD004ADD53 /* OA2AuthorizedRequest.m */; };
+		81C313A815EBEA1A004ADD53 /* OA2SignInRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 81C313A715EBEA19004ADD53 /* OA2SignInRequest.m */; };
+		81CFAA4815F1615D00661D68 /* CRMCoreDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA4715F1615D00661D68 /* CRMCoreDataManager.m */; };
+		81CFAA4B15F4584700661D68 /* NSDate+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA4A15F4584700661D68 /* NSDate+Helpers.m */; };
+		81CFAA5715F7F31700661D68 /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA5615F7F31600661D68 /* Profile.m */; };
+		81E2BDE615EFB3DB00BFBDE0 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28860BE40F44EE6400985440 /* CoreData.framework */; };
+		81E2BDEA15EFB78000BFBDE0 /* SpringCRM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 81E2BDE815EFB78000BFBDE0 /* SpringCRM.xcdatamodeld */; };
+		81E42E1B15ADE82F001FA72D /* CRMActivityAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42D5F15ADE82F001FA72D /* CRMActivityAlertView.m */; };
+		81E42E1D15ADE82F001FA72D /* CRMAppSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42D6315ADE82F001FA72D /* CRMAppSettings.m */; };
+		81E42E2115ADE82F001FA72D /* CRMAuthorizeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42D6815ADE82F001FA72D /* CRMAuthorizeViewController.m */; };
+		81E42E2415ADE82F001FA72D /* CRMCustomNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42D6D15ADE82F001FA72D /* CRMCustomNavigationBar.m */; };
+		81E42E2615ADE82F001FA72D /* CRMCustomToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42D7115ADE82F001FA72D /* CRMCustomToolbar.m */; };
+		81E42E2A15ADE82F001FA72D /* CRMAuthorizeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 81E42D7915ADE82F001FA72D /* CRMAuthorizeViewController.xib */; };
+		81E42E3515ADE82F001FA72D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 81E42D8F15ADE82F001FA72D /* InfoPlist.strings */; };
+		81E42E3715ADE82F001FA72D /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 81E42D9315ADE82F001FA72D /* MainWindow.xib */; };
+		81E42E3815ADE82F001FA72D /* CRMProfileMainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 81E42D9515ADE82F001FA72D /* CRMProfileMainViewController.xib */; };
+		81E42E5415ADE82F001FA72D /* SpringCRMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42DCE15ADE82F001FA72D /* SpringCRMAppDelegate.m */; };
+		81E42E5F15ADE82F001FA72D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42DDC15ADE82F001FA72D /* main.m */; };
+		81E42E6115ADE82F001FA72D /* NSDictionary+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42DE015ADE82F001FA72D /* NSDictionary+Helpers.m */; };
+		81E42E6215ADE82F001FA72D /* NSString+Encoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42DE215ADE82F001FA72D /* NSString+Encoding.m */; };
+		81E42E6315ADE82F001FA72D /* CRMBaseController.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42DE415ADE82F001FA72D /* CRMBaseController.m */; };
+		81E42E6615ADE82F001FA72D /* CRMProfileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42DEA15ADE82F001FA72D /* CRMProfileController.m */; };
+		81E42E6715ADE82F001FA72D /* CRMProfileMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42DED15ADE82F001FA72D /* CRMProfileMainViewController.m */; };
+		81E42E7D15ADE82F001FA72D /* UIColor+CustomColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42E0D15ADE82F001FA72D /* UIColor+CustomColors.m */; };
+		81E42E7E15ADE82F001FA72D /* CRMUserSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42E0F15ADE82F001FA72D /* CRMUserSettings.m */; };
+		81E42E8315ADE82F001FA72D /* CRMWebImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42E1A15ADE82F001FA72D /* CRMWebImageView.m */; };
+		81E75F3A11BE0D5800E6B283 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81E75F3911BE0D5800E6B283 /* Security.framework */; };
+		81F8DEC01227801000C3E8FD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81F8DEBF1227801000C3E8FD /* QuartzCore.framework */; };
+		81FF4E771607F0D7001B0ABC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 81FF4E761607F0D7001B0ABC /* Settings.bundle */; };
+		81FF4E7C1608D05F001B0ABC /* CRMConnectionSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 81FF4E7B1608D05F001B0ABC /* CRMConnectionSettings.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		1D6058910D05DD3D006BFB54 /* SpringCRM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpringCRM.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		28860BE40F44EE6400985440 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		2892E40F0DC94CBA00A64D0F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		8106BD6F160FB3FC003968DB /* CRMAuthControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMAuthControllerDelegate.h; sourceTree = "<group>"; };
+		810FD30A15D9A0AE00A9B3B3 /* CRMSignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMSignInViewController.h; sourceTree = "<group>"; };
+		810FD30B15D9A0AE00A9B3B3 /* CRMSignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMSignInViewController.m; sourceTree = "<group>"; };
+		811471B2160CB1C400878ACD /* CRMFormTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMFormTextFieldCell.h; sourceTree = "<group>"; };
+		811471B3160CB1C400878ACD /* CRMFormTextFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMFormTextFieldCell.m; sourceTree = "<group>"; };
+		815004DF15EEFF5100972ACE /* CRMAuthorizedRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMAuthorizedRequest.h; sourceTree = "<group>"; };
+		815004E015EEFF5100972ACE /* CRMAuthorizedRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMAuthorizedRequest.m; sourceTree = "<group>"; };
+		81790DE217D7AB3D00C836B5 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		818BD9CB15DC949A00BD7842 /* OA2SignInRequestParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OA2SignInRequestParameters.h; sourceTree = "<group>"; };
+		818BD9CC15DC949A00BD7842 /* OA2SignInRequestParameters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OA2SignInRequestParameters.m; sourceTree = "<group>"; };
+		818BD9D215DCBF0C00BD7842 /* CRMURLRequestParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMURLRequestParameters.h; sourceTree = "<group>"; };
+		818BD9D315DCBF0C00BD7842 /* CRMURLRequestParameters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMURLRequestParameters.m; sourceTree = "<group>"; };
+		81963ADE15E2B88B002C1BC6 /* CRMKeychainManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMKeychainManager.h; sourceTree = "<group>"; };
+		81963ADF15E2B88B002C1BC6 /* CRMKeychainManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMKeychainManager.m; sourceTree = "<group>"; };
+		8196752015DD388F0056A806 /* CRMURLPostRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMURLPostRequest.h; sourceTree = "<group>"; };
+		8196752115DD388F0056A806 /* CRMURLPostRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMURLPostRequest.m; sourceTree = "<group>"; };
+		8196752415DD7B820056A806 /* OA2AccessGrant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OA2AccessGrant.h; sourceTree = "<group>"; };
+		8196752515DD7B820056A806 /* OA2AccessGrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OA2AccessGrant.m; sourceTree = "<group>"; };
+		81A2492415D9A6BF00C84332 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CRMSignInViewController.xib; sourceTree = "<group>"; };
+		81A2492615DA948600C84332 /* CRMAuthController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMAuthController.h; sourceTree = "<group>"; };
+		81A2492715DA948600C84332 /* CRMAuthController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMAuthController.m; sourceTree = "<group>"; };
+		81C3139A15E82371004ADD53 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
+		81C3139B15E82371004ADD53 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
+		81C3139E15E9DC11004ADD53 /* CRMURLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMURLRequest.h; sourceTree = "<group>"; };
+		81C3139F15E9DC12004ADD53 /* CRMURLRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMURLRequest.m; sourceTree = "<group>"; };
+		81C313A115EBE1AD004ADD53 /* OA2AuthorizedRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OA2AuthorizedRequest.h; sourceTree = "<group>"; };
+		81C313A215EBE1AD004ADD53 /* OA2AuthorizedRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OA2AuthorizedRequest.m; sourceTree = "<group>"; };
+		81C313A615EBEA18004ADD53 /* OA2SignInRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OA2SignInRequest.h; sourceTree = "<group>"; };
+		81C313A715EBEA19004ADD53 /* OA2SignInRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OA2SignInRequest.m; sourceTree = "<group>"; };
+		81CFAA4615F1615D00661D68 /* CRMCoreDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMCoreDataManager.h; sourceTree = "<group>"; };
+		81CFAA4715F1615D00661D68 /* CRMCoreDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMCoreDataManager.m; sourceTree = "<group>"; };
+		81CFAA4915F4584700661D68 /* NSDate+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Helpers.h"; sourceTree = "<group>"; };
+		81CFAA4A15F4584700661D68 /* NSDate+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Helpers.m"; sourceTree = "<group>"; };
+		81CFAA5515F7F31500661D68 /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profile.h; sourceTree = "<group>"; };
+		81CFAA5615F7F31600661D68 /* Profile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profile.m; sourceTree = "<group>"; };
+		81E2BDE915EFB78000BFBDE0 /* SpringCRM.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SpringCRM.xcdatamodel; sourceTree = "<group>"; };
+		81E42D5E15ADE82F001FA72D /* CRMActivityAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMActivityAlertView.h; sourceTree = "<group>"; };
+		81E42D5F15ADE82F001FA72D /* CRMActivityAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMActivityAlertView.m; sourceTree = "<group>"; };
+		81E42D6215ADE82F001FA72D /* CRMAppSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMAppSettings.h; sourceTree = "<group>"; };
+		81E42D6315ADE82F001FA72D /* CRMAppSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMAppSettings.m; sourceTree = "<group>"; };
+		81E42D6715ADE82F001FA72D /* CRMAuthorizeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMAuthorizeViewController.h; sourceTree = "<group>"; };
+		81E42D6815ADE82F001FA72D /* CRMAuthorizeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMAuthorizeViewController.m; sourceTree = "<group>"; };
+		81E42D6C15ADE82F001FA72D /* CRMCustomNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMCustomNavigationBar.h; sourceTree = "<group>"; };
+		81E42D6D15ADE82F001FA72D /* CRMCustomNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMCustomNavigationBar.m; sourceTree = "<group>"; };
+		81E42D7015ADE82F001FA72D /* CRMCustomToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMCustomToolbar.h; sourceTree = "<group>"; };
+		81E42D7115ADE82F001FA72D /* CRMCustomToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMCustomToolbar.m; sourceTree = "<group>"; };
+		81E42D7615ADE82F001FA72D /* DLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLog.h; sourceTree = "<group>"; };
+		81E42D7A15ADE82F001FA72D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CRMAuthorizeViewController.xib; sourceTree = "<group>"; };
+		81E42D9015ADE82F001FA72D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		81E42D9415ADE82F001FA72D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		81E42D9615ADE82F001FA72D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CRMProfileMainViewController.xib; sourceTree = "<group>"; };
+		81E42DCB15ADE82F001FA72D /* SpringCRM-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SpringCRM-Info.plist"; sourceTree = "<group>"; };
+		81E42DCC15ADE82F001FA72D /* SpringCRM-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SpringCRM-Prefix.pch"; sourceTree = "<group>"; };
+		81E42DCD15ADE82F001FA72D /* SpringCRMAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringCRMAppDelegate.h; sourceTree = "<group>"; };
+		81E42DCE15ADE82F001FA72D /* SpringCRMAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpringCRMAppDelegate.m; sourceTree = "<group>"; };
+		81E42DDC15ADE82F001FA72D /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		81E42DDF15ADE82F001FA72D /* NSDictionary+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Helpers.h"; sourceTree = "<group>"; };
+		81E42DE015ADE82F001FA72D /* NSDictionary+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Helpers.m"; sourceTree = "<group>"; };
+		81E42DE115ADE82F001FA72D /* NSString+Encoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Encoding.h"; sourceTree = "<group>"; };
+		81E42DE215ADE82F001FA72D /* NSString+Encoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Encoding.m"; sourceTree = "<group>"; };
+		81E42DE315ADE82F001FA72D /* CRMBaseController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMBaseController.h; sourceTree = "<group>"; };
+		81E42DE415ADE82F001FA72D /* CRMBaseController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMBaseController.m; sourceTree = "<group>"; };
+		81E42DE915ADE82F001FA72D /* CRMProfileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMProfileController.h; sourceTree = "<group>"; };
+		81E42DEA15ADE82F001FA72D /* CRMProfileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMProfileController.m; sourceTree = "<group>"; };
+		81E42DEB15ADE82F001FA72D /* CRMProfileControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMProfileControllerDelegate.h; sourceTree = "<group>"; };
+		81E42DEC15ADE82F001FA72D /* CRMProfileMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMProfileMainViewController.h; sourceTree = "<group>"; };
+		81E42DED15ADE82F001FA72D /* CRMProfileMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMProfileMainViewController.m; sourceTree = "<group>"; };
+		81E42E0C15ADE82F001FA72D /* UIColor+CustomColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+CustomColors.h"; sourceTree = "<group>"; };
+		81E42E0D15ADE82F001FA72D /* UIColor+CustomColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+CustomColors.m"; sourceTree = "<group>"; };
+		81E42E0E15ADE82F001FA72D /* CRMUserSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMUserSettings.h; sourceTree = "<group>"; };
+		81E42E0F15ADE82F001FA72D /* CRMUserSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMUserSettings.m; sourceTree = "<group>"; };
+		81E42E1915ADE82F001FA72D /* CRMWebImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMWebImageView.h; sourceTree = "<group>"; };
+		81E42E1A15ADE82F001FA72D /* CRMWebImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMWebImageView.m; sourceTree = "<group>"; };
+		81E75F3911BE0D5800E6B283 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		81F8DEBF1227801000C3E8FD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		81FF4E761607F0D7001B0ABC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		81FF4E7A1608D05F001B0ABC /* CRMConnectionSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMConnectionSettings.h; sourceTree = "<group>"; };
+		81FF4E7B1608D05F001B0ABC /* CRMConnectionSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMConnectionSettings.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1D60588F0D05DD3D006BFB54 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
+				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
+				2892E4100DC94CBA00A64D0F /* CoreGraphics.framework in Frameworks */,
+				81E75F3A11BE0D5800E6B283 /* Security.framework in Frameworks */,
+				81F8DEC01227801000C3E8FD /* QuartzCore.framework in Frameworks */,
+				81E2BDE615EFB3DB00BFBDE0 /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1D6058910D05DD3D006BFB54 /* SpringCRM.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
+			isa = PBXGroup;
+			children = (
+				81E42D5D15ADE82F001FA72D /* SpringCRM */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = CustomTemplate;
+			sourceTree = "<group>";
+			usesTabs = 0;
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				28860BE40F44EE6400985440 /* CoreData.framework */,
+				2892E40F0DC94CBA00A64D0F /* CoreGraphics.framework */,
+				1D30AB110D05D00D00671497 /* Foundation.framework */,
+				81F8DEBF1227801000C3E8FD /* QuartzCore.framework */,
+				81E75F3911BE0D5800E6B283 /* Security.framework */,
+				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8124CE6C16078C55000D3D6E /* Authorization */ = {
+			isa = PBXGroup;
+			children = (
+				81E42D6715ADE82F001FA72D /* CRMAuthorizeViewController.h */,
+				81E42D6815ADE82F001FA72D /* CRMAuthorizeViewController.m */,
+				81E42D7915ADE82F001FA72D /* CRMAuthorizeViewController.xib */,
+				810FD30A15D9A0AE00A9B3B3 /* CRMSignInViewController.h */,
+				810FD30B15D9A0AE00A9B3B3 /* CRMSignInViewController.m */,
+				81A2492515D9A6BF00C84332 /* CRMSignInViewController.xib */,
+			);
+			name = Authorization;
+			sourceTree = "<group>";
+		};
+		815D0A3E1604F1F1002786A4 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				81CFAA5515F7F31500661D68 /* Profile.h */,
+				81CFAA5615F7F31600661D68 /* Profile.m */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		81CD36FC1602425700FFFCEA /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				81E42DEC15ADE82F001FA72D /* CRMProfileMainViewController.h */,
+				81E42DED15ADE82F001FA72D /* CRMProfileMainViewController.m */,
+				81E42D9515ADE82F001FA72D /* CRMProfileMainViewController.xib */,
+			);
+			name = Profile;
+			sourceTree = "<group>";
+		};
+		81E42D5D15ADE82F001FA72D /* SpringCRM */ = {
+			isa = PBXGroup;
+			children = (
+				81FF4E7D1608D137001B0ABC /* Settings */,
+				81E42ED515AF4160001FA72D /* Controllers */,
+				81E42ED615AF43C4001FA72D /* Categories */,
+				81E42ED415AF3E96001FA72D /* Helpers */,
+				815D0A3E1604F1F1002786A4 /* Models */,
+				81E42ED315AF3D89001FA72D /* Views */,
+				81E42ED215AF377D001FA72D /* ViewControllers */,
+				81E42DCD15ADE82F001FA72D /* SpringCRMAppDelegate.h */,
+				81E42DCE15ADE82F001FA72D /* SpringCRMAppDelegate.m */,
+				81E2BDE815EFB78000BFBDE0 /* SpringCRM.xcdatamodeld */,
+				81E42D9315ADE82F001FA72D /* MainWindow.xib */,
+				81E42E8415ADE853001FA72D /* Supporting Files */,
+			);
+			path = SpringCRM;
+			sourceTree = "<group>";
+		};
+		81E42E8415ADE853001FA72D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				81E42EBC15ADF556001FA72D /* Images */,
+				81E42D7615ADE82F001FA72D /* DLog.h */,
+				81E42DCB15ADE82F001FA72D /* SpringCRM-Info.plist */,
+				81E42DCC15ADE82F001FA72D /* SpringCRM-Prefix.pch */,
+				81E42D8F15ADE82F001FA72D /* InfoPlist.strings */,
+				81E42DDC15ADE82F001FA72D /* main.m */,
+				81FF4E761607F0D7001B0ABC /* Settings.bundle */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		81E42EBC15ADF556001FA72D /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				81790DE217D7AB3D00C836B5 /* Default-568h@2x.png */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
+		81E42ED215AF377D001FA72D /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				8124CE6C16078C55000D3D6E /* Authorization */,
+				81CD36FC1602425700FFFCEA /* Profile */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		81E42ED315AF3D89001FA72D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				81E42D5E15ADE82F001FA72D /* CRMActivityAlertView.h */,
+				81E42D5F15ADE82F001FA72D /* CRMActivityAlertView.m */,
+				81E42D6C15ADE82F001FA72D /* CRMCustomNavigationBar.h */,
+				81E42D6D15ADE82F001FA72D /* CRMCustomNavigationBar.m */,
+				81E42D7015ADE82F001FA72D /* CRMCustomToolbar.h */,
+				81E42D7115ADE82F001FA72D /* CRMCustomToolbar.m */,
+				811471B2160CB1C400878ACD /* CRMFormTextFieldCell.h */,
+				811471B3160CB1C400878ACD /* CRMFormTextFieldCell.m */,
+				81E42E1915ADE82F001FA72D /* CRMWebImageView.h */,
+				81E42E1A15ADE82F001FA72D /* CRMWebImageView.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		81E42ED415AF3E96001FA72D /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				815004DF15EEFF5100972ACE /* CRMAuthorizedRequest.h */,
+				815004E015EEFF5100972ACE /* CRMAuthorizedRequest.m */,
+				81CFAA4615F1615D00661D68 /* CRMCoreDataManager.h */,
+				81CFAA4715F1615D00661D68 /* CRMCoreDataManager.m */,
+				81963ADE15E2B88B002C1BC6 /* CRMKeychainManager.h */,
+				81963ADF15E2B88B002C1BC6 /* CRMKeychainManager.m */,
+				8196752015DD388F0056A806 /* CRMURLPostRequest.h */,
+				8196752115DD388F0056A806 /* CRMURLPostRequest.m */,
+				81C3139E15E9DC11004ADD53 /* CRMURLRequest.h */,
+				81C3139F15E9DC12004ADD53 /* CRMURLRequest.m */,
+				818BD9D215DCBF0C00BD7842 /* CRMURLRequestParameters.h */,
+				818BD9D315DCBF0C00BD7842 /* CRMURLRequestParameters.m */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
+		81E42ED515AF4160001FA72D /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				81A2492615DA948600C84332 /* CRMAuthController.h */,
+				81A2492715DA948600C84332 /* CRMAuthController.m */,
+				8106BD6F160FB3FC003968DB /* CRMAuthControllerDelegate.h */,
+				81E42DE315ADE82F001FA72D /* CRMBaseController.h */,
+				81E42DE415ADE82F001FA72D /* CRMBaseController.m */,
+				81E42DE915ADE82F001FA72D /* CRMProfileController.h */,
+				81E42DEA15ADE82F001FA72D /* CRMProfileController.m */,
+				81E42DEB15ADE82F001FA72D /* CRMProfileControllerDelegate.h */,
+				81F2EA0A15DC446200733D82 /* OAuth2 */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		81E42ED615AF43C4001FA72D /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				81C3139A15E82371004ADD53 /* NSData+Base64.h */,
+				81C3139B15E82371004ADD53 /* NSData+Base64.m */,
+				81E42DDF15ADE82F001FA72D /* NSDictionary+Helpers.h */,
+				81E42DE015ADE82F001FA72D /* NSDictionary+Helpers.m */,
+				81E42DE115ADE82F001FA72D /* NSString+Encoding.h */,
+				81E42DE215ADE82F001FA72D /* NSString+Encoding.m */,
+				81E42E0C15ADE82F001FA72D /* UIColor+CustomColors.h */,
+				81E42E0D15ADE82F001FA72D /* UIColor+CustomColors.m */,
+				81CFAA4915F4584700661D68 /* NSDate+Helpers.h */,
+				81CFAA4A15F4584700661D68 /* NSDate+Helpers.m */,
+			);
+			name = Categories;
+			sourceTree = "<group>";
+		};
+		81F2EA0A15DC446200733D82 /* OAuth2 */ = {
+			isa = PBXGroup;
+			children = (
+				8196752415DD7B820056A806 /* OA2AccessGrant.h */,
+				8196752515DD7B820056A806 /* OA2AccessGrant.m */,
+				81C313A115EBE1AD004ADD53 /* OA2AuthorizedRequest.h */,
+				81C313A215EBE1AD004ADD53 /* OA2AuthorizedRequest.m */,
+				81C313A615EBEA18004ADD53 /* OA2SignInRequest.h */,
+				81C313A715EBEA19004ADD53 /* OA2SignInRequest.m */,
+				818BD9CB15DC949A00BD7842 /* OA2SignInRequestParameters.h */,
+				818BD9CC15DC949A00BD7842 /* OA2SignInRequestParameters.m */,
+			);
+			name = OAuth2;
+			sourceTree = "<group>";
+		};
+		81FF4E7D1608D137001B0ABC /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				81E42D6215ADE82F001FA72D /* CRMAppSettings.h */,
+				81E42D6315ADE82F001FA72D /* CRMAppSettings.m */,
+				81FF4E7A1608D05F001B0ABC /* CRMConnectionSettings.h */,
+				81FF4E7B1608D05F001B0ABC /* CRMConnectionSettings.m */,
+				81E42E0E15ADE82F001FA72D /* CRMUserSettings.h */,
+				81E42E0F15ADE82F001FA72D /* CRMUserSettings.m */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1D6058900D05DD3D006BFB54 /* SpringCRM */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "SpringCRM" */;
+			buildPhases = (
+				1D60588E0D05DD3D006BFB54 /* Sources */,
+				1D60588F0D05DD3D006BFB54 /* Frameworks */,
+				1D60588D0D05DD3D006BFB54 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SpringCRM;
+			productName = SpringCRM;
+			productReference = 1D6058910D05DD3D006BFB54 /* SpringCRM.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = CRM;
+				LastUpgradeCheck = 0430;
+				ORGANIZATIONNAME = "";
+			};
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "SpringCRM" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+				en,
+			);
+			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1D6058900D05DD3D006BFB54 /* SpringCRM */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1D60588D0D05DD3D006BFB54 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81E42E2A15ADE82F001FA72D /* CRMAuthorizeViewController.xib in Resources */,
+				81E42E3515ADE82F001FA72D /* InfoPlist.strings in Resources */,
+				81E42E3715ADE82F001FA72D /* MainWindow.xib in Resources */,
+				81E42E3815ADE82F001FA72D /* CRMProfileMainViewController.xib in Resources */,
+				81A2492315D9A6BF00C84332 /* CRMSignInViewController.xib in Resources */,
+				81FF4E771607F0D7001B0ABC /* Settings.bundle in Resources */,
+				81790DE317D7AB3D00C836B5 /* Default-568h@2x.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1D60588E0D05DD3D006BFB54 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81E42E1B15ADE82F001FA72D /* CRMActivityAlertView.m in Sources */,
+				81E42E1D15ADE82F001FA72D /* CRMAppSettings.m in Sources */,
+				81E42E2115ADE82F001FA72D /* CRMAuthorizeViewController.m in Sources */,
+				81E42E2415ADE82F001FA72D /* CRMCustomNavigationBar.m in Sources */,
+				81E42E2615ADE82F001FA72D /* CRMCustomToolbar.m in Sources */,
+				81E42E5415ADE82F001FA72D /* SpringCRMAppDelegate.m in Sources */,
+				81E42E5F15ADE82F001FA72D /* main.m in Sources */,
+				81E42E6115ADE82F001FA72D /* NSDictionary+Helpers.m in Sources */,
+				81E42E6215ADE82F001FA72D /* NSString+Encoding.m in Sources */,
+				81E42E6315ADE82F001FA72D /* CRMBaseController.m in Sources */,
+				81E42E6615ADE82F001FA72D /* CRMProfileController.m in Sources */,
+				81E42E6715ADE82F001FA72D /* CRMProfileMainViewController.m in Sources */,
+				81E42E7D15ADE82F001FA72D /* UIColor+CustomColors.m in Sources */,
+				81E42E7E15ADE82F001FA72D /* CRMUserSettings.m in Sources */,
+				81E42E8315ADE82F001FA72D /* CRMWebImageView.m in Sources */,
+				810FD30D15D9A0AE00A9B3B3 /* CRMSignInViewController.m in Sources */,
+				81A2492815DA948600C84332 /* CRMAuthController.m in Sources */,
+				818BD9CD15DC949A00BD7842 /* OA2SignInRequestParameters.m in Sources */,
+				818BD9D415DCBF0C00BD7842 /* CRMURLRequestParameters.m in Sources */,
+				8196752215DD388F0056A806 /* CRMURLPostRequest.m in Sources */,
+				8196752615DD7B820056A806 /* OA2AccessGrant.m in Sources */,
+				81963AE015E2B88B002C1BC6 /* CRMKeychainManager.m in Sources */,
+				81C3139C15E82372004ADD53 /* NSData+Base64.m in Sources */,
+				81C313A015E9DC12004ADD53 /* CRMURLRequest.m in Sources */,
+				81C313A315EBE1AE004ADD53 /* OA2AuthorizedRequest.m in Sources */,
+				81C313A815EBEA1A004ADD53 /* OA2SignInRequest.m in Sources */,
+				815004E115EEFF5100972ACE /* CRMAuthorizedRequest.m in Sources */,
+				81E2BDEA15EFB78000BFBDE0 /* SpringCRM.xcdatamodeld in Sources */,
+				81CFAA4815F1615D00661D68 /* CRMCoreDataManager.m in Sources */,
+				81CFAA4B15F4584700661D68 /* NSDate+Helpers.m in Sources */,
+				81CFAA5715F7F31700661D68 /* Profile.m in Sources */,
+				81FF4E7C1608D05F001B0ABC /* CRMConnectionSettings.m in Sources */,
+				811471B4160CB1C500878ACD /* CRMFormTextFieldCell.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		81A2492515D9A6BF00C84332 /* CRMSignInViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				81A2492415D9A6BF00C84332 /* en */,
+			);
+			name = CRMSignInViewController.xib;
+			sourceTree = "<group>";
+		};
+		81E42D7915ADE82F001FA72D /* CRMAuthorizeViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				81E42D7A15ADE82F001FA72D /* en */,
+			);
+			name = CRMAuthorizeViewController.xib;
+			sourceTree = "<group>";
+		};
+		81E42D8F15ADE82F001FA72D /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				81E42D9015ADE82F001FA72D /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		81E42D9315ADE82F001FA72D /* MainWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				81E42D9415ADE82F001FA72D /* en */,
+			);
+			name = MainWindow.xib;
+			sourceTree = "<group>";
+		};
+		81E42D9515ADE82F001FA72D /* CRMProfileMainViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				81E42D9615ADE82F001FA72D /* en */,
+			);
+			name = CRMProfileMainViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1D6058940D05DD3E006BFB54 /* Debug [localhost] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SpringCRM/SpringCRM-Prefix.pch";
+				INFOPLIST_FILE = "SpringCRM/SpringCRM-Info.plist";
+				PRODUCT_NAME = SpringCRM;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+			};
+			name = "Debug [localhost]";
+		};
+		1D6058950D05DD3E006BFB54 /* Release [localhost] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SpringCRM/SpringCRM-Prefix.pch";
+				INFOPLIST_FILE = "SpringCRM/SpringCRM-Info.plist";
+				PRODUCT_NAME = SpringCRM;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Release [localhost]";
+		};
+		81053A74122575D500FBC268 /* Ad Hoc Distribution [production] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PREPROCESSOR_DEFINITIONS = "PRODUCTION=1";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Ad Hoc Distribution [production]";
+		};
+		81053A75122575D500FBC268 /* Ad Hoc Distribution [production] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SpringCRM/SpringCRM-Prefix.pch";
+				INFOPLIST_FILE = "SpringCRM/SpringCRM-Info.plist";
+				PRODUCT_NAME = SpringCRM;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Ad Hoc Distribution [production]";
+		};
+		8138078212543EC80082DCC2 /* App Store Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PREPROCESSOR_DEFINITIONS = "PRODUCTION=1";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "App Store Distribution";
+		};
+		8138078312543EC80082DCC2 /* App Store Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SpringCRM/SpringCRM-Prefix.pch";
+				INFOPLIST_FILE = "SpringCRM/SpringCRM-Info.plist";
+				PRODUCT_NAME = SpringCRM;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "App Store Distribution";
+		};
+		8159359812480F5C001E8E16 /* Ad Hoc Distribution [qa] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PREPROCESSOR_DEFINITIONS = "QA=1";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Ad Hoc Distribution [qa]";
+		};
+		8159359912480F5C001E8E16 /* Ad Hoc Distribution [qa] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SpringCRM/SpringCRM-Prefix.pch";
+				INFOPLIST_FILE = "SpringCRM/SpringCRM-Info.plist";
+				PRODUCT_NAME = SpringCRM;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Ad Hoc Distribution [qa]";
+		};
+		819CC2F812235EA2005059D1 /* Debug [production] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"PRODUCTION=1",
+					"DEBUG=1",
+				);
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_LDFLAGS = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+			};
+			name = "Debug [production]";
+		};
+		819CC2F912235EA2005059D1 /* Debug [production] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SpringCRM/SpringCRM-Prefix.pch";
+				INFOPLIST_FILE = "SpringCRM/SpringCRM-Info.plist";
+				PRODUCT_NAME = SpringCRM;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+			};
+			name = "Debug [production]";
+		};
+		819CC2FD12235F1E005059D1 /* Release [production] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PREPROCESSOR_DEFINITIONS = "PRODUCTION=1";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+			};
+			name = "Release [production]";
+		};
+		819CC2FE12235F1E005059D1 /* Release [production] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SpringCRM/SpringCRM-Prefix.pch";
+				INFOPLIST_FILE = "SpringCRM/SpringCRM-Info.plist";
+				PRODUCT_NAME = SpringCRM;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Release [production]";
+		};
+		819CC3061223649E005059D1 /* Debug [qa] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"QA=1",
+					"DEBUG=1",
+				);
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_LDFLAGS = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+			};
+			name = "Debug [qa]";
+		};
+		819CC3071223649E005059D1 /* Debug [qa] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SpringCRM/SpringCRM-Prefix.pch";
+				INFOPLIST_FILE = "SpringCRM/SpringCRM-Info.plist";
+				PRODUCT_NAME = SpringCRM;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+			};
+			name = "Debug [qa]";
+		};
+		819CC30B122364B0005059D1 /* Release [qa] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PREPROCESSOR_DEFINITIONS = "QA=1";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+			};
+			name = "Release [qa]";
+		};
+		819CC30C122364B0005059D1 /* Release [qa] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SpringCRM/SpringCRM-Prefix.pch";
+				INFOPLIST_FILE = "SpringCRM/SpringCRM-Info.plist";
+				PRODUCT_NAME = SpringCRM;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Release [qa]";
+		};
+		C01FCF4F08A954540054247B /* Debug [localhost] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"LOCALHOST=1",
+					"DEBUG=1",
+				);
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_LDFLAGS = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+			};
+			name = "Debug [localhost]";
+		};
+		C01FCF5008A954540054247B /* Release [localhost] */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_PREPROCESSOR_DEFINITIONS = "LOCALHOST=1";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+			};
+			name = "Release [localhost]";
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "SpringCRM" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D6058940D05DD3E006BFB54 /* Debug [localhost] */,
+				819CC3071223649E005059D1 /* Debug [qa] */,
+				819CC2F912235EA2005059D1 /* Debug [production] */,
+				1D6058950D05DD3E006BFB54 /* Release [localhost] */,
+				819CC30C122364B0005059D1 /* Release [qa] */,
+				819CC2FE12235F1E005059D1 /* Release [production] */,
+				8159359912480F5C001E8E16 /* Ad Hoc Distribution [qa] */,
+				81053A75122575D500FBC268 /* Ad Hoc Distribution [production] */,
+				8138078312543EC80082DCC2 /* App Store Distribution */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release [localhost]";
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "SpringCRM" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug [localhost] */,
+				819CC3061223649E005059D1 /* Debug [qa] */,
+				819CC2F812235EA2005059D1 /* Debug [production] */,
+				C01FCF5008A954540054247B /* Release [localhost] */,
+				819CC30B122364B0005059D1 /* Release [qa] */,
+				819CC2FD12235F1E005059D1 /* Release [production] */,
+				8159359812480F5C001E8E16 /* Ad Hoc Distribution [qa] */,
+				81053A74122575D500FBC268 /* Ad Hoc Distribution [production] */,
+				8138078212543EC80082DCC2 /* App Store Distribution */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release [localhost]";
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		81E2BDE815EFB78000BFBDE0 /* SpringCRM.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				81E2BDE915EFB78000BFBDE0 /* SpringCRM.xcdatamodel */,
+			);
+			currentVersion = 81E2BDE915EFB78000BFBDE0 /* SpringCRM.xcdatamodel */;
+			path = SpringCRM.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}

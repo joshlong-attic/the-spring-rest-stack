@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>StringsTable</key>
+	<string>Root</string>
+	<key>PreferenceSpecifiers</key>
+	<array>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Settings</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Data Expiration</string>
+			<key>Key</key>
+			<string>data_expiration_preference</string>
+			<key>DefaultValue</key>
+			<string>3600</string>
+			<key>Titles</key>
+			<array>
+				<string>Immediate</string>
+				<string>5 Minutes</string>
+				<string>30 Minutes</string>
+				<string>1 Hour</string>
+				<string>2 Hours</string>
+				<string>4 Hours</string>
+				<string>12 Hours</string>
+				<string>1 Day</string>
+				<string>2 Days</string>
+				<string>1 Week</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<string>0</string>
+				<string>300</string>
+				<string>1800</string>
+				<string>3600</string>
+				<string>7200</string>
+				<string>14400</string>
+				<string>43200</string>
+				<string>86400</string>
+				<string>172800</string>
+				<string>604800</string>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Reset App On Next Launch</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Reset</string>
+			<key>Key</key>
+			<string>reset_app_on_start_preference</string>
+			<key>DefaultValue</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>About</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+			<key>Title</key>
+			<string>Version</string>
+			<key>Key</key>
+			<string>version_preference</string>
+			<key>DefaultValue</key>
+			<string>0.0.0</string>
+		</dict>
+	</array>
+</dict>
+</plist>

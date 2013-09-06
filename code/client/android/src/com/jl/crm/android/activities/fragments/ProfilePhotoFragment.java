@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.jl.crm.android.R;
 import com.jl.crm.android.activities.MainActivity;
+import com.jl.crm.android.utils.IoUtils;
 import com.jl.crm.client.CrmOperations;
 import com.jl.crm.client.ProfilePhoto;
 import com.jl.crm.client.User;
@@ -23,9 +24,11 @@ import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 
 import javax.inject.Provider;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import static com.jl.crm.android.utils.IoUtils.copyStreams;
 import static com.jl.crm.android.utils.IoUtils.writableFile;
 
 /**
@@ -55,44 +58,61 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
         return new File(cursor.getString(columnIndex));
     }
 
-    protected void profilePhotoFileChanged(File fi) {
-        Bitmap bm = BitmapFactory.decodeFile( fi.getAbsolutePath(), new BitmapFactory.Options());
-        userProfileImageView.setImageBitmap(bm);
-        getMainActivity().showUserAccount();
-        this.transmitProfilePhoto(fi);
+    protected void profilePhotoFileChanged(InputStream i) {
+
+        try {
+            byte[] bytesForInputStream = IoUtils.readFully(i);
+
+
+            Bitmap bm = BitmapFactory.decodeByteArray(bytesForInputStream, 0, bytesForInputStream.length);
+
+            userProfileImageView.setImageBitmap(bm);
+            getMainActivity().showUserAccount();
+
+            this.transmitProfilePhoto(bytesForInputStream);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_CAMERA_CODE) {
-                File profilePhotoFile = profilePhotoFile();
-                if (profilePhotoFile != null && profilePhotoFile.exists()) {
-                    profilePhotoFileChanged(profilePhotoFile);
+        InputStream imageStream = null;
+        try {
+            try {
+                if (resultCode == Activity.RESULT_OK) {
+                    if (requestCode == REQUEST_CAMERA_CODE) {
+                        File profilePhotoFile = profilePhotoFile();
+                        if (profilePhotoFile != null && profilePhotoFile.exists()) {
+                            imageStream = new FileInputStream(profilePhotoFile);
+                            profilePhotoFileChanged(imageStream);
+                        }
+                    }
+                    else if (requestCode == REQUEST_GALLERY_CODE) {
+                        Uri selectedImage = data.getData();
+                        imageStream = getActivity().getContentResolver().openInputStream(selectedImage);
+                        profilePhotoFileChanged(imageStream);
+                    }
                 }
-            } else if (requestCode == REQUEST_GALLERY_CODE) {
-                Uri selectedImageUri = data.getData();
-                File fi = fileFromUri(selectedImageUri);
-                profilePhotoFileChanged(fi);
+            }
+            finally {
+                if (imageStream != null) {
+                    imageStream.close();
+                }
             }
         }
-    }
-
-    protected void transmitProfilePhoto(File file) {
-        final CrmOperations crmOperations = crmOperationsProvider.get();
-        Assert.isTrue(file != null && file.exists() && file.length() > 0,
-                "the file '" + (file == null ? "" : file.getAbsolutePath()) + "' must exist and be readable.");
-        try {
-            byte[] profilePhotoBytes;
-            InputStream inputStream = new FileInputStream(file);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            copyStreams(inputStream, outputStream);
-            profilePhotoBytes = outputStream.toByteArray();
-            crmOperations.setProfilePhoto(profilePhotoBytes, MediaType.IMAGE_JPEG);    // we know that we asked for jpg back from the camera
-        } catch (IOException e) {
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+    }
+
+    protected void transmitProfilePhoto(byte data[]) {
+        final CrmOperations crmOperations = crmOperationsProvider.get();
+        Assert.isTrue(data != null && data.length > 0);
+        crmOperations.setProfilePhoto(data, MediaType.IMAGE_JPEG);
     }
 
     @Override
@@ -132,9 +152,10 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(profilePhotoFile()));
                     startActivityForResult(intent, REQUEST_CAMERA_CODE);
                 } else if (menuItemSelected.equals(chooseFromLibrary)) {
-                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    Intent intent = new Intent(Intent.ACTION_PICK);/*, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI*/
                     intent.setType("image/*");
-                    startActivityForResult(Intent.createChooser(intent, chooseFromLibrary), REQUEST_GALLERY_CODE);
+                    startActivityForResult(intent, REQUEST_GALLERY_CODE);
+//                    startActivityForResult(Intent.createChooser(intent, chooseFromLibrary), REQUEST_GALLERY_CODE);
                 } else if (menuItemSelected.equals(cancel)) {
                     dialog.dismiss();
                 }
@@ -143,6 +164,24 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
         builder.show();
     }
 
+    /*Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+photoPickerIntent.setType("image/*");
+startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+Process result
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+    super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+    switch(requestCode) {
+    case SELECT_PHOTO:
+        if(resultCode == RESULT_OK){
+            Uri selectedImage = imageReturnedIntent.getData();
+            InputStream imageStream = getContentResolver().openInputStream(selectedImage);
+            Bitmap yourSelectedImage = BitmapFactory.decodeStream(imageStream);
+        }
+    }
+}*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile_photo_fragment, container, false);

@@ -16,22 +16,31 @@
 package com.jl.crm.web;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockFilterChain;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
+import org.springframework.mock.http.client.MockClientHttpResponse;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.jl.crm.services.ServiceConfiguration;
 
@@ -43,38 +52,70 @@ import com.jl.crm.services.ServiceConfiguration;
 @ContextConfiguration(classes= {ServiceConfiguration.class, RepositoryRestMvcConfiguration.class, WebMvcConfiguration.class, SecurityConfiguration.class})
 @WebAppConfiguration
 public class OAuthTest {
+	@Autowired
+	private WebApplicationContext context;
 
 	@Autowired
 	private FilterChainProxy springSecurityFilterChain;
 
-	private MockHttpServletRequest request;
-	private MockHttpServletResponse response;
-	private MockFilterChain chain;
+	private MockMvc mvc;
 
 	@Before
 	public void setup() {
-		request = new MockHttpServletRequest();
-		request.setMethod("GET");
-		response = new MockHttpServletResponse();
-		chain = new MockFilterChain();
+		mvc = MockMvcBuilders.webAppContextSetup(context).addFilters(springSecurityFilterChain).build();
 	}
 
 	@Test
 	public void formLoginForContentAll()  throws Exception {
-		request.addHeader("Accept", MediaType.ALL_VALUE);
-
-		springSecurityFilterChain.doFilter(request, response, chain);
-
-		assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY, response.getStatus());
+		mvc.perform(get("/").accept(MediaType.ALL)).andExpect(status().isMovedTemporarily());
 	}
 
 	@Test
 	public void oauthLoginForJson()  throws Exception {
-		request.addHeader("Accept", MediaType.APPLICATION_JSON_VALUE);
+		mvc.perform(get("/").accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isUnauthorized())
+			.andExpect(header().string("WWW-Authenticate","Bearer realm=\"oauth\", error=\"unauthorized\", error_description=\"Full authentication is required to access this resource\""));
+	}
 
-		springSecurityFilterChain.doFilter(request, response, chain);
+	@Test
+	public void iOSTests() throws Exception {
+		MappingJacksonHttpMessageConverter converter = new MappingJacksonHttpMessageConverter();
 
-		assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
-		assertEquals("Bearer realm=\"oauth\", error=\"unauthorized\", error_description=\"Full authentication is required to access this resource\"",response.getHeader("WWW-Authenticate"));
+		// Get an OAuth Token
+
+		RequestBuilder tokenRequest =
+				post("/oauth/token")
+					.accept(MediaType.APPLICATION_JSON)
+					.param("password", "android")
+					.param("username", "roy")
+					.param("grant_type", "password")
+					.param("scope", "read,write")
+					.param("client_secret", "123456")
+					.param("client_id","ios-crm");
+
+		byte[] tokenResponse = mvc.perform(tokenRequest)
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsByteArray();
+
+		MockClientHttpResponse tokenHttpResponse = new MockClientHttpResponse(tokenResponse, HttpStatus.OK);
+		OAuth2AccessToken token = (OAuth2AccessToken) converter.read(OAuth2AccessToken.class, tokenHttpResponse);
+
+		// use the token to get Roy
+
+		RequestBuilder userRequest =
+				get("/user")
+					.accept(MediaType.APPLICATION_JSON)
+					.header("Authorization", "Bearer "+token.getValue());
+
+		byte[] userResponse = mvc.perform(userRequest)
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsByteArray();
+
+		MockClientHttpResponse userHttpResponse = new MockClientHttpResponse(userResponse, HttpStatus.OK);
+		@SuppressWarnings("unchecked")
+		Map<String,String> user = (Map<String,String>) converter.read(Map.class, userHttpResponse);
+
+		// verify we got roy
+		assertEquals("roy", user.get("username"));
 	}
 }

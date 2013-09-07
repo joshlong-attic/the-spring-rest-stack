@@ -15,12 +15,15 @@
  */
 package com.jl.crm.web;
 
+import static com.jl.crm.web.SecurityRequestPostProcessors.csrf;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.net.URLEncoder;
 import java.util.Map;
 
 import org.junit.Before;
@@ -32,6 +35,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.mock.http.client.MockClientHttpResponse;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.ContextConfiguration;
@@ -117,5 +121,85 @@ public class OAuthTest {
 
 		// verify we got roy
 		assertEquals("roy", user.get("username"));
+	}
+
+	@Test
+	public void browserTests() throws Exception {
+		// setup
+		MappingJacksonHttpMessageConverter converter = new MappingJacksonHttpMessageConverter();
+		MockHttpSession session = new MockHttpSession() {
+			// avoid session fixation protection issues
+			public void invalidate() {
+			}
+		};
+		String redirectUri = "http://localhost/crm/welcome.html";
+		String encodedRedirectUri = URLEncoder.encode(redirectUri, "UTF-8");
+
+		// get a token
+		RequestBuilder tokenRequest =
+				get("/oauth/authorize?client_id=android-crm&response_type=token&scope=read%2Cwrite&redirect_uri="+encodedRedirectUri)
+					.param("client_id","android-crm")
+					.param("response_type","token")
+					.param("redirect_uri", redirectUri)
+					.session(session);
+
+		mvc.perform(tokenRequest).andExpect(redirectedUrl("http://localhost/crm/signin.html"));
+
+		// login within the browser
+		RequestBuilder loginRequest =
+				post("/crm/signin.html")
+					.param("username", "joshlong")
+					.param("password", "cowbell")
+					.session(session)
+					.with(csrf());
+
+		mvc.perform(loginRequest).andExpect(redirectedUrl("http://localhost/oauth/authorize?client_id=android-crm&response_type=token&scope=read%2Cwrite&redirect_uri="+encodedRedirectUri));
+
+		// make the original request now we are authenticated
+		tokenRequest =
+				get("/oauth/authorize?client_id=android-crm&response_type=token&scope=read%2Cwrite&redirect_uri=http://localhost/crm/welcome.html")
+					.param("client_id","android-crm")
+					.param("response_type","token")
+					.param("redirect_uri",redirectUri)
+					.session(session);
+		mvc.perform(tokenRequest);
+
+		// confirm access is granted
+		RequestBuilder accessConfirmationRequest =
+				post("/oauth/authorize")
+					.accept(MediaType.ALL)
+					.param("user_oauth_approval", "true")
+					.session(session)
+					.with(csrf());
+
+		String confirmationUrl = mvc.perform(accessConfirmationRequest).andReturn().getResponse().getRedirectedUrl();
+
+		// extract the token from the response
+		String[] confirmationParts = confirmationUrl.split("[=&]");
+		String token = null;
+		for(int i=0;i<confirmationParts.length;i++) {
+			String part = confirmationParts[i];
+			if(part.endsWith("access_token")) {
+				token = confirmationParts[i+1];
+				break;
+			}
+		}
+
+		// Get the user
+		RequestBuilder userRequest =
+				get("/user")
+					.accept(MediaType.APPLICATION_JSON)
+					.header("Authorization", "Bearer "+token);
+
+		byte[] userResponse = mvc.perform(userRequest)
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsByteArray();
+
+		MockClientHttpResponse userHttpResponse = new MockClientHttpResponse(userResponse, HttpStatus.OK);
+		@SuppressWarnings("unchecked")
+		Map<String,String> user = (Map<String,String>) converter.read(Map.class, userHttpResponse);
+
+		// verify we got joshlong
+		assertEquals("joshlong", user.get("username"));
 	}
 }

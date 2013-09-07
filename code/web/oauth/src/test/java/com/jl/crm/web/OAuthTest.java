@@ -56,150 +56,150 @@ import com.jl.crm.services.ServiceConfiguration;
 @ContextConfiguration(classes= {ServiceConfiguration.class, RepositoryRestMvcConfiguration.class, WebMvcConfiguration.class, SecurityConfiguration.class})
 @WebAppConfiguration
 public class OAuthTest {
-	@Autowired
-	private WebApplicationContext context;
+    @Autowired
+    private WebApplicationContext context;
 
-	@Autowired
-	private FilterChainProxy springSecurityFilterChain;
+    @Autowired
+    private FilterChainProxy springSecurityFilterChain;
 
-	private MockMvc mvc;
+    private MockMvc mvc;
 
-	@Before
-	public void setup() {
-		mvc = MockMvcBuilders.webAppContextSetup(context).addFilters(springSecurityFilterChain).build();
-	}
+    @Before
+    public void setup() {
+        mvc = MockMvcBuilders.webAppContextSetup(context).addFilters(springSecurityFilterChain).build();
+    }
 
-	@Test
-	public void formLoginForContentAll()  throws Exception {
-		mvc.perform(get("/").accept(MediaType.ALL)).andExpect(status().isMovedTemporarily());
-	}
+    @Test
+    public void formLoginForContentAll()  throws Exception {
+        mvc.perform(get("/").accept(MediaType.ALL)).andExpect(status().isMovedTemporarily());
+    }
 
-	@Test
-	public void oauthLoginForJson()  throws Exception {
-		mvc.perform(get("/").accept(MediaType.APPLICATION_JSON))
-			.andExpect(status().isUnauthorized())
-			.andExpect(header().string("WWW-Authenticate","Bearer realm=\"oauth\", error=\"unauthorized\", error_description=\"Full authentication is required to access this resource\""));
-	}
+    @Test
+    public void oauthLoginForJson()  throws Exception {
+        mvc.perform(get("/").accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isUnauthorized())
+            .andExpect(header().string("WWW-Authenticate","Bearer realm=\"oauth\", error=\"unauthorized\", error_description=\"Full authentication is required to access this resource\""));
+    }
 
-	@Test
-	public void iOSTests() throws Exception {
-		MappingJacksonHttpMessageConverter converter = new MappingJacksonHttpMessageConverter();
+    @Test
+    public void iOSTests() throws Exception {
+        MappingJacksonHttpMessageConverter converter = new MappingJacksonHttpMessageConverter();
 
-		// Get an OAuth Token
+        // Get an OAuth Token
 
-		RequestBuilder tokenRequest =
-				post("/oauth/token")
-					.accept(MediaType.APPLICATION_JSON)
-					.param("password", "android")
-					.param("username", "roy")
-					.param("grant_type", "password")
-					.param("scope", "read,write")
-					.param("client_secret", "123456")
-					.param("client_id","ios-crm");
+        RequestBuilder tokenRequest =
+                post("/oauth/token")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .param("password", "android")
+                    .param("username", "roy")
+                    .param("grant_type", "password")
+                    .param("scope", "read,write")
+                    .param("client_secret", "123456")
+                    .param("client_id","ios-crm");
 
-		byte[] tokenResponse = mvc.perform(tokenRequest)
-				.andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsByteArray();
+        byte[] tokenResponse = mvc.perform(tokenRequest)
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsByteArray();
 
-		MockClientHttpResponse tokenHttpResponse = new MockClientHttpResponse(tokenResponse, HttpStatus.OK);
-		OAuth2AccessToken token = (OAuth2AccessToken) converter.read(OAuth2AccessToken.class, tokenHttpResponse);
+        MockClientHttpResponse tokenHttpResponse = new MockClientHttpResponse(tokenResponse, HttpStatus.OK);
+        OAuth2AccessToken token = (OAuth2AccessToken) converter.read(OAuth2AccessToken.class, tokenHttpResponse);
 
-		// use the token to get Roy
+        // use the token to get Roy
 
-		RequestBuilder userRequest =
-				get("/user")
-					.accept(MediaType.APPLICATION_JSON)
-					.header("Authorization", "Bearer "+token.getValue());
+        RequestBuilder userRequest =
+                get("/user")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer "+token.getValue());
 
-		byte[] userResponse = mvc.perform(userRequest)
-				.andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsByteArray();
+        byte[] userResponse = mvc.perform(userRequest)
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsByteArray();
 
-		MockClientHttpResponse userHttpResponse = new MockClientHttpResponse(userResponse, HttpStatus.OK);
-		@SuppressWarnings("unchecked")
-		Map<String,String> user = (Map<String,String>) converter.read(Map.class, userHttpResponse);
+        MockClientHttpResponse userHttpResponse = new MockClientHttpResponse(userResponse, HttpStatus.OK);
+        @SuppressWarnings("unchecked")
+        Map<String,String> user = (Map<String,String>) converter.read(Map.class, userHttpResponse);
 
-		// verify we got roy
-		assertEquals("roy", user.get("username"));
-	}
+        // verify we got roy
+        assertEquals("roy", user.get("username"));
+    }
 
-	@Test
-	public void browserTests() throws Exception {
-		// setup
-		MappingJacksonHttpMessageConverter converter = new MappingJacksonHttpMessageConverter();
-		MockHttpSession session = new MockHttpSession() {
-			// avoid session fixation protection issues
-			public void invalidate() {
-			}
-		};
-		String redirectUri = "http://localhost/crm/welcome.html";
-		String encodedRedirectUri = URLEncoder.encode(redirectUri, "UTF-8");
+    @Test
+    public void browserTests() throws Exception {
+        // setup
+        MappingJacksonHttpMessageConverter converter = new MappingJacksonHttpMessageConverter();
+        MockHttpSession session = new MockHttpSession() {
+            // avoid session fixation protection issues
+            public void invalidate() {
+            }
+        };
+        String redirectUri = "http://localhost/crm/welcome.html";
+        String encodedRedirectUri = URLEncoder.encode(redirectUri, "UTF-8");
 
-		// get a token
-		RequestBuilder tokenRequest =
-				get("/oauth/authorize?client_id=android-crm&response_type=token&scope=read%2Cwrite&redirect_uri="+encodedRedirectUri)
-					.param("client_id","android-crm")
-					.param("response_type","token")
-					.param("redirect_uri", redirectUri)
-					.session(session);
+        // get a token
+        RequestBuilder tokenRequest =
+                get("/oauth/authorize?client_id=android-crm&response_type=token&scope=read%2Cwrite&redirect_uri="+encodedRedirectUri)
+                    .param("client_id","android-crm")
+                    .param("response_type","token")
+                    .param("redirect_uri", redirectUri)
+                    .session(session);
 
-		mvc.perform(tokenRequest).andExpect(redirectedUrl("http://localhost/crm/signin.html"));
+        mvc.perform(tokenRequest).andExpect(redirectedUrl("http://localhost/crm/signin.html"));
 
-		// login within the browser
-		RequestBuilder loginRequest =
-				post("/crm/signin.html")
-					.param("username", "joshlong")
-					.param("password", "cowbell")
-					.session(session)
-					.with(csrf());
+        // login within the browser
+        RequestBuilder loginRequest =
+                post("/crm/signin.html")
+                    .param("username", "joshlong")
+                    .param("password", "cowbell")
+                    .session(session)
+                    .with(csrf());
 
-		mvc.perform(loginRequest).andExpect(redirectedUrl("http://localhost/oauth/authorize?client_id=android-crm&response_type=token&scope=read%2Cwrite&redirect_uri="+encodedRedirectUri));
+        mvc.perform(loginRequest).andExpect(redirectedUrl("http://localhost/oauth/authorize?client_id=android-crm&response_type=token&scope=read%2Cwrite&redirect_uri="+encodedRedirectUri));
 
-		// make the original request now we are authenticated
-		tokenRequest =
-				get("/oauth/authorize?client_id=android-crm&response_type=token&scope=read%2Cwrite&redirect_uri=http://localhost/crm/welcome.html")
-					.param("client_id","android-crm")
-					.param("response_type","token")
-					.param("redirect_uri",redirectUri)
-					.session(session);
-		mvc.perform(tokenRequest);
+        // make the original request now we are authenticated
+        tokenRequest =
+                get("/oauth/authorize?client_id=android-crm&response_type=token&scope=read%2Cwrite&redirect_uri=http://localhost/crm/welcome.html")
+                    .param("client_id","android-crm")
+                    .param("response_type","token")
+                    .param("redirect_uri",redirectUri)
+                    .session(session);
+        mvc.perform(tokenRequest);
 
-		// confirm access is granted
-		RequestBuilder accessConfirmationRequest =
-				post("/oauth/authorize")
-					.accept(MediaType.ALL)
-					.param("user_oauth_approval", "true")
-					.session(session)
-					.with(csrf());
+        // confirm access is granted
+        RequestBuilder accessConfirmationRequest =
+                post("/oauth/authorize")
+                    .accept(MediaType.ALL)
+                    .param("user_oauth_approval", "true")
+                    .session(session)
+                    .with(csrf());
 
-		String confirmationUrl = mvc.perform(accessConfirmationRequest).andReturn().getResponse().getRedirectedUrl();
+        String confirmationUrl = mvc.perform(accessConfirmationRequest).andReturn().getResponse().getRedirectedUrl();
 
-		// extract the token from the response
-		String[] confirmationParts = confirmationUrl.split("[=&]");
-		String token = null;
-		for(int i=0;i<confirmationParts.length;i++) {
-			String part = confirmationParts[i];
-			if(part.endsWith("access_token")) {
-				token = confirmationParts[i+1];
-				break;
-			}
-		}
+        // extract the token from the response
+        String[] confirmationParts = confirmationUrl.split("[=&]");
+        String token = null;
+        for(int i=0;i<confirmationParts.length;i++) {
+            String part = confirmationParts[i];
+            if(part.endsWith("access_token")) {
+                token = confirmationParts[i+1];
+                break;
+            }
+        }
 
-		// Get the user
-		RequestBuilder userRequest =
-				get("/user")
-					.accept(MediaType.APPLICATION_JSON)
-					.header("Authorization", "Bearer "+token);
+        // Get the user
+        RequestBuilder userRequest =
+                get("/user")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer "+token);
 
-		byte[] userResponse = mvc.perform(userRequest)
-				.andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsByteArray();
+        byte[] userResponse = mvc.perform(userRequest)
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsByteArray();
 
-		MockClientHttpResponse userHttpResponse = new MockClientHttpResponse(userResponse, HttpStatus.OK);
-		@SuppressWarnings("unchecked")
-		Map<String,String> user = (Map<String,String>) converter.read(Map.class, userHttpResponse);
+        MockClientHttpResponse userHttpResponse = new MockClientHttpResponse(userResponse, HttpStatus.OK);
+        @SuppressWarnings("unchecked")
+        Map<String,String> user = (Map<String,String>) converter.read(Map.class, userHttpResponse);
 
-		// verify we got joshlong
-		assertEquals("joshlong", user.get("username"));
-	}
+        // verify we got joshlong
+        assertEquals("joshlong", user.get("username"));
+    }
 }

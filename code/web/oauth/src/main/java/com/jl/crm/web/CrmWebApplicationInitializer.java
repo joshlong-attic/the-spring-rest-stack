@@ -43,29 +43,29 @@ import java.util.Collections;
  */
 public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
-	private int maxUploadSizeInMb = 5 * 1024 * 1024; // 5 MB
+    private int maxUploadSizeInMb = 5 * 1024 * 1024; // 5 MB
 
-	@Override
-	protected Class<?>[] getRootConfigClasses() {
-		return new Class<?>[]{ServiceConfiguration.class};
-	}
+    @Override
+    protected Class<?>[] getRootConfigClasses() {
+        return new Class<?>[]{ServiceConfiguration.class};
+    }
 
-	@Override
-	protected Class<?>[] getServletConfigClasses() {
-		return new Class<?>[]{RepositoryRestMvcConfiguration.class, WebMvcConfiguration.class, SecurityConfiguration.class};
-	}
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class<?>[]{RepositoryRestMvcConfiguration.class, WebMvcConfiguration.class, SecurityConfiguration.class};
+    }
 
-	@Override
-	protected String[] getServletMappings() {
-		return new String[]{"/"};
-	}
+    @Override
+    protected String[] getServletMappings() {
+        return new String[]{"/"};
+    }
 
-	@Override
-	protected void customizeRegistration(ServletRegistration.Dynamic registration) {
-		File uploadDirectory = ServiceConfiguration.CRM_STORAGE_UPLOADS_DIRECTORY;
-		MultipartConfigElement multipartConfigElement = new MultipartConfigElement(uploadDirectory.getAbsolutePath(), maxUploadSizeInMb, maxUploadSizeInMb * 2, maxUploadSizeInMb / 2);
-		registration.setMultipartConfig(multipartConfigElement);
-	}
+    @Override
+    protected void customizeRegistration(ServletRegistration.Dynamic registration) {
+        File uploadDirectory = ServiceConfiguration.CRM_STORAGE_UPLOADS_DIRECTORY;
+        MultipartConfigElement multipartConfigElement = new MultipartConfigElement(uploadDirectory.getAbsolutePath(), maxUploadSizeInMb, maxUploadSizeInMb * 2, maxUploadSizeInMb / 2);
+        registration.setMultipartConfig(multipartConfigElement);
+    }
 
 }
 
@@ -74,19 +74,19 @@ public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispat
 @Order(1)
 class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 
-	private final String applicationName = ServiceConfiguration.CRM_NAME;
+    private final String applicationName = ServiceConfiguration.CRM_NAME;
 
-	@Inject
-	private DataSource dataSource;
+    @Inject
+    private DataSource dataSource;
 
     @Inject
     private UserDetailsService userDetailsService;
 
-	@Inject
-	private ContentNegotiationStrategy contentNegotiationStrategy;
+    @Inject
+    private ContentNegotiationStrategy contentNegotiationStrategy;
 
-	@Override
-	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+    @Override
+    protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
 
         auth
                 .userDetailsService(userDetailsService)
@@ -106,37 +106,37 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
                 .authorizedGrantTypes("password")
                 .secret("123456");
 
-	}
+    }
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.requestMatcher(oauthRequestMatcher());
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.requestMatcher(oauthRequestMatcher());
 
-		http.authorizeRequests()
-				  .anyRequest().authenticated();
+        http.authorizeRequests()
+                  .anyRequest().authenticated();
 
-		http.apply(new OAuth2ServerConfigurer())
+        http.apply(new OAuth2ServerConfigurer())
 
-				  .tokenStore(new JdbcTokenStore(this.dataSource))
-				  .resourceId(applicationName);
-	}
+                  .tokenStore(new JdbcTokenStore(this.dataSource))
+                  .resourceId(applicationName);
+    }
 
-	@Bean
-	public MediaTypeRequestMatcher oauthRequestMatcher() {
-		MediaTypeRequestMatcher mediaTypeRequestMatcher = new MediaTypeRequestMatcher(contentNegotiationStrategy, MediaType.APPLICATION_JSON);
-		mediaTypeRequestMatcher.setIgnoredMediaTypes(Collections.singleton(MediaType.ALL));
-		return mediaTypeRequestMatcher;
-	}
+    @Bean
+    public MediaTypeRequestMatcher oauthRequestMatcher() {
+        MediaTypeRequestMatcher mediaTypeRequestMatcher = new MediaTypeRequestMatcher(contentNegotiationStrategy, MediaType.APPLICATION_JSON);
+        mediaTypeRequestMatcher.setIgnoredMediaTypes(Collections.singleton(MediaType.ALL));
+        return mediaTypeRequestMatcher;
+    }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return NoOpPasswordEncoder.getInstance();
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
 
-	@Bean
-	public TextEncryptor textEncryptor() {
-		return Encryptors.noOpText();
-	}
+    @Bean
+    public TextEncryptor textEncryptor() {
+        return Encryptors.noOpText();
+    }
 }
 
 
@@ -144,48 +144,48 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 @EnableWebSecurity
 class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	@Inject
-	private UserDetailsService userDetailsService;
+    @Inject
+    private UserDetailsService userDetailsService;
 
-	@Override
-	protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService);
-	}
+    @Override
+    protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService);
+    }
 
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		web.ignoring()
-				.antMatchers("/h2/**"); // h2 has its own security
-	}
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring()
+                .antMatchers("/h2/**"); // h2 has its own security
+    }
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
 
-		http.formLogin()
-				.loginPage("/crm/signin.html")
-				.defaultSuccessUrl("/crm/welcome.html")
-				.usernameParameter("username")
-				.passwordParameter("password")
-				.permitAll();
+        http.formLogin()
+                .loginPage("/crm/signin.html")
+                .defaultSuccessUrl("/crm/welcome.html")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .permitAll();
 
-		http.logout()
-				.logoutUrl("/signout")
-				.permitAll();
+        http.logout()
+                .logoutUrl("/signout")
+                .permitAll();
 
 
-		// nb: the H2 administration console should *not* be left exposed.
-		// comment out the mapping path below so that it requires an authentication to see it.
-		String[] filesToLetThroughUnAuthorized =
-				{
-							H2EmbeddedDatbaseConsoleInitializer.H2_DATABASE_CONSOLE_MAPPING,
-							"/favicon.ico"
-				};
+        // nb: the H2 administration console should *not* be left exposed.
+        // comment out the mapping path below so that it requires an authentication to see it.
+        String[] filesToLetThroughUnAuthorized =
+                {
+                            H2EmbeddedDatbaseConsoleInitializer.H2_DATABASE_CONSOLE_MAPPING,
+                            "/favicon.ico"
+                };
 
-		http.authorizeRequests()
-				.antMatchers(filesToLetThroughUnAuthorized).permitAll()
-				.antMatchers("/users/*").denyAll()
-				.anyRequest().authenticated();
-	}
+        http.authorizeRequests()
+                .antMatchers(filesToLetThroughUnAuthorized).permitAll()
+                .antMatchers("/users/*").denyAll()
+                .anyRequest().authenticated();
+    }
 
 }
 
@@ -195,23 +195,23 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 @EnableWebMvc
 class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
-	@Override
-	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-		configurer.enable();
-	}
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
 
-	@Bean
-	public MultipartResolver multipartResolver() {
-		return new StandardServletMultipartResolver();
-	}
+    @Bean
+    public MultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
+    }
 
-	/** This application renders Spring Security UI pages to support logging into, and out of, the application. */
-	@Bean
-	public ViewResolver internalResourceViewResolver() {
-		InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
-		internalResourceViewResolver.setPrefix("/WEB-INF/crm/");
-		internalResourceViewResolver.setSuffix(".jsp");
-		return internalResourceViewResolver;
-	}
+    /** This application renders Spring Security UI pages to support logging into, and out of, the application. */
+    @Bean
+    public ViewResolver internalResourceViewResolver() {
+        InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
+        internalResourceViewResolver.setPrefix("/WEB-INF/crm/");
+        internalResourceViewResolver.setSuffix(".jsp");
+        return internalResourceViewResolver;
+    }
 
 }

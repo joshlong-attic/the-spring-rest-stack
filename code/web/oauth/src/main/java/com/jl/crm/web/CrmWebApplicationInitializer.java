@@ -85,6 +85,7 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
     @Inject
     private ContentNegotiationStrategy contentNegotiationStrategy;
 
+    // @formatter:off
     @Override
     protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
         auth
@@ -106,7 +107,9 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
                 .secret("123456");
 
     }
+    // @formatter:on
 
+    // @formatter:off
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -118,6 +121,7 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
                 .tokenStore(new JdbcTokenStore(this.dataSource))
                 .resourceId(applicationName);
     }
+    // @formatter:on
 
     @Bean
     public MediaTypeRequestMatcher oauthRequestMatcher() {
@@ -151,13 +155,16 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService);
     }
 
+    // @formatter:off
     @Override
     public void configure(WebSecurity web) throws Exception {
         web
             .ignoring()
                 .antMatchers("/h2/**"); // h2 has its own security
     }
+    // @formatter:on
 
+    // @formatter:off
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // nb: the H2 administration console should *not* be left exposed.
@@ -185,6 +192,7 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/signout")
                 .permitAll();
     }
+    // @formatter:on
 }
 
 @Configuration

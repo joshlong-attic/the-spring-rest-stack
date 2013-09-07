@@ -87,11 +87,10 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 
     @Override
     protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-
         auth
-                .userDetailsService(userDetailsService)
+            .userDetailsService(userDetailsService)
                 .and()
-                .apply(new InMemoryClientDetailsServiceConfigurer())
+            .apply(new InMemoryClientDetailsServiceConfigurer())
                 .withClient("android-crm")
                 .resourceIds(applicationName)
                 .scopes("read", "write")
@@ -99,7 +98,7 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
                 .authorizedGrantTypes("authorization_code", "implicit", "password")
                 .secret("123456")
                 .and()
-                .withClient("ios-crm")
+            .withClient("ios-crm")
                 .resourceIds(applicationName)
                 .scopes("read", "write")
                 .authorities("ROLE_USER")
@@ -110,20 +109,20 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.requestMatcher(oauthRequestMatcher());
-
-        http.authorizeRequests()
-                  .anyRequest().authenticated();
-
-        http.apply(new OAuth2ServerConfigurer())
-
-                  .tokenStore(new JdbcTokenStore(this.dataSource))
-                  .resourceId(applicationName);
+        http
+            .requestMatcher(oauthRequestMatcher())
+            .authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+            .apply(new OAuth2ServerConfigurer())
+                .tokenStore(new JdbcTokenStore(this.dataSource))
+                .resourceId(applicationName);
     }
 
     @Bean
     public MediaTypeRequestMatcher oauthRequestMatcher() {
-        MediaTypeRequestMatcher mediaTypeRequestMatcher = new MediaTypeRequestMatcher(contentNegotiationStrategy, MediaType.APPLICATION_JSON);
+        MediaTypeRequestMatcher mediaTypeRequestMatcher =
+                new MediaTypeRequestMatcher(contentNegotiationStrategy, MediaType.APPLICATION_JSON);
         mediaTypeRequestMatcher.setIgnoredMediaTypes(Collections.singleton(MediaType.ALL));
         return mediaTypeRequestMatcher;
     }
@@ -154,39 +153,38 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring()
+        web
+            .ignoring()
                 .antMatchers("/h2/**"); // h2 has its own security
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // nb: the H2 administration console should *not* be left exposed.
+        // comment out the mapping path below so that it requires an authentication to see it.
+        String[] filesToLetThroughUnAuthorized =
+            {
+                H2EmbeddedDatbaseConsoleInitializer.H2_DATABASE_CONSOLE_MAPPING,
+                "/favicon.ico"
+            };
 
-        http.formLogin()
+        http
+            .authorizeRequests()
+                .antMatchers(filesToLetThroughUnAuthorized).permitAll()
+                .antMatchers("/users/*").denyAll()
+                .anyRequest().authenticated()
+                .and()
+            .formLogin()
                 .loginPage("/crm/signin.html")
                 .defaultSuccessUrl("/crm/welcome.html")
                 .usernameParameter("username")
                 .passwordParameter("password")
-                .permitAll();
-
-        http.logout()
+                .permitAll()
+                .and()
+            .logout()
                 .logoutUrl("/signout")
                 .permitAll();
-
-
-        // nb: the H2 administration console should *not* be left exposed.
-        // comment out the mapping path below so that it requires an authentication to see it.
-        String[] filesToLetThroughUnAuthorized =
-                {
-                            H2EmbeddedDatbaseConsoleInitializer.H2_DATABASE_CONSOLE_MAPPING,
-                            "/favicon.ico"
-                };
-
-        http.authorizeRequests()
-                .antMatchers(filesToLetThroughUnAuthorized).permitAll()
-                .antMatchers("/users/*").denyAll()
-                .anyRequest().authenticated();
     }
-
 }
 
 @Configuration

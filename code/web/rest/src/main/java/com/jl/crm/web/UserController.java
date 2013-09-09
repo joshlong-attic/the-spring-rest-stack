@@ -21,7 +21,9 @@ import java.util.ArrayList;
 class UserController {
 
 	private CrmService crmService;
-
+	
+	UserController(){}
+	
 	@Inject
 	public UserController(CrmService crmService) {
 		this.crmService = crmService;

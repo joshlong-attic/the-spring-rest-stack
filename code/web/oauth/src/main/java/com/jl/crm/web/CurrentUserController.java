@@ -19,6 +19,7 @@ import java.util.*;
  * @author Josh Long
  */
 @Controller
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class CurrentUserController {
 
 	private UserLinks userLinks;

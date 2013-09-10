@@ -43,6 +43,7 @@ import java.util.List;
 public class MainActivity extends SherlockFragmentActivity {
 
     final String tag = getClass().getSimpleName();
+
     FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
 
         @Override
@@ -85,11 +86,9 @@ public class MainActivity extends SherlockFragmentActivity {
                     " To reset everything, we're removing existing (stale) connection information");
             crmConnectionState.resetLocalConnections();
             Log.d(tag, "loading the authentication fragment.");
-//            show(signInFragment);
-
             show(signInFragment);
             signInFragment.signout();
-             invalidateOptionsMenu();
+            invalidateOptionsMenu();
             menu.clear();
         }
     };
@@ -110,6 +109,7 @@ public class MainActivity extends SherlockFragmentActivity {
     TextView searchTextView;
     Fragment selectedFragment;
     MenuItem userAccountMenuItem, signOutMenuItem, searchMenuItem;
+    Menu menu;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -175,7 +175,6 @@ public class MainActivity extends SherlockFragmentActivity {
 
         this.userAccountFragment = new ProfilePhotoFragment(this, this.crmOperationsProvider, getString(R.string.user_account));
         this.searchFragment = new CustomerSearchFragment(this, this.crmOperationsProvider, getString(R.string.search), getString(R.string.search_hint));
-        //   this.signOutFragment = new SignOutFragment(this, getString(R.string.sign_out));
         addSecuredFragments(this.searchFragment, this.userAccountFragment);
 
         this.viewPager = (ViewPager) findViewById(R.id.pager);
@@ -197,8 +196,6 @@ public class MainActivity extends SherlockFragmentActivity {
     protected void searchCurrentQuery() {
         runQuery(searchTextView.getText().toString());
     }
-
-    Menu menu ;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

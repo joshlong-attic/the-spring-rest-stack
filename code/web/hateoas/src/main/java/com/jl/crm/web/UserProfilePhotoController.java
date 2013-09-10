@@ -18,6 +18,9 @@ import java.util.List;
 @RequestMapping (value = ApiUrls.URL_USERS_USER_PHOTO)
 class UserProfilePhotoController {
 
+    public UserProfilePhotoController(){}
+
+
 	private CrmService crmService;
 	private UserResourceAssembler userResourceAssembler;
 

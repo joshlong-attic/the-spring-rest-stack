@@ -20,6 +20,8 @@ class UserProfilePhotoController {
 
 	private CrmService crmService;
 
+    public UserProfilePhotoController(){ }
+
 	@Inject
 	public UserProfilePhotoController(CrmService crmService) {
 		this.crmService = crmService;

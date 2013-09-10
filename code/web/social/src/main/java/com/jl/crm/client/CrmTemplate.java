@@ -102,6 +102,8 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         params.put("userId", (Long.toString(dbId)));
         params.put("q", ("%" + token + "%"));
 
+
+
         UriComponentsBuilder uriToSearch = UriComponentsBuilder.fromUri(this.apiBaseUri).path("/customers/search/search");
         for (String k : params.keySet()) {
             uriToSearch.queryParam(k, params.get(k));

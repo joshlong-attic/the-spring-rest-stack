@@ -155,8 +155,7 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
                     Intent intent = new Intent(Intent.ACTION_PICK);/*, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI*/
                     intent.setType("image/*");
                     startActivityForResult(intent, REQUEST_GALLERY_CODE);
-//                    startActivityForResult(Intent.createChooser(intent, chooseFromLibrary), REQUEST_GALLERY_CODE);
-                } else if (menuItemSelected.equals(cancel)) {
+                 } else if (menuItemSelected.equals(cancel)) {
                     dialog.dismiss();
                 }
             }
@@ -164,24 +163,7 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
         builder.show();
     }
 
-    /*Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-photoPickerIntent.setType("image/*");
-startActivityForResult(photoPickerIntent, SELECT_PHOTO);
-Process result
 
-@Override
-protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
-    super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-
-    switch(requestCode) {
-    case SELECT_PHOTO:
-        if(resultCode == RESULT_OK){
-            Uri selectedImage = imageReturnedIntent.getData();
-            InputStream imageStream = getContentResolver().openInputStream(selectedImage);
-            Bitmap yourSelectedImage = BitmapFactory.decodeStream(imageStream);
-        }
-    }
-}*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile_photo_fragment, container, false);

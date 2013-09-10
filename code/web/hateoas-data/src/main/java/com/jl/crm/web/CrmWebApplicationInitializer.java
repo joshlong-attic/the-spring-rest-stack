@@ -15,7 +15,8 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import javax.servlet.*;
 import java.io.File;
 
-public class CrmWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+public class CrmWebApplicationInitializer
+        extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	private int maxUploadSizeInMb = 5 * 1024 * 1024; // 5 MB
 

@@ -126,9 +126,8 @@ public class MainActivity extends SherlockFragmentActivity {
         for (AuthenticatedFragment f : this.securedFragments) {
             f.setCurrentUser(user);
         }
-        /* this will trigger the redraw of the menus when we have a signed in user */
-        //
-       // invalidateOptionsMenu();
+
+        invalidateOptionsMenu();
         showUserAccount();
     }
 

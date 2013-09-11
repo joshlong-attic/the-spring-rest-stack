@@ -30,6 +30,7 @@
 
 @property (nonatomic, strong) Profile *profile;
 
+- (void)displayProfile;
 - (void)signOut;
 
 @end
@@ -38,6 +39,7 @@
 
 @synthesize profile = _profile;
 @synthesize labelDisplayName;
+@synthesize profileImage;
 
 
 #pragma mark -
@@ -63,11 +65,41 @@
 #pragma mark -
 #pragma mark Private Instance methods
 
+- (void)displayProfile
+{
+    [self sendRequestForProfileImage];
+	labelDisplayName.text = [NSString stringWithFormat:@"%@ %@", self.profile.firstName, self.profile.lastName];
+}
+
 - (void)signOut
 {
     [CRMAuthController deleteAccessGrant];
     [[CRMCoreDataManager sharedInstance] deletePersistentStore];
 	[(SpringCRMAppDelegate *)[[UIApplication sharedApplication] delegate] showAuthNavigationViewController];
+}
+
+- (void)sendRequestForProfileImage
+{
+    NSURL *url = [NSURL URLWithString:self.profile.imageUrl];
+    NSMutableURLRequest *request = [[CRMAuthorizedRequest alloc] initWithURL:url];
+	DLog(@"%@", request);
+	
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+         NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
+         DLog(@"Http Status: %d", statusCode);
+         if (statusCode == 200 && data.length > 0 && error == nil)
+         {
+             UIImage *downloadedImage = [[UIImage alloc] initWithData:data];
+             profileImage.image = downloadedImage;
+             [profileImage setNeedsDisplay];
+         }
+         else {
+             DLog(@"booo. something happened");
+         }
+     }];
 }
 
 
@@ -77,7 +109,7 @@
 - (void)fetchProfileDidFinishWithResults:(Profile *)profile;
 {
     self.profile = profile;
-	labelDisplayName.text = [NSString stringWithFormat:@"%@ %@", self.profile.firstName, self.profile.lastName];
+    [self displayProfile];
 }
 
 - (void)fetchProfileDidFailWithError:(NSError *)error
@@ -123,7 +155,7 @@
     }
     else
     {
-        labelDisplayName.text = [NSString stringWithFormat:@"%@ %@", self.profile.firstName, self.profile.lastName];
+        [self displayProfile];
     }
 }
 

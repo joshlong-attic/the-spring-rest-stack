@@ -116,7 +116,19 @@
     profile.accountId = [dictionary objectForKey:@"id"];
     profile.firstName = [dictionary stringByReplacingPercentEscapesForKey:@"firstName" usingEncoding:NSUTF8StringEncoding];
     profile.lastName = [dictionary stringByReplacingPercentEscapesForKey:@"lastName" usingEncoding:NSUTF8StringEncoding];
-//    profile.imageUrl = [dictionary objectForKey:@"pictureUrl"];
+    NSArray *links = [dictionary objectForKey:@"links"];
+    
+    [links enumerateObjectsUsingBlock:^(NSDictionary *d, NSUInteger idx, BOOL *stop) {
+        NSString *url = [d objectForKey:@"rel"];
+        NSString *href = [d objectForKey:@"href"];
+        if ([url isEqualToString:@"photo"]) {
+            profile.imageUrl = href;
+        }
+//        else if ([url isEqualToString:@"customers"]) {
+//            profile.customersUrl = href;
+//        }
+    }];
+    
     NSError *error;
     [context save:&error];
     if (error)

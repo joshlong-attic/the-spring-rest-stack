@@ -96,7 +96,7 @@
      {
          [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];         
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
-         DLog(@"status code: %d", statusCode);
+         DLog(@"Http status: %d", statusCode);
          DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
          if (statusCode == 200 && data.length > 0 && error == nil)
          {

@@ -113,7 +113,7 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .requestMatcher(oauthRequestMatcher())
+//            .requestMatcher(oauthRequestMatcher())
             .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()

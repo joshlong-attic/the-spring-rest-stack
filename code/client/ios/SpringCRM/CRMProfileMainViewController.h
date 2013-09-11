@@ -26,6 +26,7 @@
 @interface CRMProfileMainViewController : UIViewController <CRMProfileControllerDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UILabel *labelDisplayName;
+@property (nonatomic, strong) IBOutlet UIImageView *profileImage;
 
 - (IBAction)actionSignOut:(id)sender;
 - (IBAction)actionRefresh:(id)sender;

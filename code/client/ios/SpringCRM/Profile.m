@@ -17,7 +17,7 @@
 //  Profile.m
 //  SpringCRM
 //
-//  Created by Roy Clarkson on 9/6/13.
+//  Created by Roy Clarkson on 9/11/13.
 //
 
 #import "Profile.h"
@@ -29,5 +29,6 @@
 @dynamic firstName;
 @dynamic imageUrl;
 @dynamic lastName;
+@dynamic customersUrl;
 
 @end

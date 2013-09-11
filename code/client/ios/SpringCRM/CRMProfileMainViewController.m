@@ -25,13 +25,17 @@
 #import "Profile.h"
 #import "CRMCoreDataManager.h"
 #import "CRMAuthController.h"
+#import "CRMActivityAlertView.h"
 
 @interface CRMProfileMainViewController()
 
 @property (nonatomic, strong) Profile *profile;
+@property (nonatomic, strong) CRMActivityAlertView *activityView;
 
 - (void)displayProfile;
 - (void)signOut;
+- (void)sendRequestForProfileImage;
+- (void)sendRequestForCustomers;
 
 @end
 
@@ -40,6 +44,8 @@
 @synthesize profile = _profile;
 @synthesize labelDisplayName;
 @synthesize profileImage;
+@synthesize customersViewController;
+@synthesize activityView;
 
 
 #pragma mark -
@@ -59,6 +65,11 @@
 - (IBAction)actionRefresh:(id)sender
 {
     [[CRMProfileController sharedInstance] sendRequestForProfileWithDelegate:self];
+}
+
+- (IBAction)actionViewCustomers:(id)sender
+{
+    [self sendRequestForCustomers];
 }
 
 
@@ -96,8 +107,39 @@
              profileImage.image = downloadedImage;
              [profileImage setNeedsDisplay];
          }
-         else {
-             DLog(@"booo. something happened");
+     }];
+}
+
+- (void)sendRequestForCustomers
+{
+    activityView = [[CRMActivityAlertView alloc] initWithActivityMessage:@"Signing in..."];
+	[activityView startAnimating];
+    
+    NSURL *url = [NSURL URLWithString:self.profile.customersUrl];
+    NSMutableURLRequest *request = [[CRMAuthorizedRequest alloc] initWithURL:url];
+	DLog(@"%@", request);
+	
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+         NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
+         DLog(@"Http Status: %d", statusCode);
+         if (statusCode == 200 && data.length > 0 && error == nil)
+         {
+             DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+             NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+             NSArray *array = [dictionary objectForKey:@"content"];
+             NSMutableArray *customers = [[NSMutableArray alloc] init];
+             [array enumerateObjectsUsingBlock:^(NSDictionary *d, NSUInteger idx, BOOL *stop) {
+                 NSString *firstName = [d objectForKey:@"firstName"];
+                 NSString *lastName = [d objectForKey:@"lastName"];
+                 [customers addObject:[NSString stringWithFormat:@"%@ %@", firstName, lastName]];
+             }];
+             
+             [activityView stopAnimating];
+             customersViewController.customers = customers;
+             [self.navigationController pushViewController:customersViewController animated:YES];
          }
      }];
 }
@@ -138,15 +180,16 @@
     [super viewDidLoad];
     DLog(@"");
     
+    self.title = @"User Profile";
+    
     labelDisplayName.text = nil;
+    profileImage.image = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     DLog(@"");
-    
-    [self.navigationController setNavigationBarHidden:YES];
     
     self.profile = [[CRMProfileController sharedInstance] fetchProfile];
     if (self.profile == nil)
@@ -166,6 +209,8 @@
     
     self.profile = nil;
 	self.labelDisplayName = nil;
+    self.profileImage = nil;
+    self.customersViewController = nil;
 }
 
 @end

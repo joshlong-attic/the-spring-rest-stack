@@ -124,9 +124,9 @@
         if ([url isEqualToString:@"photo"]) {
             profile.imageUrl = href;
         }
-//        else if ([url isEqualToString:@"customers"]) {
-//            profile.customersUrl = href;
-//        }
+        else if ([url isEqualToString:@"customers"]) {
+            profile.customersUrl = href;
+        }
     }];
     
     NSError *error;

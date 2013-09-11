@@ -14,6 +14,8 @@
 		811471B4160CB1C500878ACD /* CRMFormTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 811471B3160CB1C400878ACD /* CRMFormTextFieldCell.m */; };
 		815004E115EEFF5100972ACE /* CRMAuthorizedRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 815004E015EEFF5100972ACE /* CRMAuthorizedRequest.m */; };
 		81790DE317D7AB3D00C836B5 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 81790DE217D7AB3D00C836B5 /* Default-568h@2x.png */; };
+		817D525917E0E40E0000D27D /* CRMCustomersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 817D525717E0E40E0000D27D /* CRMCustomersViewController.m */; };
+		817D525B17E0E5620000D27D /* CRMCustomersViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 817D525D17E0E5620000D27D /* CRMCustomersViewController.xib */; };
 		818BD9CD15DC949A00BD7842 /* OA2SignInRequestParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 818BD9CC15DC949A00BD7842 /* OA2SignInRequestParameters.m */; };
 		818BD9D415DCBF0C00BD7842 /* CRMURLRequestParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 818BD9D315DCBF0C00BD7842 /* CRMURLRequestParameters.m */; };
 		81963AE015E2B88B002C1BC6 /* CRMKeychainManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 81963ADF15E2B88B002C1BC6 /* CRMKeychainManager.m */; };
@@ -69,6 +71,9 @@
 		815004DF15EEFF5100972ACE /* CRMAuthorizedRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMAuthorizedRequest.h; sourceTree = "<group>"; };
 		815004E015EEFF5100972ACE /* CRMAuthorizedRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMAuthorizedRequest.m; sourceTree = "<group>"; };
 		81790DE217D7AB3D00C836B5 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		817D525617E0E40E0000D27D /* CRMCustomersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMCustomersViewController.h; sourceTree = "<group>"; };
+		817D525717E0E40E0000D27D /* CRMCustomersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRMCustomersViewController.m; sourceTree = "<group>"; };
+		817D525C17E0E5620000D27D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CRMCustomersViewController.xib; sourceTree = "<group>"; };
 		818BD9CB15DC949A00BD7842 /* OA2SignInRequestParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OA2SignInRequestParameters.h; sourceTree = "<group>"; };
 		818BD9CC15DC949A00BD7842 /* OA2SignInRequestParameters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OA2SignInRequestParameters.m; sourceTree = "<group>"; };
 		818BD9D215DCBF0C00BD7842 /* CRMURLRequestParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRMURLRequestParameters.h; sourceTree = "<group>"; };
@@ -218,6 +223,9 @@
 				81E42DEC15ADE82F001FA72D /* CRMProfileMainViewController.h */,
 				81E42DED15ADE82F001FA72D /* CRMProfileMainViewController.m */,
 				81E42D9515ADE82F001FA72D /* CRMProfileMainViewController.xib */,
+				817D525617E0E40E0000D27D /* CRMCustomersViewController.h */,
+				817D525717E0E40E0000D27D /* CRMCustomersViewController.m */,
+				817D525D17E0E5620000D27D /* CRMCustomersViewController.xib */,
 			);
 			name = Profile;
 			sourceTree = "<group>";
@@ -431,6 +439,7 @@
 				81A2492315D9A6BF00C84332 /* CRMSignInViewController.xib in Resources */,
 				81FF4E771607F0D7001B0ABC /* Settings.bundle in Resources */,
 				81790DE317D7AB3D00C836B5 /* Default-568h@2x.png in Resources */,
+				817D525B17E0E5620000D27D /* CRMCustomersViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,12 +483,21 @@
 				81CFAA5715F7F31700661D68 /* Profile.m in Sources */,
 				81FF4E7C1608D05F001B0ABC /* CRMConnectionSettings.m in Sources */,
 				811471B4160CB1C500878ACD /* CRMFormTextFieldCell.m in Sources */,
+				817D525917E0E40E0000D27D /* CRMCustomersViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		817D525D17E0E5620000D27D /* CRMCustomersViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				817D525C17E0E5620000D27D /* en */,
+			);
+			name = CRMCustomersViewController.xib;
+			sourceTree = "<group>";
+		};
 		81A2492515D9A6BF00C84332 /* CRMSignInViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (

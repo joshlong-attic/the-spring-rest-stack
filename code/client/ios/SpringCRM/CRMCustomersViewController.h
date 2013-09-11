@@ -14,24 +14,17 @@
 //  limitations under the License.
 //
 //
-//  CRMProfileMainViewController.h
+//  CRMCustomersViewController.h
 //  SpringCRM
 //
-//  Created by Roy Clarkson on 6/7/10.
+//  Created by Roy Clarkson on 9/11/13.
+//
 //
 
 #import <UIKit/UIKit.h>
-#import "CRMProfileControllerDelegate.h"
-#import "CRMCustomersViewController.h"
 
-@interface CRMProfileMainViewController : UIViewController <CRMProfileControllerDelegate, UIAlertViewDelegate>
+@interface CRMCustomersViewController : UITableViewController
 
-@property (nonatomic, strong) IBOutlet UILabel *labelDisplayName;
-@property (nonatomic, strong) IBOutlet UIImageView *profileImage;
-@property (nonatomic, strong) IBOutlet CRMCustomersViewController *customersViewController;
-
-- (IBAction)actionSignOut:(id)sender;
-- (IBAction)actionRefresh:(id)sender;
-- (IBAction)actionViewCustomers:(id)sender;
+@property (nonatomic, strong) NSArray *customers;
 
 @end

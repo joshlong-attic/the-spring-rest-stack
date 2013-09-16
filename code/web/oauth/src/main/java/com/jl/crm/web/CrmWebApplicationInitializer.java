@@ -113,7 +113,10 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-//            .requestMatcher(oauthRequestMatcher())
+            .requestMatchers()
+                .requestMatchers(oauthRequestMatcher())
+//                .antMatchers("/users/*/photo")
+                .and()
             .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
@@ -126,7 +129,7 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
     @Bean
     public MediaTypeRequestMatcher oauthRequestMatcher() {
         MediaTypeRequestMatcher mediaTypeRequestMatcher =
-                new MediaTypeRequestMatcher(contentNegotiationStrategy, MediaType.APPLICATION_JSON);
+                new MediaTypeRequestMatcher(contentNegotiationStrategy, MediaType.APPLICATION_JSON, new MediaType("image", "*"));
         mediaTypeRequestMatcher.setIgnoredMediaTypes(Collections.singleton(MediaType.ALL));
         return mediaTypeRequestMatcher;
     }

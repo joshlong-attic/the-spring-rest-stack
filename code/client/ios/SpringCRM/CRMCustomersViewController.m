@@ -81,6 +81,20 @@
     self.title = @"Customers";
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self.tableView reloadData];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    self.customers = nil;
+}
+
 - (void)viewDidUnload
 {
     [super viewDidUnload];

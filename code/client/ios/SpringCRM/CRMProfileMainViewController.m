@@ -93,6 +93,7 @@
 {
     NSURL *url = [NSURL URLWithString:self.profile.imageUrl];
     NSMutableURLRequest *request = [[CRMAuthorizedRequest alloc] initWithURL:url];
+	[request setValue:@"image/jpeg, image/png, image/gif" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);
 	
     [NSURLConnection sendAsynchronousRequest:request
@@ -112,11 +113,12 @@
 
 - (void)sendRequestForCustomers
 {
-    activityView = [[CRMActivityAlertView alloc] initWithActivityMessage:@"Signing in..."];
+    activityView = [[CRMActivityAlertView alloc] initWithActivityMessage:@"Fetching customers..."];
 	[activityView startAnimating];
     
     NSURL *url = [NSURL URLWithString:self.profile.customersUrl];
     NSMutableURLRequest *request = [[CRMAuthorizedRequest alloc] initWithURL:url];
+	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);
 	
     [NSURLConnection sendAsynchronousRequest:request
@@ -140,6 +142,10 @@
              [activityView stopAnimating];
              customersViewController.customers = customers;
              [self.navigationController pushViewController:customersViewController animated:YES];
+         }
+         else
+         {
+             [activityView stopAnimating];
          }
      }];
 }
@@ -181,9 +187,6 @@
     DLog(@"");
     
     self.title = @"User Profile";
-    
-    labelDisplayName.text = nil;
-    profileImage.image = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -191,6 +194,10 @@
     [super viewWillAppear:animated];
     DLog(@"");
     
+    labelDisplayName.text = nil;
+    profileImage.image = nil;
+    [profileImage setNeedsDisplay];
+
     self.profile = [[CRMProfileController sharedInstance] fetchProfile];
     if (self.profile == nil)
     {

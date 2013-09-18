@@ -92,7 +92,7 @@
 - (void)sendRequestForProfileImage {
     NSURL *url = [NSURL URLWithString:self.profile.imageUrl];
     NSMutableURLRequest *request = [[CRMAuthorizedRequest alloc] initWithURL:url];
-    [request setValue:@"image/jpeg, image/png, image/gif" forHTTPHeaderField:@"Accept"];
+    [request setValue:self.profile.imageMediaType forHTTPHeaderField:@"Accept"];
     DLog(@"%@", request);
 
     [NSURLConnection sendAsynchronousRequest:request

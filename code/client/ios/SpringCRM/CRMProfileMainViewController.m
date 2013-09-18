@@ -46,6 +46,7 @@
 
 @synthesize profile = _profile;
 @synthesize labelDisplayName;
+@synthesize labelMediaType;
 @synthesize profileImage;
 @synthesize customersViewController;
 @synthesize activityView;
@@ -78,7 +79,8 @@
 
 - (void)displayProfile {
     [self sendRequestForProfileImage];
-    labelDisplayName.text = [NSString stringWithFormat:@"%@ %@", self.profile.firstName, self.profile.lastName];
+	labelDisplayName.text = [NSString stringWithFormat:@"%@ %@", self.profile.firstName, self.profile.lastName];
+    labelMediaType.text = self.profile.imageMediaType;
 }
 
 - (void)signOut {
@@ -197,7 +199,8 @@
     DLog(@"");
 
     self.profile = nil;
-    self.labelDisplayName = nil;
+	self.labelDisplayName = nil;
+    self.labelMediaType = nil;
     self.profileImage = nil;
     self.customersViewController = nil;
 }

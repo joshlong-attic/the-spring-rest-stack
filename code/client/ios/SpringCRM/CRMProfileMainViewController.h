@@ -27,6 +27,7 @@
 @interface CRMProfileMainViewController : UIViewController <CRMProfileControllerDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UILabel *labelDisplayName;
+@property (nonatomic, strong) IBOutlet UILabel *labelMediaType;
 @property (nonatomic, strong) IBOutlet UIImageView *profileImage;
 @property (nonatomic, strong) IBOutlet CRMCustomersViewController *customersViewController;
 

@@ -17,7 +17,7 @@
 //  Profile.h
 //  SpringCRM
 //
-//  Created by Roy Clarkson on 9/11/13.
+//  Created by Roy Clarkson on 9/17/13.
 //
 
 #import <Foundation/Foundation.h>
@@ -27,10 +27,10 @@
 @interface Profile : NSManagedObject
 
 @property (nonatomic, retain) NSNumber * accountId;
+@property (nonatomic, retain) NSString * customersUrl;
 @property (nonatomic, retain) NSString * firstName;
 @property (nonatomic, retain) NSString * imageUrl;
 @property (nonatomic, retain) NSString * lastName;
-@property (nonatomic, retain) NSString * customersUrl;
-@property (nonatomic, retain) NSString * profilePhotoMediaType ;
+@property (nonatomic, retain) NSString * imageMediaType;
 
 @end

@@ -123,6 +123,8 @@
         NSString *href = [d objectForKey:@"href"];
         if ([url isEqualToString:@"photo"]) {
             profile.imageUrl = href;
+            profile.imageMediaType = [dictionary stringByReplacingPercentEscapesForKey:@"profilePhotoMediaType"
+                                                                         usingEncoding:NSUTF8StringEncoding];
         }
         else if ([url isEqualToString:@"customers"]) {
             profile.customersUrl = href;

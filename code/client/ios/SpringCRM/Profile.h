@@ -31,5 +31,6 @@
 @property (nonatomic, retain) NSString * imageUrl;
 @property (nonatomic, retain) NSString * lastName;
 @property (nonatomic, retain) NSString * customersUrl;
+@property (nonatomic, retain) NSString * profilePhotoMediaType ;
 
 @end

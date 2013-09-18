@@ -115,7 +115,6 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
         http
             .requestMatchers()
                 .requestMatchers(oauthRequestMatcher())
-//                .antMatchers("/users/*/photo")
                 .and()
             .authorizeRequests()
                 .anyRequest().authenticated()

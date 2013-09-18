@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -13,6 +12,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import com.jl.crm.android.R;
 import com.jl.crm.android.activities.MainActivity;
@@ -50,27 +50,15 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
         return writableFile("profile.jpg");
     }
 
-    protected File fileFromUri(Uri contentUri) {
-        String[] project = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getActivity().getContentResolver().query(contentUri, project, null, null, null);
-        int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return new File(cursor.getString(columnIndex));
-    }
-
     protected void profilePhotoFileChanged(InputStream i) {
 
         try {
             byte[] bytesForInputStream = IoUtils.readFully(i);
 
-
             Bitmap bm = BitmapFactory.decodeByteArray(bytesForInputStream, 0, bytesForInputStream.length);
-
             userProfileImageView.setImageBitmap(bm);
             getMainActivity().showUserAccount();
-
             this.transmitProfilePhoto(bytesForInputStream);
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -89,21 +77,18 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
                             imageStream = new FileInputStream(profilePhotoFile);
                             profilePhotoFileChanged(imageStream);
                         }
-                    }
-                    else if (requestCode == REQUEST_GALLERY_CODE) {
+                    } else if (requestCode == REQUEST_GALLERY_CODE) {
                         Uri selectedImage = data.getData();
                         imageStream = getActivity().getContentResolver().openInputStream(selectedImage);
                         profilePhotoFileChanged(imageStream);
                     }
                 }
-            }
-            finally {
+            } finally {
                 if (imageStream != null) {
                     imageStream.close();
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -124,12 +109,13 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
             if (user.isProfilePhotoImported()) {
                 ProfilePhoto profilePhoto = crmOperations.getUserProfilePhoto();
                 byte[] profilePhotoBytes = profilePhoto.getBytes();
-
                 Bitmap bm = BitmapFactory.decodeByteArray(profilePhotoBytes, 0, profilePhotoBytes.length);
-
-
                 userProfileImageView.setImageBitmap(bm);
+
+                changeProfilePhotoButton.setText(  "Edit Your Profile Photo, "  +  user.getFirstName());
+                //hiUserTextView.setText( "Hi, " + currentUser.getFirstName() +"!");
             }
+
         }
     }
 
@@ -155,7 +141,7 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
                     Intent intent = new Intent(Intent.ACTION_PICK);/*, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI*/
                     intent.setType("image/*");
                     startActivityForResult(intent, REQUEST_GALLERY_CODE);
-                 } else if (menuItemSelected.equals(cancel)) {
+                } else if (menuItemSelected.equals(cancel)) {
                     dialog.dismiss();
                 }
             }
@@ -163,18 +149,31 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
         builder.show();
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile_photo_fragment, container, false);
+
+        // set what happens
+        View.OnClickListener onClickListener  =
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        capturePhoto();
+                    }
+                } ;
         userProfileImageView = (ImageView) view.findViewById(R.id.profile_photo);
         userProfileImageView.setScaleType(ImageView.ScaleType.FIT_START);
-        userProfileImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                capturePhoto();
-            }
-        });
+        userProfileImageView.setOnClickListener(onClickListener);
+
+        // wire up the button
+          changeProfilePhotoButton = (Button) view.findViewById(R.id.change_profile_photo) ;
+
+        changeProfilePhotoButton.setOnClickListener(onClickListener);
+
+
+
         return view;
     }
+
+    private  Button changeProfilePhotoButton ;
 }

@@ -30,5 +30,5 @@
 @dynamic imageUrl;
 @dynamic lastName;
 @dynamic customersUrl;
-
+@dynamic profilePhotoMediaType;
 @end

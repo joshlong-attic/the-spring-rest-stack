@@ -98,7 +98,9 @@ public class MainActivity extends SherlockFragmentActivity {
             User currentUser = crmOperationsProvider.get().currentUser();
             signin(currentUser);
             invalidateOptionsMenu();
-            onPrepareOptionsMenu(menu);
+            //onPrepareOptionsMenu(menu);
+            closeOptionsMenu();
+
         }
     };
     // fragments
@@ -127,7 +129,9 @@ public class MainActivity extends SherlockFragmentActivity {
             f.setCurrentUser(user);
         }
 
-        invalidateOptionsMenu();
+        /*invalidateOptionsMenu();*/
+
+
         showUserAccount();
     }
 

@@ -27,14 +27,17 @@
 #import "CRMAuthController.h"
 #import "CRMActivityAlertView.h"
 
-@interface CRMProfileMainViewController()
+@interface CRMProfileMainViewController ()
 
-@property (nonatomic, strong) Profile *profile;
-@property (nonatomic, strong) CRMActivityAlertView *activityView;
+@property(nonatomic, strong) Profile *profile;
+@property(nonatomic, strong) CRMActivityAlertView *activityView;
 
 - (void)displayProfile;
+
 - (void)signOut;
+
 - (void)sendRequestForProfileImage;
+
 - (void)sendRequestForCustomers;
 
 @end
@@ -51,8 +54,7 @@
 #pragma mark -
 #pragma mark Public Instance methods
 
-- (IBAction)actionSignOut:(id)sender
-{
+- (IBAction)actionSignOut:(id)sender {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
                                                         message:@"Would you like to sign out?"
                                                        delegate:self
@@ -62,13 +64,11 @@
     [alertView show];
 }
 
-- (IBAction)actionRefresh:(id)sender
-{
+- (IBAction)actionRefresh:(id)sender {
     [[CRMProfileController sharedInstance] sendRequestForProfileWithDelegate:self];
 }
 
-- (IBAction)actionViewCustomers:(id)sender
-{
+- (IBAction)actionViewCustomers:(id)sender {
     [self sendRequestForCustomers];
 }
 
@@ -76,93 +76,81 @@
 #pragma mark -
 #pragma mark Private Instance methods
 
-- (void)displayProfile
-{
+- (void)displayProfile {
     [self sendRequestForProfileImage];
-	labelDisplayName.text = [NSString stringWithFormat:@"%@ %@", self.profile.firstName, self.profile.lastName];
+    labelDisplayName.text = [NSString stringWithFormat:@"%@ %@", self.profile.firstName, self.profile.lastName];
 }
 
-- (void)signOut
-{
+- (void)signOut {
     [CRMAuthController deleteAccessGrant];
     [[CRMCoreDataManager sharedInstance] deletePersistentStore];
-	[(SpringCRMAppDelegate *)[[UIApplication sharedApplication] delegate] showAuthNavigationViewController];
+    [(SpringCRMAppDelegate *) [[UIApplication sharedApplication] delegate] showAuthNavigationViewController];
 }
 
-- (void)sendRequestForProfileImage
-{
+- (void)sendRequestForProfileImage {
     NSURL *url = [NSURL URLWithString:self.profile.imageUrl];
     NSMutableURLRequest *request = [[CRMAuthorizedRequest alloc] initWithURL:url];
-	 /// [request setValue:@"image/jpeg, image/png, image/gif" forHTTPHeaderField:@"Accept"];
-    [request setValue: self.profile.profilePhotoMediaType forHTTPHeaderField:@"Accept"];
-	DLog(@"%@", request);
-	
+    [request setValue:@"image/jpeg, image/png, image/gif" forHTTPHeaderField:@"Accept"];
+    DLog(@"%@", request);
+
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
-     {
-         NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
-         DLog(@"Http Status: %d", statusCode);
-         if (statusCode == 200 && data.length > 0 && error == nil)
-         {
-             UIImage *downloadedImage = [[UIImage alloc] initWithData:data];
-             profileImage.image = downloadedImage;
-             [profileImage setNeedsDisplay];
-         }
-     }];
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                               NSInteger statusCode = [(NSHTTPURLResponse *) response statusCode];
+                               DLog(@"Http Status: %d", statusCode);
+                               if (statusCode == 200 && data.length > 0 && error == nil) {
+                                   UIImage *downloadedImage = [[UIImage alloc] initWithData:data];
+                                   profileImage.image = downloadedImage;
+                                   [profileImage setNeedsDisplay];
+                               }
+                           }];
 }
 
-- (void)sendRequestForCustomers
-{
+- (void)sendRequestForCustomers {
     activityView = [[CRMActivityAlertView alloc] initWithActivityMessage:@"Fetching customers..."];
-	[activityView startAnimating];
-    
+    [activityView startAnimating];
+
     NSURL *url = [NSURL URLWithString:self.profile.customersUrl];
     NSMutableURLRequest *request = [[CRMAuthorizedRequest alloc] initWithURL:url];
-	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-	DLog(@"%@", request);
-	
+    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    DLog(@"%@", request);
+
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
-     {
-         NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
-         DLog(@"Http Status: %d", statusCode);
-         if (statusCode == 200 && data.length > 0 && error == nil)
-         {
-             DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-             NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-             NSArray *array = [dictionary objectForKey:@"content"];
-             NSMutableArray *customers = [[NSMutableArray alloc] init];
-             [array enumerateObjectsUsingBlock:^(NSDictionary *d, NSUInteger idx, BOOL *stop) {
-                 NSString *firstName = [d objectForKey:@"firstName"];
-                 NSString *lastName = [d objectForKey:@"lastName"];
-                 [customers addObject:[NSString stringWithFormat:@"%@ %@", firstName, lastName]];
-             }];
-             
-             [activityView stopAnimating];
-             customersViewController.customers = customers;
-             [self.navigationController pushViewController:customersViewController animated:YES];
-         }
-         else
-         {
-             [activityView stopAnimating];
-         }
-     }];
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                               NSInteger statusCode = [(NSHTTPURLResponse *) response statusCode];
+                               DLog(@"Http Status: %d", statusCode);
+                               if (statusCode == 200 && data.length > 0 && error == nil) {
+                                   DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+                                   NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+                                   NSArray *array = [dictionary objectForKey:@"content"];
+                                   NSMutableArray *customers = [[NSMutableArray alloc] init];
+                                   [array enumerateObjectsUsingBlock:^(NSDictionary *d, NSUInteger idx, BOOL *stop) {
+                                       NSString *firstName = [d objectForKey:@"firstName"];
+                                       NSString *lastName = [d objectForKey:@"lastName"];
+                                       [customers addObject:[NSString stringWithFormat:@"%@ %@", firstName, lastName]];
+                                   }];
+
+                                   [activityView stopAnimating];
+                                   customersViewController.customers = customers;
+                                   [self.navigationController pushViewController:customersViewController animated:YES];
+                               }
+                               else {
+                                   [activityView stopAnimating];
+                               }
+                           }];
 }
 
 
 #pragma mark -
 #pragma mark ProfileControllerDelegate methods
 
-- (void)fetchProfileDidFinishWithResults:(Profile *)profile;
-{
+- (void)fetchProfileDidFinishWithResults:(Profile *)profile; {
     self.profile = profile;
     [self displayProfile];
 }
 
-- (void)fetchProfileDidFailWithError:(NSError *)error
-{
+- (void)fetchProfileDidFailWithError:(NSError *)error {
 
 }
 
@@ -170,10 +158,8 @@
 #pragma mark -
 #pragma mark UIAlertViewDelegate methods
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (alertView.tag == 1 && buttonIndex == 1)
-    {
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (alertView.tag == 1 && buttonIndex == 1) {
         [self signOut];
     }
 }
@@ -182,41 +168,36 @@
 #pragma mark -
 #pragma mark UIViewController methods
 
-- (void)viewDidLoad 
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     DLog(@"");
-    
+
     self.title = @"User Profile";
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     DLog(@"");
-    
+
     labelDisplayName.text = nil;
     profileImage.image = nil;
     [profileImage setNeedsDisplay];
 
     self.profile = [[CRMProfileController sharedInstance] fetchProfile];
-    if (self.profile == nil)
-    {
+    if (self.profile == nil) {
         [[CRMProfileController sharedInstance] sendRequestForProfileWithDelegate:self];
     }
-    else
-    {
+    else {
         [self displayProfile];
     }
 }
 
-- (void)viewDidUnload 
-{
+- (void)viewDidUnload {
     [super viewDidUnload];
     DLog(@"");
-    
+
     self.profile = nil;
-	self.labelDisplayName = nil;
+    self.labelDisplayName = nil;
     self.profileImage = nil;
     self.customersViewController = nil;
 }

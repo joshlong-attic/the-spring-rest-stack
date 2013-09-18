@@ -175,5 +175,6 @@
     <string name="cancel">I\'ll Do It Later...</string>
     <string name="select_profile_photo">Choose a New Profile Photo</string>
     <string name="change_profile_photo">Change Profile Photo</string>
+    <string name="edit_profile_photo">Edit Your Profile Photo, %s</string>
 
 </resources>

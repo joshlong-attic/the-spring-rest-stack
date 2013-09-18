@@ -112,9 +112,10 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
                 Bitmap bm = BitmapFactory.decodeByteArray(profilePhotoBytes, 0, profilePhotoBytes.length);
                 userProfileImageView.setImageBitmap(bm);
 
-                changeProfilePhotoButton.setText(  "Edit Your Profile Photo, "  +  user.getFirstName());
-                //hiUserTextView.setText( "Hi, " + currentUser.getFirstName() +"!");
-            }
+                String editYourProfilePhoto
+                        = getActivity().getString(R.string.edit_profile_photo);
+                changeProfilePhotoButton.setText(  String.format( editYourProfilePhoto,  user.getFirstName()));
+             }
 
         }
     }

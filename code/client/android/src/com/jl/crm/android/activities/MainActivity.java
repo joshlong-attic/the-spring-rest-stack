@@ -133,6 +133,8 @@ public class MainActivity extends SherlockFragmentActivity {
 
 
         showUserAccount();
+
+
     }
 
     private void addFragments(Fragment... fragments) {

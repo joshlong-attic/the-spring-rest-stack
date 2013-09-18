@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:text="@string/change_profile_photo"
             android:id="@+id/change_profile_photo"
-            android:gravity="center" android:textAlignment="center" android:layout_gravity="right|center_vertical"/>
+            android:gravity="center" android:textAlignment="center" android:layout_gravity="right|top"/>
 
 
 

@@ -78,7 +78,10 @@
 #pragma mark Private Instance methods
 
 - (void)displayProfile {
-    [self sendRequestForProfileImage];
+    if ([self.profile.hasImage boolValue] == YES)
+    {
+        [self sendRequestForProfileImage];
+    }
 	labelDisplayName.text = [NSString stringWithFormat:@"%@ %@", self.profile.firstName, self.profile.lastName];
     labelMediaType.text = self.profile.imageMediaType;
 }

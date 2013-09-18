@@ -28,8 +28,10 @@
 @dynamic accountId;
 @dynamic customersUrl;
 @dynamic firstName;
-@dynamic imageUrl;
-@dynamic lastName;
 @dynamic imageMediaType;
+@dynamic imageUrl;
+@dynamic profilePhotoMediaType;
+@dynamic lastName;
+@dynamic hasImage;
 
 @end

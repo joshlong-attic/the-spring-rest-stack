@@ -116,12 +116,13 @@
     profile.accountId = [dictionary objectForKey:@"id"];
     profile.firstName = [dictionary stringByReplacingPercentEscapesForKey:@"firstName" usingEncoding:NSUTF8StringEncoding];
     profile.lastName = [dictionary stringByReplacingPercentEscapesForKey:@"lastName" usingEncoding:NSUTF8StringEncoding];
+    profile.hasImage = [dictionary objectForKey:@"profilePhotoImported"];
     NSArray *links = [dictionary objectForKey:@"links"];
     
     [links enumerateObjectsUsingBlock:^(NSDictionary *d, NSUInteger idx, BOOL *stop) {
         NSString *url = [d objectForKey:@"rel"];
         NSString *href = [d objectForKey:@"href"];
-        if ([url isEqualToString:@"photo"]) {
+        if ([url isEqualToString:@"photo"] && [profile.hasImage boolValue] == YES) {
             profile.imageUrl = href;
             profile.imageMediaType = [dictionary stringByReplacingPercentEscapesForKey:@"profilePhotoMediaType"
                                                                          usingEncoding:NSUTF8StringEncoding];

@@ -29,8 +29,10 @@
 @property (nonatomic, retain) NSNumber * accountId;
 @property (nonatomic, retain) NSString * customersUrl;
 @property (nonatomic, retain) NSString * firstName;
-@property (nonatomic, retain) NSString * imageUrl;
-@property (nonatomic, retain) NSString * lastName;
 @property (nonatomic, retain) NSString * imageMediaType;
+@property (nonatomic, retain) NSString * imageUrl;
+@property (nonatomic, retain) NSString * profilePhotoMediaType;
+@property (nonatomic, retain) NSString * lastName;
+@property (nonatomic, retain) NSNumber * hasImage;
 
 @end

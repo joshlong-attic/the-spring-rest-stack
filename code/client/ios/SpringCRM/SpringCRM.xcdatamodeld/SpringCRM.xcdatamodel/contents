@@ -4,13 +4,12 @@
         <attribute name="accountId" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="customersUrl" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="firstName" attributeType="String" syncable="YES"/>
+        <attribute name="hasImage" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="imageMediaType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="imageUrl" optional="YES" attributeType="String" syncable="YES"/>
-
-        <attribute name="profilePhotoMediaType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Profile" positionX="-1395" positionY="-630" width="128" height="135"/>
+        <element name="Profile" positionX="-1395" positionY="-630" width="128" height="150"/>
     </elements>
 </model>

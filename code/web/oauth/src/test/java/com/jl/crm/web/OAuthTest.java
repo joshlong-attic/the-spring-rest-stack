@@ -70,10 +70,11 @@ public class OAuthTest {
     }
 
     @Test
-    public void formLoginForContentAll()  throws Exception {
-        mvc.perform(get("/").accept(MediaType.ALL)).andExpect(status().isMovedTemporarily());
+    public void formLoginForContentTextHtml()  throws Exception {
+        mvc.perform(get("/").accept(browserMediaType )).andExpect(status().isMovedTemporarily());
     }
 
+    private MediaType browserMediaType = MediaType.TEXT_HTML ;
     @Test
     public void oauthLoginForJson()  throws Exception {
         mvc.perform(get("/").accept(MediaType.APPLICATION_JSON))
@@ -138,6 +139,7 @@ public class OAuthTest {
         // get a token
         RequestBuilder tokenRequest =
                 get("/oauth/authorize?client_id=android-crm&response_type=token&scope=read%2Cwrite&redirect_uri="+encodedRedirectUri)
+                    .accept(browserMediaType )
                     .param("client_id","android-crm")
                     .param("response_type","token")
                     .param("redirect_uri", redirectUri)
@@ -148,6 +150,7 @@ public class OAuthTest {
         // login within the browser
         RequestBuilder loginRequest =
                 post("/crm/signin.html")
+                    .accept(browserMediaType )
                     .param("username", "joshlong")
                     .param("password", "cowbell")
                     .session(session)
@@ -158,6 +161,7 @@ public class OAuthTest {
         // make the original request now we are authenticated
         tokenRequest =
                 get("/oauth/authorize?client_id=android-crm&response_type=token&scope=read%2Cwrite&redirect_uri=http://localhost/crm/welcome.html")
+                    .accept(browserMediaType )
                     .param("client_id","android-crm")
                     .param("response_type","token")
                     .param("redirect_uri",redirectUri)
@@ -167,7 +171,8 @@ public class OAuthTest {
         // confirm access is granted
         RequestBuilder accessConfirmationRequest =
                 post("/oauth/authorize")
-                    .accept(MediaType.ALL)
+                    .accept(browserMediaType )
+//                    .accept(MediaType.ALL)
                     .param("user_oauth_approval", "true")
                     .session(session)
                     .with(csrf());

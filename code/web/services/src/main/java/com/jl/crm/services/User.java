@@ -2,12 +2,15 @@ package com.jl.crm.services;
 
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import org.apache.commons.lang.builder.*;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.springframework.hateoas.Identifiable;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Simple object that administers all customer data. This user is the one on whose behalf modifications to {@link
@@ -18,7 +21,7 @@ import java.util.*;
 @JsonAutoDetect (fieldVisibility = JsonAutoDetect.Visibility.ANY, isGetterVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.ANY)
 @Entity
 @Table (name = "user_account")
-public class User implements Identifiable<Long>, Serializable {
+public class User implements Identifiable<Long>, Serializable    {
 
 	private static final long serialVersionUID = 1L;
 

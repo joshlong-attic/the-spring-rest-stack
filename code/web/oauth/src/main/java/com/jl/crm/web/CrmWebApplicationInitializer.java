@@ -8,7 +8,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -168,9 +170,8 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-
 
     @Inject
     private UserDetailsService userDetailsService;
@@ -178,6 +179,12 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService);
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     // @formatter:off
@@ -203,7 +210,7 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
             .authorizeRequests()
                 .antMatchers(filesToLetThroughUnAuthorized).permitAll()
-                .antMatchers("/users/*").denyAll()
+               // .antMatchers("/users/*").denyAll()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()

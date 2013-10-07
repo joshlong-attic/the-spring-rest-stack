@@ -1,6 +1,7 @@
 package com.jl.crm.services.security;
 
 import com.jl.crm.services.CrmService;
+import com.jl.crm.services.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,32 +31,21 @@ public class CrmUserDetailsService implements UserDetailsService {
     }
 
     @SuppressWarnings("serial")
-    public static class CrmUserDetails implements UserDetails {
+    public static class CrmUserDetails extends User implements UserDetails  {
         public static final String SCOPE_READ = "read";
         public static final String SCOPE_WRITE = "write";
         public static final String ROLE_USER = "ROLE_USER";
         private Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-        private com.jl.crm.services.User user;
 
         public CrmUserDetails(com.jl.crm.services.User user) {
+            super(user);
             Assert.notNull(user, "the provided user reference can't be null");
-            this.user = user;
             this.grantedAuthorities = AuthorityUtils.createAuthorityList(ROLE_USER, SCOPE_READ, SCOPE_WRITE);
         }
 
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
             return this.grantedAuthorities;
-        }
-
-        @Override
-        public String getPassword() {
-            return user.getPassword();
-        }
-
-        @Override
-        public String getUsername() {
-            return user.getUsername();
         }
 
         @Override
@@ -73,14 +63,8 @@ public class CrmUserDetailsService implements UserDetailsService {
             return isEnabled();
         }
 
-        @Override
-        public boolean isEnabled() {
-            return user.isEnabled();
-        }
 
-        public com.jl.crm.services.User getUser() {
-            return this.user;
-        }
+
     }
 
 }

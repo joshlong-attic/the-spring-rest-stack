@@ -1,8 +1,9 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.ServiceConfiguration;
-import org.springframework.beans.factory.config.CustomScopeConfigurer;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
@@ -13,26 +14,34 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.encrypt.*;
-import org.springframework.security.crypto.password.*;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.authentication.configurers.InMemoryClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.OAuth2ServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.OAuth2ServerConfigurer;
 import org.springframework.security.oauth2.provider.token.JdbcTokenStore;
 import org.springframework.security.web.util.MediaTypeRequestMatcher;
+import org.springframework.security.web.util.NegatedRequestMatcher;
+import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.web.accept.ContentNegotiationStrategy;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.inject.Inject;
-import javax.servlet.*;
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletRegistration;
 import javax.sql.DataSource;
 import java.io.File;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * In conjunction with {@link CrmSecurityApplicationInitializer}, this configuration class sets up Spring Data REST, In
@@ -118,6 +127,7 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
                 .requestMatchers(oauthRequestMatcher())
                 .and()
             .authorizeRequests()
+                .antMatchers("/favicon.ico").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .apply(new OAuth2ServerConfigurer())
@@ -127,11 +137,18 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
     // @formatter:on
 
     @Bean
-    public MediaTypeRequestMatcher oauthRequestMatcher() {
-        MediaTypeRequestMatcher mediaTypeRequestMatcher =
+    public RequestMatcher oauthRequestMatcher() {
+      /*  MediaTypeRequestMatcher mediaTypeRequestMatcher =
                 new MediaTypeRequestMatcher(contentNegotiationStrategy, MediaType.APPLICATION_JSON, new MediaType("image", "*"));
-        mediaTypeRequestMatcher.setIgnoredMediaTypes(Collections.singleton(MediaType.ALL));
-        return mediaTypeRequestMatcher;
+        Set<MediaType> mediaTypes = new HashSet<MediaType>();
+        mediaTypes.add(MediaType.ALL);
+        mediaTypes.add( new MediaType("image","webp"));
+        mediaTypeRequestMatcher.setIgnoredMediaTypes( mediaTypes);
+        return mediaTypeRequestMatcher;*/
+
+        MediaTypeRequestMatcher mediaTypeRequestMatcher = new MediaTypeRequestMatcher( this.contentNegotiationStrategy, MediaType.TEXT_HTML);
+        return new NegatedRequestMatcher( mediaTypeRequestMatcher);
+
     }
 
     @Bean

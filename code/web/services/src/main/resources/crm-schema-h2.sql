@@ -37,6 +37,7 @@ INSERT INTO user_account (id, first_name, last_name, pass_word, signup_date, use
 INSERT INTO user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (NEXTVAL('hibernate_sequence'), 'Josh', 'Long', 'cowbell', '2013-06-02 15:33:51', 'joshlong', true, true, 'image/png');
 INSERT INTO user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (NEXTVAL('hibernate_sequence'), 'George', 'Jetson', 'sprockets', '2013-07-18 20:52:28', 'georgelee', true, false, null);
 INSERT INTO user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (NEXTVAL('hibernate_sequence'), 'Roy', 'Clarkson', 'android', '2013-06-28 19:54:14', 'roy', true, false, null);
+INSERT INTO user_account (id, first_name, last_name, pass_word, signup_date, user_name, enabled, profile_photo_imported, profile_photo_media_type) VALUES (NEXTVAL('hibernate_sequence'), 'Rob', 'Winch', 'secureit', '2013-06-28 19:54:14', 'rob', true, false, null);
 
 INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Arjen', 'Poutsma', '2013-06-12 22:37:22', 3);
 INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_fkey) VALUES (NEXTVAL('hibernate_sequence'), 'Mark', 'Pollack', '2013-06-12 22:37:22', 4);

@@ -74,7 +74,7 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
+    public PlatformTransactionManager transactionManager( EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
     }
 

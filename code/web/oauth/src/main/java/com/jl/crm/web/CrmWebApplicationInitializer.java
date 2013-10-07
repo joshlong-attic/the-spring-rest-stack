@@ -1,6 +1,7 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.ServiceConfiguration;
+import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
@@ -148,6 +149,8 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+
 
     @Inject
     private UserDetailsService userDetailsService;

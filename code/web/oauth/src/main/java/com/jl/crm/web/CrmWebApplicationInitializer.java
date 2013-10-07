@@ -170,7 +170,7 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Inject

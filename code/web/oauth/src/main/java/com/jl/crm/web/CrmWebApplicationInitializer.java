@@ -146,6 +146,9 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
         mediaTypeRequestMatcher.setIgnoredMediaTypes( mediaTypes);
         return mediaTypeRequestMatcher;*/
 
+        // oauth is complicated
+        // how do i detect when it's a browser? when it's not?
+        // if a native REST client makes a call and submits a Accept: */*
         MediaTypeRequestMatcher mediaTypeRequestMatcher = new MediaTypeRequestMatcher( this.contentNegotiationStrategy, MediaType.TEXT_HTML);
         return new NegatedRequestMatcher( mediaTypeRequestMatcher);
 

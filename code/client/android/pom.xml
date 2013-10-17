@@ -138,6 +138,11 @@
                 <artifactId>actionbarsherlock</artifactId>
                 <version>4.4.0</version>
                 <type>apklib</type>
+            </dependency>  <dependency>
+                <groupId>com.actionbarsherlock</groupId>
+                <artifactId>actionbarsherlock</artifactId>
+                <version>4.4.0</version>
+                <type>jar</type>
             </dependency>
             <!--  <dependency>
                   <groupId>com.actionbarsherlock</groupId>

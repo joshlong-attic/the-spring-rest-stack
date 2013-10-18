@@ -24,9 +24,9 @@ import org.springframework.security.oauth2.config.annotation.authentication.conf
 import org.springframework.security.oauth2.config.annotation.web.configuration.OAuth2ServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.OAuth2ServerConfigurer;
 import org.springframework.security.oauth2.provider.token.JdbcTokenStore;
-import org.springframework.security.web.util.MediaTypeRequestMatcher;
-import org.springframework.security.web.util.NegatedRequestMatcher;
-import org.springframework.security.web.util.RequestMatcher;
+import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.accept.ContentNegotiationStrategy;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;

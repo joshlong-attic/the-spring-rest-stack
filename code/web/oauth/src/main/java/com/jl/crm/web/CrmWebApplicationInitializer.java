@@ -96,7 +96,7 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
 
     // @formatter:off
     @Override
-    protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
             .userDetailsService(userDetailsService)
                 .and()
@@ -174,7 +174,7 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
 
     @Override
-    protected void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService);
     }
 

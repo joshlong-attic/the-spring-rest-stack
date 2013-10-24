@@ -89,7 +89,9 @@ public class MainActivity extends SherlockFragmentActivity {
             show(signInFragment);
             signInFragment.signout();
             invalidateOptionsMenu();
-            menu.clear();
+            if (menu != null) {
+                menu.clear();
+            }
         }
     };
     Runnable connectionEstablishedRunnable = new Runnable() {

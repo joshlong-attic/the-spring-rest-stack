@@ -3,3 +3,6 @@ classes/
 gen/
 gen-external-apklibs/
 .idea/
+build/
+.gradle/
+local.properties

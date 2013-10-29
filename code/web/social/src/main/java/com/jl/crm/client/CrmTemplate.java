@@ -282,6 +282,8 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 		return messageConverters;
 	}
 
+    
+    //Prefer this mapping message converter over the Jackson1 implementation since Spring HATEOAS only requires Jackson 2 AFAICT        
 	protected MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
         return new MappingJackson2HttpMessageConverter();
     }

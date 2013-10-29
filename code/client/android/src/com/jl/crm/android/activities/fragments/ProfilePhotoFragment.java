@@ -47,6 +47,7 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
     }
 
     protected File profilePhotoFile() {
+
         return writableFile("profile.jpg");
     }
 
@@ -135,6 +136,9 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
             public void onClick(DialogInterface dialog, int item) {
                 String menuItemSelected = items[item];
                 if (menuItemSelected.equals(takePhoto)) {
+
+
+
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(profilePhotoFile()));
                     startActivityForResult(intent, REQUEST_CAMERA_CODE);

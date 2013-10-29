@@ -9,6 +9,9 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -101,7 +104,6 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         Map<String, String> params = new HashMap<String, String>();
         params.put("userId", (Long.toString(dbId)));
         params.put("q", ("%" + token + "%"));
-
 
 
         UriComponentsBuilder uriToSearch = UriComponentsBuilder.fromUri(this.apiBaseUri).path("/customers/search/search");
@@ -268,6 +270,22 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         MediaType mediaType = profilePhotoData.getHeaders().getContentType();
         return new ProfilePhoto(profilePhotoData.getBody(), mediaType);
     }
+ 
+
+    @Override
+	protected List<HttpMessageConverter<?>> getMessageConverters() {
+    	List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+		messageConverters.add(new StringHttpMessageConverter());
+		messageConverters.add(getFormMessageConverter());
+		messageConverters.add(mappingJackson2HttpMessageConverter());
+		messageConverters.add(getByteArrayMessageConverter()); 
+		return messageConverters;
+	}
+
+	protected MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
+        return new MappingJackson2HttpMessageConverter();
+    }
+
 
     private URI uriFrom(String subUrl) {
         return this.uriFrom(subUrl, Collections.<String, String>emptyMap());

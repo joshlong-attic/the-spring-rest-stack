@@ -11,8 +11,12 @@ import com.jl.crm.client.CrmApiAdapter;
 import com.jl.crm.client.CrmConnectionFactory;
 import com.jl.crm.client.CrmOperations;
 import com.jl.crm.client.CrmServiceProvider;
+import com.jl.crm.client.CrmTemplate;
+
 import dagger.Module;
 import dagger.Provides;
+
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.crypto.encrypt.AndroidEncryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.social.connect.sqlite.SQLiteConnectionRepository;
@@ -89,6 +93,7 @@ public class CrmModule {
     LayoutInflater layoutInflater(@InjectAndroidApplicationContext Context context) {
 		return (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}*/
+
 
     @Provides
     @Singleton

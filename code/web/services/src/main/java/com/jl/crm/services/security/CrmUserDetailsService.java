@@ -16,7 +16,11 @@ import java.util.Collection;
 
 @Component("userService")
 public class CrmUserDetailsService implements UserDetailsService {
-
+    
+		
+	
+	private static final long serialVersionUID = 8188998571705670332L;
+		
     private CrmService crmService;
 
     @Inject

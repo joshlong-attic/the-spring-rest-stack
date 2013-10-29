@@ -1,1 +1,0 @@
-mvn -DskipTests=true -f ../../web/pom.xml clean install ; mvn -DskipTests=true clean install

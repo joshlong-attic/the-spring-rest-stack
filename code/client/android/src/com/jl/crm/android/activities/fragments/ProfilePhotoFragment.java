@@ -47,7 +47,6 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
     }
 
     protected File profilePhotoFile() {
-
         return writableFile("profile.jpg");
     }
 
@@ -55,7 +54,6 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
 
         try {
             byte[] bytesForInputStream = IoUtils.readFully(i);
-
             Bitmap bm = BitmapFactory.decodeByteArray(bytesForInputStream, 0, bytesForInputStream.length);
             userProfileImageView.setImageBitmap(bm);
             getMainActivity().showUserAccount();
@@ -104,7 +102,7 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
     @Override
     public void setCurrentUser(User currentUser) {
         super.setCurrentUser(currentUser);
-        User user = getCurrentUser();
+        User user = this.getCurrentUser();
         if (null != user) {
             CrmOperations crmOperations = crmOperationsProvider.get();
             if (user.isProfilePhotoImported()) {
@@ -115,10 +113,13 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
 
                 String editYourProfilePhoto
                         = getActivity().getString(R.string.edit_profile_photo);
-                changeProfilePhotoButton.setText(  String.format( editYourProfilePhoto,  user.getFirstName()));
-             }
-
+                changeProfilePhotoButton.setText(String.format(editYourProfilePhoto, user.getFirstName()));
+            }
         }
+    }
+
+    protected void searchCustomers() {
+        this.getMainActivity().showSearch();
     }
 
     protected void capturePhoto() {
@@ -143,7 +144,7 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(profilePhotoFile()));
                     startActivityForResult(intent, REQUEST_CAMERA_CODE);
                 } else if (menuItemSelected.equals(chooseFromLibrary)) {
-                    Intent intent = new Intent(Intent.ACTION_PICK);/*, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI*/
+                    Intent intent = new Intent(Intent.ACTION_PICK);
                     intent.setType("image/*");
                     startActivityForResult(intent, REQUEST_GALLERY_CODE);
                 } else if (menuItemSelected.equals(cancel)) {
@@ -159,26 +160,34 @@ public class ProfilePhotoFragment extends SecuredCrmFragment {
         View view = inflater.inflate(R.layout.profile_photo_fragment, container, false);
 
         // set what happens
-        View.OnClickListener onClickListener  =
+        View.OnClickListener onClickListener =
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         capturePhoto();
                     }
-                } ;
+                };
         userProfileImageView = (ImageView) view.findViewById(R.id.profile_photo);
         userProfileImageView.setScaleType(ImageView.ScaleType.FIT_START);
         userProfileImageView.setOnClickListener(onClickListener);
 
         // wire up the button
-          changeProfilePhotoButton = (Button) view.findViewById(R.id.change_profile_photo) ;
-
+        changeProfilePhotoButton = (Button) view.findViewById(R.id.change_profile_photo);
         changeProfilePhotoButton.setOnClickListener(onClickListener);
 
+        // wire up search customers button
+
+        this.searchCustomersButton = (Button) view.findViewById(R.id.search);
+        this.searchCustomersButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchCustomers();
+            }
+        });
 
 
         return view;
     }
 
-    private  Button changeProfilePhotoButton ;
+    private Button changeProfilePhotoButton, searchCustomersButton;
 }

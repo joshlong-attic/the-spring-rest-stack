@@ -1,26 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content" android:gravity="top">
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="top">
 
     <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="center"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/profile_photo_description"
-            android:id="@+id/profile_photo"
-            android:src="@drawable/springsource_welcome_transparent_bg"
-            />
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="center"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/profile_photo_description"
+        android:id="@+id/profile_photo"
+        android:src="@drawable/springsource_welcome_transparent_bg" />
 
-    <Button android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom">
+
+    <Button
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/change_profile_photo"
             android:id="@+id/change_profile_photo"
-            android:gravity="center" android:textAlignment="center" android:layout_gravity="right|top"/>
+            android:gravity="center"
+            android:textAlignment="center"
+            android:layout_gravity="right|top" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search"
+            android:id="@+id/search"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:layout_gravity="center_horizontal" />
 
 
+    </LinearLayout>
 
 </LinearLayout>

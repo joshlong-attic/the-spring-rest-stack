@@ -3,6 +3,7 @@ package com.jl.crm.web;
 import com.jl.crm.services.CrmService;
 import com.jl.crm.services.Customer;
 import com.jl.crm.services.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -32,17 +32,14 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping(value = ApiUrls.ROOT_URL_USERS, produces = MediaType.APPLICATION_JSON_VALUE)
 class UserController {
 
-    private CrmService crmService;
-    private UserResourceAssembler userResourceAssembler;
-    private CustomerResourceAssembler customerResourceAssembler;
+    CrmService crmService;
+    UserResourceAssembler userResourceAssembler;
+    CustomerResourceAssembler customerResourceAssembler;
 
-
-    public UserController() {}
-
-    @Inject
-    public UserController(CrmService crmService,
-                          UserResourceAssembler userResourceAssembler,
-                          CustomerResourceAssembler customerResourceAssembler) {
+    @Autowired
+    UserController(CrmService crmService,
+                   UserResourceAssembler userResourceAssembler,
+                   CustomerResourceAssembler customerResourceAssembler) {
         this.crmService = crmService;
         this.userResourceAssembler = userResourceAssembler;
         this.customerResourceAssembler = customerResourceAssembler;

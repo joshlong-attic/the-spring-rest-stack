@@ -61,7 +61,11 @@
 
     <dependencyManagement>
         <dependencies>
-
+            <dependency>
+                <groupId>org.springframework.hateoas</groupId>
+                <artifactId>spring-hateoas</artifactId>
+                <version>0.8.0.RELEASE</version>
+            </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>

@@ -1,26 +1,26 @@
 package com.jl.crm.web;
 
-import com.jl.crm.services.*;
-
-import org.springframework.hateoas.*;
+import com.jl.crm.services.Customer;
+import com.jl.crm.services.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityLinks;
+import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 
 @Component
-public class CustomerLinks {
+class CustomerLinks {
 
-	static final String USER_REL = "user";
+    String usersRel = "user";
+    EntityLinks entityLinks;
 
-	private EntityLinks entityLinks;
+    @Autowired
+    CustomerLinks(EntityLinks entityLinks) {
+        this.entityLinks = entityLinks;
+    }
 
-	@Inject
-	public CustomerLinks(EntityLinks entityLinks) {
-		this.entityLinks = entityLinks;
-	}
-
-	public Link getUserLink(Customer customer) {
-		return entityLinks.linkForSingleResource(User.class, customer.getUser().getId()).withRel(USER_REL);
-	}
+    Link getUserLink(Customer customer) {
+        return entityLinks.linkForSingleResource(User.class, customer.getUser().getId()).withRel(usersRel);
+    }
 
 }

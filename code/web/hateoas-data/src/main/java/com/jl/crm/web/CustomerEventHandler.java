@@ -15,8 +15,6 @@ class CustomerEventHandler extends AbstractRepositoryEventListener<Customer> {
 
     @Override
     protected void onBeforeCreate(Customer customer) {
-
-
         if (StringUtils.isEmpty(customer.getFirstName())
                 || StringUtils.isEmpty(customer.getLastName())
                 || customer.getUser() == null) {
@@ -39,5 +37,4 @@ class CustomerEventHandler extends AbstractRepositoryEventListener<Customer> {
     protected void onAfterDelete(Customer entity) {
         logger.debug("deleted customer #" + entity.getId());
     }
-
 }

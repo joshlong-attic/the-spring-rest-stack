@@ -45,5 +45,4 @@ class WebMvcConfiguration {
     MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
-
 }

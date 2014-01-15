@@ -7,7 +7,6 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceProcessor;
 import org.springframework.stereotype.Component;
 
-
 @Component
 class UserResourceProcessor implements ResourceProcessor<Resource<User>> {
 

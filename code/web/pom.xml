@@ -12,6 +12,7 @@
     <artifactId>core</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
+        <sd.rest>2.0.0.BUILD-SNAPSHOT</sd.rest>
         <m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
         <spring-security.version>3.2.0.RELEASE</spring-security.version>
         <spring-social.version>1.1.0.M4</spring-social.version>
@@ -39,23 +40,23 @@
         <contributor>
             <email>josh@joshlong.com</email>
             <name>Josh Long</name>
-            <organization>SpringSource, by Pivotal</organization>
-            <organizationUrl>http://www.springsource.org</organizationUrl>
+            <organization>Pivotal</organization>
+            <organizationUrl>http://spring.io/team/jlong</organizationUrl>
         </contributor>
         <contributor>
             <name>Rob Winch</name>
-            <organization>SpringSource, by Pivotal</organization>
-            <organizationUrl>http://www.springsource.org</organizationUrl>
+            <organization>Pivotal</organization>
+            <organizationUrl>http://spring.io/team/rwinch</organizationUrl>
         </contributor>
         <contributor>
             <name>Phill Webb</name>
-            <organization>SpringSource, by Pivotal</organization>
-            <organizationUrl>http://www.springsource.org</organizationUrl>
+            <organization>Pivotal</organization>
+            <organizationUrl>http://spring.io/team/pwebb</organizationUrl>
         </contributor>
         <contributor>
             <name>Roy Clarkson</name>
-            <organization>SpringSource, by Pivotal</organization>
-            <organizationUrl>http://www.springsource.org</organizationUrl>
+            <organization>Pivotal</organization>
+            <organizationUrl>http://spring.io/team/rclarkson</organizationUrl>
         </contributor>
 
     </contributors>
@@ -129,6 +130,11 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.4</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.plugin</groupId>
+                <artifactId>spring-plugin-core</artifactId>
+                <version>0.8.0.RELEASE</version>
+             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>

@@ -17,9 +17,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @Component
 class UserResourceAssembler implements ResourceAssembler<User, Resource<User>> {
 
-    public static final String CUSTOMERS_REL = "customers";
-
-    public static final String PHOTO_REL = "photo";
+     String customersRel = "customers", photoRel = "photo";
 
     @Override
     public Resource<User> toResource(User u) {
@@ -32,8 +30,8 @@ class UserResourceAssembler implements ResourceAssembler<User, Resource<User>> {
             Resource<User> userResource = new Resource<User>(user);
             Collection<Link> links = new ArrayList<Link>();
             links.add(linkTo(methodOn(UserController.class).loadUser(userId)).withSelfRel());
-            links.add(linkTo(methodOn(UserController.class).loadUserCustomers(userId)).withRel(CUSTOMERS_REL));
-            links.add(linkTo(methodOn(UserProfilePhotoController.class).loadUserProfilePhoto(user.getId())).withRel(PHOTO_REL));
+            links.add(linkTo(methodOn(UserController.class).loadUserCustomers(userId)).withRel(customersRel));
+            links.add(linkTo(methodOn(UserProfilePhotoController.class).loadUserProfilePhoto(user.getId())).withRel(photoRel));
             for (Link l : links) {
                 userResource.add(l);
             }

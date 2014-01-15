@@ -35,9 +35,8 @@ public class Application extends SpringBootServletInitializer {
 @Import(ServiceConfiguration.class)
 @Configuration
 @EnableWebMvc
-@EnableHypermediaSupport
+@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 class WebMvcConfiguration {
-
     @Bean
     MultipartConfigElement multipartConfigElement() {
         return new MultipartConfigElement("");
@@ -47,5 +46,4 @@ class WebMvcConfiguration {
     MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
-
 }

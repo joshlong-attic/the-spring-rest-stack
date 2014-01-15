@@ -28,6 +28,7 @@
             in the Android module's pom.xml, which is not nearly the same certainty a given version working with a previous version of 
             the JVM is. -->
         <module>rest</module>
+        <module>hateoas</module>
         <!--      <module>hateoas</module>
               <module>hateoas-data</module>
               <module>oauth</module>-->

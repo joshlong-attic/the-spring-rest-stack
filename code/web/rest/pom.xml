@@ -13,6 +13,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+       <!-- <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
@@ -25,6 +29,10 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -33,17 +41,6 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+
 
 </project>

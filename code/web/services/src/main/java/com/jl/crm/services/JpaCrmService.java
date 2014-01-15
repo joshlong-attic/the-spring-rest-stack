@@ -3,11 +3,11 @@ package com.jl.crm.services;
 
 import org.apache.commons.io.IOUtils;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.io.*;
 import java.util.*;
 
@@ -18,13 +18,13 @@ import java.util.*;
  */
 @Service
 @Transactional
-public class JpaCrmService implements CrmService {
+class JpaCrmService implements CrmService {
     private CustomerRepository customerRepository;
     private UserRepository userRepository;
 
-    @Inject
+    @Autowired
     public JpaCrmService(CustomerRepository customerRepository,
-                         UserRepository userRepository) {
+                  UserRepository userRepository) {
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
     }

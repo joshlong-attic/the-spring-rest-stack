@@ -1,20 +1,12 @@
 package com.jl.crm.services.security;
 
-import com.jl.crm.services.CrmService;
-import com.jl.crm.services.User;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
+class CrmUserDetailsService{}
+/*
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
+@Deprecated
+//todo restore this
 
-@Component("userService")
+//@Component("userService")
 public class CrmUserDetailsService implements UserDetailsService {
 
 
@@ -23,7 +15,7 @@ public class CrmUserDetailsService implements UserDetailsService {
 
     private CrmService crmService;
 
-    @Inject
+//    @Autowired
     public CrmUserDetailsService(CrmService crmService) {
         this.crmService = crmService;
     }
@@ -73,3 +65,4 @@ public class CrmUserDetailsService implements UserDetailsService {
     }
 
 }
+*/

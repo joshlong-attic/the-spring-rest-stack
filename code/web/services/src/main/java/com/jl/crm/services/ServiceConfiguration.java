@@ -40,7 +40,8 @@ public class ServiceConfiguration {
     /**
      * The root directory to which all uploads for the application are uploaded.
      */
-    public static final File CRM_STORAGE_DIRECTORY = new File(SystemUtils.getUserHome(), CRM_NAME);
+    public static final File CRM_STORAGE_DIRECTORY = new File(
+            System.getProperty("user.home"), CRM_NAME);
     /**
      * Things are first uploaded by the application server to this directory. it's a sort
      * of staging directory

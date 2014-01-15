@@ -2,12 +2,12 @@ package com.jl.crm.services;
 
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.util.Collection;
 
 @RunWith (SpringJUnit4ClassRunner.class)
@@ -20,7 +20,7 @@ public class TestCustomerService {
 
 	private User joshlong;
 
-	@Inject private CrmService crmService ;
+	@Autowired private CrmService crmService ;
 
 	@Before
 	public void begin() throws Throwable {
@@ -45,7 +45,7 @@ public class TestCustomerService {
 		Assert.assertNotNull(this.joshlong);
 	}
 
-	@Inject private CustomerRepository customerRepository ;
+	@Autowired private CustomerRepository customerRepository ;
 
 	@Test public void testCustomerSearch  () throws Throwable {
 		long joshlongUserId = this.joshlong.getId();

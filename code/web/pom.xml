@@ -62,24 +62,13 @@
 
     <dependencyManagement>
         <dependencies>
- <!--           <dependency>
-                <groupId>org.springframework.hateoas</groupId>
-                <artifactId>spring-hateoas</artifactId>
-                <version>0.8.0.RELEASE</version>
-            </dependency>-->
+
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>2.0.1</version>
             </dependency>
-            <!--   <dependency>
-                   <groupId>org.springframework.data</groupId>
-                   <artifactId>spring-data-redis</artifactId>
-                   <version>1.0.5.RELEASE</version>
-               </dependency>-->
-            <!--  <dependency>
-                  <groupId>org.apache.httpcomponents</groupId><artifactId>httpclient</artifactId><version>4.2.5</version>
-              </dependency>-->
+
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
@@ -96,22 +85,61 @@
                 <version>${spring-boot.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-rest-webmvc</artifactId>
-                <version>2.0.0.BUILD-SNAPSHOT</version>
-
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>11.0</version>
             </dependency>
-
+            <dependency>
+                <groupId>postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>9.1-901-1.jdbc4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-dbcp</groupId>
+                <artifactId>commons-dbcp</artifactId>
+                <version>1.4</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
-            <!--   <dependency>
-                   <groupId>javax.servlet.jsp</groupId>
-                   <artifactId>jsp-api</artifactId>
-                   <version>2.1</version>
-               </dependency>-->
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-rest-webmvc</artifactId>
+                <version>${sd.rest}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.hateoas</groupId>
+                <artifactId>spring-hateoas</artifactId>
+                <version>0.9.0.BUILD-SNAPSHOT</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-web</artifactId>
@@ -124,16 +152,16 @@
                     <version>${spring-social.version}</version>
                 </dependency>-->
 
-    <!--        <dependency>
-                <groupId>org.springframework.social</groupId>
-                <artifactId>spring-social-facebook</artifactId>
-                <version>${spring-social.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.social</groupId>
-                <artifactId>spring-social-security</artifactId>
-                <version>${spring-social.version}</version>
-            </dependency>-->
+            <!--        <dependency>
+                        <groupId>org.springframework.social</groupId>
+                        <artifactId>spring-social-facebook</artifactId>
+                        <version>${spring-social.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.springframework.social</groupId>
+                        <artifactId>spring-social-security</artifactId>
+                        <version>${spring-social.version}</version>
+                    </dependency>-->
             <!--  <dependency>
                   <groupId>com.fasterxml.jackson.core</groupId>
                   <artifactId>jackson-core</artifactId>
@@ -166,206 +194,168 @@
                   <artifactId>spring-web</artifactId>
                   <version>${spring.version}</version>
               </dependency>-->
-           <!-- <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>2.2.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.2.1</version>
-            </dependency>-->
-            <dependency>
-                <groupId>javax.inject</groupId>
-                <artifactId>javax.inject</artifactId>
-                <version>1</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.4</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.6</version>
-            </dependency>
-    <!--        <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-                <version>${spring.version}</version>
-            </dependency>-->
-<!--
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjweaver</artifactId>
-                <version>1.7.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-core</artifactId>
-                <version>1.3</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring.version}</version>
-            </dependency>-->
-         <!--   <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
+            <!-- <dependency>
+                 <groupId>com.fasterxml.jackson.core</groupId>
+                 <artifactId>jackson-annotations</artifactId>
+                 <version>2.2.1</version>
+             </dependency>
+             <dependency>
+                 <groupId>com.fasterxml.jackson.core</groupId>
+                 <artifactId>jackson-databind</artifactId>
+                 <version>2.2.1</version>
+             </dependency>-->
+
+            <!--        <dependency>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-tx</artifactId>
+                        <version>${spring.version}</version>
+                    </dependency>-->
+            <!--
+                        <dependency>
+                            <groupId>org.aspectj</groupId>
+                            <artifactId>aspectjweaver</artifactId>
+                            <version>1.7.2</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.hamcrest</groupId>
+                            <artifactId>hamcrest-core</artifactId>
+                            <version>1.3</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-test</artifactId>
+                            <version>${spring.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-beans</artifactId>
+                            <version>${spring.version}</version>
+                        </dependency>-->
+            <!--   <dependency>
+                   <groupId>org.springframework</groupId>
+                   <artifactId>spring-context-support</artifactId>
+                   <version>${spring.version}</version>
+               </dependency>
+               <dependency>
+                   <groupId>org.springframework</groupId>
+                   <artifactId>spring-context</artifactId>
+                   <version>${spring.version}</version>
+               </dependency>
+               <dependency>
+                   <groupId>org.springframework</groupId>
+                   <artifactId>spring-core</artifactId>
+                   <version>${spring.version}</version>
+               </dependency>
 
 
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-                <version>${spring.version}</version>
-            </dependency>-->
-          <!--  <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>1.7.2</version>
-            </dependency>-->
+               <dependency>
+                   <groupId>org.springframework</groupId>
+                   <artifactId>spring-orm</artifactId>
+                   <version>${spring.version}</version>
+               </dependency>-->
+            <!--  <dependency>
+                  <groupId>org.springframework</groupId>
+                  <artifactId>spring-webmvc</artifactId>
+                  <version>${spring.version}</version>
+              </dependency>
+              <dependency>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-log4j12</artifactId>
+                  <version>1.7.2</version>
+              </dependency>-->
 
 
-      <!--      <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>2.1</version>
-            </dependency>-->
-           <!-- <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>4.1.6.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.hateoas</groupId>
-                <version>0.6.0.RELEASE</version>
-                <artifactId>spring-hateoas</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-jpa</artifactId>
-                <version>1.3.0.RELEASE</version>
-            </dependency>-->
+            <!--      <dependency>
+                      <groupId>joda-time</groupId>
+                      <artifactId>joda-time</artifactId>
+                      <version>2.1</version>
+                  </dependency>-->
+            <!-- <dependency>
+                 <groupId>org.hibernate</groupId>
+                 <artifactId>hibernate-entitymanager</artifactId>
+                 <version>4.1.6.Final</version>
+             </dependency>
+             <dependency>
+                 <groupId>org.springframework.hateoas</groupId>
+                 <version>0.6.0.RELEASE</version>
+                 <artifactId>spring-hateoas</artifactId>
+             </dependency>
+             <dependency>
+                 <groupId>org.springframework.data</groupId>
+                 <artifactId>spring-data-jpa</artifactId>
+                 <version>1.3.0.RELEASE</version>
+             </dependency>-->
 
-          <!--  <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-rest-webmvc</artifactId>
-                <version>1.1.0.M1</version>
-            </dependency>-->
-           <!-- <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>4.2.0.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.0.1</version>
-                <scope>provided</scope>
-            </dependency>-->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>11.0</version>
-            </dependency>
-            <dependency>
-                <groupId>postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <!--<version>8.3-603.jdbc3</version> -->
-                <version>9.1-901-1.jdbc4</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-dbcp</groupId>
-                <artifactId>commons-dbcp</artifactId>
-                <version>1.4</version>
-            </dependency>
-         <!--   <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>1.7.2</version>
-            </dependency>-->
-     <!--       <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-core-asl</artifactId>
-                <version>1.9.2</version>
-            </dependency>-->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>2.2.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.2.1</version>
-            </dependency>
-       <!--     <dependency>
-                <groupId>org.springframework.security.oauth</groupId>
-                <artifactId>spring-security-oauth2-javaconfig</artifactId>
-                <version>1.0.0.CI-SNAPSHOT</version>
-                &lt;!&ndash; <version>1.0.0.SNAPSHOT</version> &ndash;&gt;
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-acl</artifactId>
-                <version>${spring-security.version}</version>
-            </dependency>
+            <!--  <dependency>
+                  <groupId>org.springframework.data</groupId>
+                  <artifactId>spring-data-rest-webmvc</artifactId>
+                  <version>1.1.0.M1</version>
+              </dependency>-->
+            <!-- <dependency>
+                 <groupId>org.hibernate</groupId>
+                 <artifactId>hibernate-validator</artifactId>
+                 <version>4.2.0.Final</version>
+             </dependency>
+             <dependency>
+                 <groupId>javax.servlet</groupId>
+                 <artifactId>javax.servlet-api</artifactId>
+                 <version>3.0.1</version>
+                 <scope>provided</scope>
+             </dependency>-->
 
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-config</artifactId>
-                <version>${spring-security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-crypto</artifactId>
-                <version>${spring-security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core</artifactId>
-                <version>${spring-security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-taglibs</artifactId>
-                <version>${spring-security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
-                <version>${spring-security.version}</version>
-            </dependency>-->
+            <!--   <dependency>
+                   <groupId>org.slf4j</groupId>
+                   <artifactId>jcl-over-slf4j</artifactId>
+                   <version>1.7.2</version>
+               </dependency>-->
+            <!--       <dependency>
+                       <groupId>org.codehaus.jackson</groupId>
+                       <artifactId>jackson-mapper-asl</artifactId>
+                       <version>1.9.2</version>
+                   </dependency>
+                   <dependency>
+                       <groupId>org.codehaus.jackson</groupId>
+                       <artifactId>jackson-core-asl</artifactId>
+                       <version>1.9.2</version>
+                   </dependency>-->
+
+            <!--     <dependency>
+                     <groupId>org.springframework.security.oauth</groupId>
+                     <artifactId>spring-security-oauth2-javaconfig</artifactId>
+                     <version>1.0.0.CI-SNAPSHOT</version>
+                     &lt;!&ndash; <version>1.0.0.SNAPSHOT</version> &ndash;&gt;
+                 </dependency>
+                 <dependency>
+                     <groupId>org.springframework.security</groupId>
+                     <artifactId>spring-security-acl</artifactId>
+                     <version>${spring-security.version}</version>
+                 </dependency>
+
+                 <dependency>
+                     <groupId>org.springframework.security</groupId>
+                     <artifactId>spring-security-config</artifactId>
+                     <version>${spring-security.version}</version>
+                 </dependency>
+                 <dependency>
+                     <groupId>org.springframework.security</groupId>
+                     <artifactId>spring-security-crypto</artifactId>
+                     <version>${spring-security.version}</version>
+                 </dependency>
+                 <dependency>
+                     <groupId>org.springframework.security</groupId>
+                     <artifactId>spring-security-core</artifactId>
+                     <version>${spring-security.version}</version>
+                 </dependency>
+                 <dependency>
+                     <groupId>org.springframework.security</groupId>
+                     <artifactId>spring-security-taglibs</artifactId>
+                     <version>${spring-security.version}</version>
+                 </dependency>
+                 <dependency>
+                     <groupId>org.springframework.security</groupId>
+                     <artifactId>spring-security-web</artifactId>
+                     <version>${spring-security.version}</version>
+                 </dependency>-->
         </dependencies>
     </dependencyManagement>
 
@@ -382,49 +372,5 @@
     </repositories>
 
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
-                    <configuration>
-                        <compilerVersion>1.7</compilerVersion>
-                        <source>1.7</source>
-                        <target>1.7</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>2.1.1</version>
-                    <configuration>
-                        <failOnMissingWebXml>false</failOnMissingWebXml>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.0.3.v20130506</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.tomcat.maven</groupId>
-                    <artifactId>tomcat7-maven-plugin</artifactId>
-                    <version>2.1</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <compilerVersion>1.7</compilerVersion>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

@@ -1,7 +1,6 @@
 package com.jl.crm.services;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.*;
@@ -32,7 +31,7 @@ import java.sql.Driver;
 @EnableJpaRepositories
 @EnableTransactionManagement
 @ComponentScan
-@PropertySource("/config.properties")
+@PropertySource("/application.properties")
 @Configuration
 public class ServiceConfiguration {
 
@@ -54,7 +53,7 @@ public class ServiceConfiguration {
     public static final File CRM_STORAGE_PROFILES_DIRECTORY = new File(CRM_STORAGE_DIRECTORY, "profiles");
 
     @PostConstruct
-    public void setupStorage() throws Throwable {
+    void setupStorage() throws Throwable {
         File[] files = {CRM_STORAGE_DIRECTORY, CRM_STORAGE_UPLOADS_DIRECTORY, CRM_STORAGE_PROFILES_DIRECTORY};
         for (File f : files) {
             if (!f.exists() && !f.mkdirs()) {
@@ -66,7 +65,7 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(HibernateJpaVendorAdapter adapter, DataSource dataSource) {
+    LocalContainerEntityManagerFactoryBean entityManagerFactory(HibernateJpaVendorAdapter adapter, DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
         emf.setPackagesToScan(User.class.getPackage().getName());
         emf.setDataSource(dataSource);
@@ -75,7 +74,7 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager( EntityManagerFactory emf) {
+    PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
     }
 
@@ -86,7 +85,7 @@ public class ServiceConfiguration {
 class ProductionDataSourceConfiguration {
 
     @Bean
-    public HibernateJpaVendorAdapter hibernateJpaVendorAdapter() {
+    HibernateJpaVendorAdapter hibernateJpaVendorAdapter() {
         HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
         adapter.setDatabase(Database.POSTGRESQL);
         adapter.setGenerateDdl(true);
@@ -95,7 +94,7 @@ class ProductionDataSourceConfiguration {
     }
 
     @Bean
-    public DataSource dataSource(Environment env) {
+    DataSource dataSource(Environment env) {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setDriverClass(env.getPropertyAsClass("dataSource.driverClass", Driver.class));
         dataSource.setUrl(env.getProperty("dataSource.url").trim());
@@ -112,7 +111,7 @@ class EmbeddedDataSourceConfiguration {
     private Log log = LogFactory.getLog(getClass());
 
     @PostConstruct
-    public void setupTestProfileImages() throws Exception {
+    void setupTestProfileImages() throws Exception {
         long userId = 5;
         File profilePhotoForUser5 = new File(ServiceConfiguration.CRM_STORAGE_PROFILES_DIRECTORY, Long.toString(userId));
         if (!profilePhotoForUser5.exists()) {
@@ -137,7 +136,7 @@ class EmbeddedDataSourceConfiguration {
     }
 
     @Bean
-    public HibernateJpaVendorAdapter hibernateJpaVendorAdapter() {
+    HibernateJpaVendorAdapter hibernateJpaVendorAdapter() {
         HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
         adapter.setDatabase(Database.H2);
         adapter.setGenerateDdl(true);
@@ -150,7 +149,7 @@ class EmbeddedDataSourceConfiguration {
      * console</a>.
      */
     @Bean
-    public DataSource dataSource() {
+    DataSource dataSource() {
 
         ClassPathResource classPathResource = new ClassPathResource("/crm-schema-h2.sql");
 

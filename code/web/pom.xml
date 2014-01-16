@@ -26,14 +26,17 @@
         -->
         <!-- <module>android</module> TODO should this be included in the main build? it would mean that everyone who wants
             to consume this would need to have the Android SDK setup. And it would have to work with the build configuration specified 
-            in the Android module's pom.xml, which is not nearly the same certainty a given version working with a previous version of 
+            in the Android module's pom.xml, which is not nearly the same certainty a given version working with a previous version of     <module>oauth</module>
             the JVM is. -->
+    
         <module>rest</module>
         <module>hateoas-data</module>
-        <module>hateoas</module>
+        <module>hateoas</module> 
+
+				<module>oauth-boot</module>
         <!--      <module>hateoas</module>
 
-              <module>oauth</module>-->
+             -->
     </modules>
 
     <contributors>

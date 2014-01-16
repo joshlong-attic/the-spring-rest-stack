@@ -1,10 +1,11 @@
 package com.jl.crm.web;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.oauth2.provider.*;
-import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
+//import org.springframework.security.authentication.AuthenticationManager;
+//import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
+//import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+//import org.springframework.security.oauth2.provider.ClientDetailsService;
+//import org.springframework.security.oauth2.provider.JdbcClientDetailsService;
+//import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
 
 import javax.sql.DataSource;
 
@@ -13,23 +14,24 @@ import javax.sql.DataSource;
  * crm-schema-(h2|postgresql).sql}.
  *
  * @author Josh Long
- */
-public class JdbcClientDetailsServiceConfigurer extends SecurityConfigurerAdapter<AuthenticationManager, AuthenticationManagerBuilder> {
+ *//*
+class JdbcClientDetailsServiceConfigurer extends SecurityConfigurerAdapter<AuthenticationManager, AuthenticationManagerBuilder> {
 
-	private DataSource dataSource;
+    DataSource dataSource;
 
-	public JdbcClientDetailsServiceConfigurer(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+    JdbcClientDetailsServiceConfigurer(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-	@Override
-	public void init(AuthenticationManagerBuilder builder) throws Exception {
-		JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
+    @Override
+    public void init(AuthenticationManagerBuilder builder) throws Exception {
+        JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
 
-		ClientDetailsUserDetailsService userDetailsService = new ClientDetailsUserDetailsService(clientDetailsService);
+        ClientDetailsUserDetailsService userDetailsService = new ClientDetailsUserDetailsService(clientDetailsService);
 
-		builder.userDetailsService(userDetailsService);
-		builder.setSharedObject(ClientDetailsService.class, clientDetailsService);
-	}
+        builder.userDetailsService(userDetailsService);
+        builder.setSharedObject(ClientDetailsService.class, clientDetailsService);
+    }
 
 }
+*/

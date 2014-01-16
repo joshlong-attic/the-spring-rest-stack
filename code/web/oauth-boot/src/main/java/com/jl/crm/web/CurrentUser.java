@@ -1,4 +1,5 @@
 package com.jl.crm.web;
+/*
 
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 
@@ -10,3 +11,4 @@ import java.lang.annotation.*;
 @AuthenticationPrincipal     // refactored to use Spring Security's new meta annotation
 public @interface CurrentUser {
 }
+*/

@@ -9,7 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
+/*
  * Convenience REST endpoint to answer the question:
  * <EM>who's currently signed in for this session?</EM>. We look up the
  * currently installed Spring Security {@link Authentication} and then adapt it
  * to a {@link User}.
  * 
  * @author Josh Long
- */
+
 @Controller
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 class CurrentUserController {
@@ -53,3 +53,4 @@ class CurrentUserController {
 	}
 
 }
+ */

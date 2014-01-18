@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 @Component
 class CustomerEventHandler extends AbstractRepositoryEventListener<Customer> {
 
-    private Log logger = LogFactory.getLog(getClass());
+    Log logger = LogFactory.getLog(getClass());
 
     @Override
     protected void onBeforeCreate(Customer customer) {

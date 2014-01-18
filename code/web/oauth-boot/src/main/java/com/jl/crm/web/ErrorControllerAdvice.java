@@ -14,14 +14,14 @@ class ErrorControllerAdvice {
 		return doHandleException(e, HttpStatus.NOT_FOUND);
 	}
 
-	private HttpEntity<VndErrors> doHandleException(Exception e, HttpStatus httpStatus) {
-		VndErrors vndErrors = new VndErrors(new VndErrors.VndError(e.getClass().getName(), e.getMessage()));
-		return new ResponseEntity<VndErrors>(vndErrors, httpStatus);
-	}
-
 	@ExceptionHandler
 	HttpEntity<VndErrors> userProfilePhotoWriteException(UserProfilePhotoWriteException e) {
 		return doHandleException(e, HttpStatus.NOT_FOUND);
 	}
+
+    protected HttpEntity<VndErrors> doHandleException(Exception e, HttpStatus httpStatus) {
+        VndErrors vndErrors = new VndErrors(new VndErrors.VndError(e.getClass().getName(), e.getMessage()));
+        return new ResponseEntity<VndErrors>(vndErrors, httpStatus);
+    }
 
 }

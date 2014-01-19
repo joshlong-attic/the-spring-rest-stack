@@ -107,6 +107,11 @@
             <groupId>org.springframework.security.oauth</groupId>
             <artifactId>spring-security-oauth2-javaconfig</artifactId>
         </dependency>-->
+        <dependency>
+            <version>1.0.0.CI-SNAPSHOT</version>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2-javaconfig</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

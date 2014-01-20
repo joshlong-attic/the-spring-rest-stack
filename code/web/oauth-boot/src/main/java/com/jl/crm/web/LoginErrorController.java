@@ -17,18 +17,21 @@ class LoginErrorController {
 	@RequestMapping("/login-error")
 	String error(Model model, HttpServletRequest request) {
 
-		// request state
+		// request state 
+		System.out.println( "request");
 		for (String k : Collections.list(request.getAttributeNames()))
 			System.out.println(k + "=" + request.getAttribute(k));
 
-		// session state 
+		// session state  
+		System.out.println( "session");
 		HttpSession session = request.getSession(false);
 		if (null != session) {
 			for (String k : Collections.list(session.getAttributeNames()))
 				System.out.println(k + "=" + session.getAttribute(k));
 		}
 
-		// model state
+		// model state 
+		System.out.println( "model");
 		Map<String, Object> vals = model.asMap();
 		for (String k : vals.keySet())
 			System.out.println(k + "=" + vals.get(k));

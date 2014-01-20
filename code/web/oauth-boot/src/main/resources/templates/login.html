@@ -1,20 +1,32 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-    <title>Spring Security Example </title>
+<title>Spring Security Example</title>
 </head>
 <body>
 
-<div class="error" th:if="${param.login_error}" th:with="errorMsg=${session['SPRING_SECURITY_LAST_EXCEPTION']}">
-  Your login attempt was not successful, try again.<br />
-  Reason: <span th:text="${errorMsg}">Wrong input!</span> 
-</div> 
+	<div class="error" th:if="${session['SPRING_SECURITY_LAST_EXCEPTION'] ne null}">
+ 		
+ 		Your login attempt was not successful, try again.<br /> 
+ 		
+ 		Reason: <span th:text="${session['SPRING_SECURITY_LAST_EXCEPTION'].message}">Wrong input!</span>
+ 		
+	</div>
 
-<form th:action="@{/login}" method="post"> 
-    <div><label> User Name : <input type="text" name="username"/> </label></div>
-    <div><label> Password: <input type="password" name="password"/> </label></div>
-    <div><input type="submit" value="Sign In"/></div>
-</form>
+	<form th:action="@{/login}" method="post">
+		<div>
+			<label> User Name : <input type="text" name="username" />
+			</label>
+		</div>
+		<div>
+			<label> Password: <input type="password" name="password" />
+			</label>
+		</div>
+		<div>
+			<input type="submit" value="Sign In" />
+		</div>
+	</form>
 </body>
 </html>

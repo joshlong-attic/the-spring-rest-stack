@@ -159,7 +159,7 @@ class MvcSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.and()
 			.formLogin()		
 				.defaultSuccessUrl("/hello")
-				.failureUrl("/login-error")
+				.failureUrl("/login")
 				.loginPage("/login")
 				.permitAll() 
 				.and()

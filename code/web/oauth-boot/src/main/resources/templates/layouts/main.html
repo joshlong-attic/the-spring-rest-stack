@@ -3,46 +3,21 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
 	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head>
-<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">Spring
-	CRM</title>
-<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-
-<!--  
-		<link rel="stylesheet" href="bootstrap.css" th:href="@{/webjars/bootstrap/3.0.3/css/bootstrap.min.css}"></link>
-
-
-
-
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css"></link>
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css"></link>
-	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-		<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-		-->
-
-
-
-<link href="http://getbootstrap.com/dist/css/bootstrap.css"
-	rel="stylesheet"></link>
-<link href="site.css" rel="stylesheet" th:href="@{/site.css}"></link>
-
-<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
-
+	<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">Spring CRM</title>
+	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+	
+	<link rel="stylesheet" href="bootstrap.css" th:href="@{/webjars/bootstrap/3.0.3/css/bootstrap.min.css}"></link>
+	<link href="site.css" rel="stylesheet" th:href="@{/site.css}"></link>
+	
+	<script th:src="@{/webjars/jquery/2.0.3/jquery.min.js}"></script> 
+	<script th:src="@{/webjars/bootstrap/3.0.3/js/bootstrap.min.js}"></script>
+	
 </head>
 <body>
-
 	<div class="container">
-		<!--  
-		<div sec:authorize="hasRole('ROLE_USER')">
-			<span style="font-weight: bold;" sec:authentication="name">Bob</span>
-			- <span style="color: gray;"> <span
-				sec:authentication="principal.authorities">[ROLE_USER,
-					ROLE_ADMIN]</span>
-			</span>
-		</div>
-	-->
-
+		
 
 		<!-- Static navbar -->
 		<div class="navbar navbar-default" role="navigation">

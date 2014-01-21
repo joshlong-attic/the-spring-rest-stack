@@ -1,15 +1,16 @@
 package com.jl.crm.web;
 
-import com.jl.crm.services.CrmService;
-import com.jl.crm.services.User;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import com.jl.crm.services.CrmService;
+import com.jl.crm.services.User;
 
 /**
  * @author Josh Long

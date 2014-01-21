@@ -1,11 +1,12 @@
 package com.jl.crm.web;
 
 
-import com.jl.crm.services.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceProcessor;
 import org.springframework.stereotype.Component;
+
+import com.jl.crm.services.User;
 
 @Component
 class UserResourceProcessor implements ResourceProcessor<Resource<User>> {

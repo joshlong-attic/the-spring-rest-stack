@@ -1,10 +1,15 @@
 package com.jl.crm.web;
 
 
-import com.jl.crm.services.*;
 import org.springframework.hateoas.VndErrors;
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import com.jl.crm.services.UserProfilePhotoReadException;
+import com.jl.crm.services.UserProfilePhotoWriteException;
 
 @ControllerAdvice
 class ErrorControllerAdvice {

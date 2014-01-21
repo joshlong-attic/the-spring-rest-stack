@@ -1,12 +1,13 @@
 package com.jl.crm.web;
 
-import com.jl.crm.services.Customer;
-import com.jl.crm.services.CustomerWriteException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.rest.core.event.AbstractRepositoryEventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import com.jl.crm.services.Customer;
+import com.jl.crm.services.CustomerWriteException;
 
 @Component
 class CustomerEventHandler extends AbstractRepositoryEventListener<Customer> {

@@ -3,32 +3,26 @@ package com.jl.crm.web;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-//@Controller
+@Controller
 public class PageControllers {
-    /*@RequestMapping("/login.html")
-    public String login() {
-        return "login";
-    }
-
-    @RequestMapping("/hello.html")
-    public String hello() {
-        return "hello";
-    }
-
-    @RequestMapping("/home.html")
-    public String home() {
-        return "home";
-    }*/
-/*
-    @RequestMapping ("/crm/welcome.html")
-	public String welcome() {
-		return "welcome";
+	@RequestMapping("/login")
+	String login() {
+		return "login";
 	}
 
-	@RequestMapping ("/crm/signin.html")
-	public String signin() {
-		return "signin";
+	@RequestMapping("/")
+	String index() {
+		return "home";
 	}
-*/
+
+	@RequestMapping("/home")
+	String home() {
+		return "home";
+	}
+
+	@RequestMapping("/hello")
+	String hello() {
+		return "hello";
+	}
 
 }

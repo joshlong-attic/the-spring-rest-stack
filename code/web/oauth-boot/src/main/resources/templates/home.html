@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorator="layouts/main">
 <head>
-    <title>Spring Security Example</title>
+<title>Messages : View</title>
 </head>
 <body>
-<h1>Welcome!</h1>
-
-<p>Click <a th:href="@{/crm/users/5}">here</a> to see a (secured) user resource.</p>
+	<span layout:fragment="header"> Welcome </span> 
+	
+	<div layout:fragment="content">		  
+		  <a th:href="@{/logout}">Sign Out</a>	  
+	</div>
 </body>
 </html>

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SpringBootWebSecurityConfiguration;
+import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.util.UriTemplate;
@@ -52,16 +55,9 @@ public class Application extends SpringBootServletInitializer {
 
 @Configuration
 @Import({ ServiceConfiguration.class, RepositoryRestMvcConfiguration.class })
-@EnableWebMvc
-class WebMvcConfiguration extends WebMvcConfigurerAdapter {
+class WebMvcConfiguration {
 
 	String curieNamespace = "crm";
-
-	@Override
-	public void addViewControllers(ViewControllerRegistry registry) {
-		for (String p : "home,hello,login".split(","))
-			registry.addViewController("/" + p).setViewName(p);
-	}
 
 	@Bean
 	MultipartConfigElement multipartConfigElement() {
@@ -122,11 +118,11 @@ class MvcSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http		
 			.authorizeRequests()
-				.antMatchers("/favicon.ico").permitAll()
+				.antMatchers( "/**", "/favicon.ico", "/webjars/**").permitAll()				
 				.anyRequest().authenticated()
 				.and()
 			.formLogin()		
-				.defaultSuccessUrl("/hello")
+				.defaultSuccessUrl("/home")
 				.failureUrl("/login")
 				.loginPage("/login")
 				.permitAll() 

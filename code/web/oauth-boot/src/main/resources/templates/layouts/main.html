@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+ 
+<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">Spring CRM</title>
+ 
+<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+
+
+<link rel="stylesheet" href="bootstrap.css"
+	th:href="@{/webjars/bootstrap/3.0.3/css/bootstrap.min.css}"></link>
+
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+	<div class="container">
+
+		<h2>
+			<span layout:fragment="header"></span>
+		</h2>
+
+		<div layout:fragment="content">
+			<h1>This is placeholder content!</h1>
+		</div>
+		<div layout:fragment="footer"></div>
+	</div>
+</body>
+</html>
+
+

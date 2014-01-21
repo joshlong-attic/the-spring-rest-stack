@@ -1,26 +1,120 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
 	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head>
- 
-<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">Spring CRM</title>
- 
+<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">Spring
+	CRM</title>
 <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
 
+<!--  
+		<link rel="stylesheet" href="bootstrap.css" th:href="@{/webjars/bootstrap/3.0.3/css/bootstrap.min.css}"></link>
 
-<link rel="stylesheet" href="bootstrap.css"
-	th:href="@{/webjars/bootstrap/3.0.3/css/bootstrap.min.css}"></link>
 
-<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
+
+
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css"></link>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css"></link>
+	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+		<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+		-->
+
+
+
+<link href="http://getbootstrap.com/dist/css/bootstrap.css"
+	rel="stylesheet"></link>
+<link href="site.css" rel="stylesheet" th:href="@{/site.css}"></link>
+
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
 
 </head>
 <body>
+
 	<div class="container">
+		<!--  
+		<div sec:authorize="hasRole('ROLE_USER')">
+			<span style="font-weight: bold;" sec:authentication="name">Bob</span>
+			- <span style="color: gray;"> <span
+				sec:authentication="principal.authorities">[ROLE_USER,
+					ROLE_ADMIN]</span>
+			</span>
+		</div>
+	-->
+
+
+		<!-- Static navbar -->
+		<div class="navbar navbar-default" role="navigation">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" th:href="@{/}"> Spring CRM </a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="http://github.com/joshlong/the-spring-rest-stack">get
+							the code</a></li>
+					<li><a href="http://spring.io/guides">read the guides</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+
+					
+
+					<!-- NOT LOGGED IN  
+					 -->
+
+					<li sec:authorize="!authenticated "><a th:href="@{/}">Home</a></li>
+					<li sec:authorize="!authenticated "><a th:href="@{/login}">Log
+							In</a></li>
+
+
+					<li sec:authorize="authenticated " class="dropdown"><a
+						href="#" class="dropdown-toggle" data-toggle="dropdown"> 
+						<span style="font-weight: bold;" sec:authentication="name">Bob</span>
+						
+						
+ 
+						
+						 
+						<b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a th:href="@{/logout}">Sign Out</a></li>  
+					
+							
+					 
+							<li class="divider"></li>
+							<li class="dropdown-header">Account Status</li>
+							<li>
+								<a href="#">  
+									<span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span>
+								</a>
+							</li>
+					 
+						</ul></li>
+
+				 
+
+
+				</ul>
+			</div>
+		 
+		</div>
+
+
+
+
+
+
+
+
+
+
+
 
 		<h2>
 			<span layout:fragment="header"></span>

@@ -21,37 +21,40 @@ import javax.servlet.MultipartConfigElement;
 @ComponentScan
 @EnableAutoConfiguration
 public class Application extends SpringBootServletInitializer {
-    private static Class<Application> applicationClass = Application.class;
+	private static Class<Application> applicationClass = Application.class;
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(applicationClass);
-    }
+	@Override
+	protected SpringApplicationBuilder configure(
+			SpringApplicationBuilder application) {
+		return application.sources(applicationClass);
+	}
 
-    public static void main(String[] args) {
-        SpringApplication.run(applicationClass);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(applicationClass);
+	}
 }
 
 @Configuration
-@Import({ServiceConfiguration.class, RepositoryRestMvcConfiguration.class})
+@Import({ ServiceConfiguration.class, RepositoryRestMvcConfiguration.class })
 @EnableWebMvc
 class WebMvcConfiguration {
 
-    String curieNamespace = "crm";
+	String curieNamespace = "crm";
 
-    @Bean
-    MultipartConfigElement multipartConfigElement() {
-        return new MultipartConfigElement("");
-    }
+	@Bean
+	MultipartConfigElement multipartConfigElement() {
+		return new MultipartConfigElement("");
+	}
 
-    @Bean
-    MultipartResolver multipartResolver() {
-        return new StandardServletMultipartResolver();
-    }
+	@Bean
+	MultipartResolver multipartResolver() {
+		return new StandardServletMultipartResolver();
+	}
 
-    @Bean
-    DefaultCurieProvider defaultCurieProvider() {
-        return new DefaultCurieProvider(curieNamespace, new UriTemplate("http://localhost:8080/rels/{rel}"));
-    }
+	@Bean
+	DefaultCurieProvider defaultCurieProvider() {
+		org.springframework.hateoas.UriTemplate template = new org.springframework.hateoas.UriTemplate(
+				"http://localhost:8080/rels/{rel}");
+		return new DefaultCurieProvider(curieNamespace, template);
+	}
 }

@@ -210,11 +210,10 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
     				.resourceId(applicationName)
     				.and()
             	.requestMatchers()
-                	.requestMatchers(oauthRequestMatcher()) ;
-//                .authorizeRequests()
-//                	.anyRequest().authenticated()
-              //  .and()
-                
+                	.requestMatchers(oauthRequestMatcher())
+                    .and()
+                .authorizeRequests()
+                    .anyRequest().permitAll();
     }
     // @formatter:on
 

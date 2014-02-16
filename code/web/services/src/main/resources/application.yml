@@ -1,0 +1,17 @@
+# app settings
+
+spring:
+  thymeleaf:
+    cache: false
+
+---
+spring:
+  profiles: cloud
+
+---
+spring:
+  profiles: default
+  jpa:
+    database : H2
+    hibernate:
+      ddl-auto : none

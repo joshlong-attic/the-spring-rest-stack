@@ -27,7 +27,7 @@ public class Application {
 }
 
 @Configuration
-@Import({ServiceConfiguration.class,RepositoryRestMvcConfiguration.class})
+@Import({ServiceConfiguration.class, RepositoryRestMvcConfiguration.class})
 @EnableWebMvc
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 class WebMvcConfiguration {

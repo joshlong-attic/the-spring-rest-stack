@@ -2,7 +2,7 @@ package com.jl.crm.web;
 
 public class ApiUrls {
 
-	// root
+
 	public static final String ROOT_URL_USERS = "/users";
 	public static final String URL_USERS_USER = "/{user}";
 

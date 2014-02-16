@@ -1,10 +1,11 @@
 package com.jl.crm.web;
 
-import com.jl.crm.services.ServiceConfiguration;
+import javax.servlet.MultipartConfigElement;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.SpringBootServletInitializer;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -14,9 +15,8 @@ import org.springframework.hateoas.hal.DefaultCurieProvider;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.util.UriTemplate;
 
-import javax.servlet.MultipartConfigElement;
+import com.jl.crm.services.ServiceConfiguration;
 
 @ComponentScan
 @EnableAutoConfiguration

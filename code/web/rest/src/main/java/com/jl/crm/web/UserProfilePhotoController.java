@@ -5,7 +5,6 @@ import com.jl.crm.services.ProfilePhoto;
 import com.jl.crm.services.UserProfilePhotoReadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

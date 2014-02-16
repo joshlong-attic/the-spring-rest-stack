@@ -5,7 +5,7 @@ import javax.servlet.MultipartConfigElement;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.SpringBootServletInitializer;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,31 +20,31 @@ import com.jl.crm.services.ServiceConfiguration;
 @ComponentScan
 @EnableAutoConfiguration
 public class Application extends SpringBootServletInitializer {
-    private static Class<Application> applicationClass = Application.class;
+	private static Class<Application> applicationClass = Application.class;
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(applicationClass);
-    }
+	@Override
+	protected SpringApplicationBuilder configure(
+			SpringApplicationBuilder application) {
+		return application.sources(applicationClass);
+	}
 
-    public static void main(String[] args) {
-        SpringApplication.run(applicationClass);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(applicationClass);
+	}
 }
-
 
 @Import(ServiceConfiguration.class)
 @Configuration
 @EnableWebMvc
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 class WebMvcConfiguration {
-    @Bean
-    MultipartConfigElement multipartConfigElement() {
-        return new MultipartConfigElement("");
-    }
+	@Bean
+	MultipartConfigElement multipartConfigElement() {
+		return new MultipartConfigElement("");
+	}
 
-    @Bean
-    MultipartResolver multipartResolver() {
-        return new StandardServletMultipartResolver();
-    }
+	@Bean
+	MultipartResolver multipartResolver() {
+		return new StandardServletMultipartResolver();
+	}
 }

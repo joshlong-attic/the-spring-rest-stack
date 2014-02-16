@@ -1,146 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<version>1.0.0.BUILD-SNAPSHOT</version>
-		<artifactId>spring-boot-starter-parent</artifactId>
-	</parent>
-	<version>1.0.0.BUILD-SNAPSHOT</version>
-	<groupId>com.joshlong.restfuliterations</groupId>
-	<artifactId>core</artifactId>
-	<properties>
-		<sd.rest>2.0.0.RC1</sd.rest>
-		<spring.version>4.0.1.RELEASE</spring.version>
-		<m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
-		<spring-social.version>1.1.0.M4</spring-social.version>
-	</properties>
-	<packaging>pom</packaging>
-	<modules>
-		<module>services</module>
-        <module>rest</module> <module>hateoas-data</module>
-        <!-- <module>hateoas</module> <module>oauth-boot1</module>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <version>1.0.0.BUILD-SNAPSHOT</version>
+        <artifactId>spring-boot-starter-parent</artifactId>
+    </parent>
+    <version>1.0.0.BUILD-SNAPSHOT</version>
+    <groupId>com.joshlong.restfuliterations</groupId>
+    <artifactId>core</artifactId>
+    <properties>
+        <sd.rest>2.0.0.RC1</sd.rest>
+        <spring.version>4.0.1.RELEASE</spring.version>
+        <m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
+        <spring-social.version>1.1.0.M4</spring-social.version>
+    </properties>
+    <packaging>pom</packaging>
+    <modules>
+        <module>services</module>
+        <module>hateoas</module>
+        <module>rest</module>
+        <module>hateoas-data</module>
+        <!--  <module>oauth-boot1</module>
         -->
-	</modules>
-	<contributors>
-		<contributor>
-			<email>josh@joshlong.com</email>
-			<name>Josh Long</name>
-			<organization>Pivotal</organization>
-			<organizationUrl>http://spring.io/team/jlong</organizationUrl>
-		</contributor>
-		<contributor>
-			<name>Rob Winch</name>
-			<organization>Pivotal</organization>
-			<organizationUrl>http://spring.io/team/rwinch</organizationUrl>
-		</contributor>
-		<contributor>
-			<name>Phill Webb</name>
-			<organization>Pivotal</organization>
-			<organizationUrl>http://spring.io/team/pwebb</organizationUrl>
-		</contributor>
-		<contributor>
-			<name>Roy Clarkson</name>
-			<organization>Pivotal</organization>
-			<organizationUrl>http://spring.io/team/rclarkson</organizationUrl>
-		</contributor>
-	</contributors>
+    </modules>
+    <contributors>
+        <contributor>
+            <email>josh@joshlong.com</email>
+            <name>Josh Long</name>
+            <organization>Pivotal</organization>
+            <organizationUrl>http://spring.io/team/jlong</organizationUrl>
+        </contributor>
+        <contributor>
+            <name>Rob Winch</name>
+            <organization>Pivotal</organization>
+            <organizationUrl>http://spring.io/team/rwinch</organizationUrl>
+        </contributor>
+        <contributor>
+            <name>Phill Webb</name>
+            <organization>Pivotal</organization>
+            <organizationUrl>http://spring.io/team/pwebb</organizationUrl>
+        </contributor>
+        <contributor>
+            <name>Roy Clarkson</name>
+            <organization>Pivotal</organization>
+            <organizationUrl>http://spring.io/team/rclarkson</organizationUrl>
+        </contributor>
+    </contributors>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+    </dependencies>
 
-	<dependencyManagement>
-		<dependencies>
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.hateoas</groupId>
+                <artifactId>spring-hateoas</artifactId>
+                <version>0.9.0.RELEASE</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-commons</artifactId>
                 <version>1.7.0.RC1</version>
             </dependency>
-			<dependency>
-				<groupId>com.google.code.findbugs</groupId>
-				<artifactId>jsr305</artifactId>
-				<version>2.0.1</version>
-			</dependency>
-			<dependency>
-				<groupId>com.h2database</groupId>
-				<artifactId>h2</artifactId>
-				<version>${h2.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>2.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
 
-			<dependency>
-				<groupId>com.google.guava</groupId>
-				<artifactId>guava</artifactId>
-				<version>11.0</version>
-			</dependency>
-			<dependency>
-				<groupId>postgresql</groupId>
-				<artifactId>postgresql</artifactId>
-				<version>9.1-901-1.jdbc4</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<version>${jackson.version}</version>
-				<artifactId>jackson-annotations</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-databind</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>11.0</version>
+            </dependency>
+            <dependency>
+                <groupId>postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>9.1-901-1.jdbc4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <version>${jackson.version}</version>
+                <artifactId>jackson-annotations</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
 
-			<dependency>
-				<groupId>org.springframework.data</groupId>
-				<artifactId>spring-data-rest-webmvc</artifactId>
-				<version>${sd.rest}</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.inject</groupId>
-				<artifactId>javax.inject</artifactId>
-				<version>1</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>2.4</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.plugin</groupId>
-				<artifactId>spring-plugin-core</artifactId>
-				<version>0.8.0.RELEASE</version>
-			</dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-rest-webmvc</artifactId>
+                <version>${sd.rest}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.plugin</groupId>
+                <artifactId>spring-plugin-core</artifactId>
+                <version>0.8.0.RELEASE</version>
+            </dependency>
 
-			<dependency>
-				<groupId>commons-lang</groupId>
-				<artifactId>commons-lang</artifactId>
-				<version>2.6</version>
-			</dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
+            </dependency>
 
-			<dependency>
-				<groupId>org.springframework.social</groupId>
-				<artifactId>spring-social-web</artifactId>
-				<version>${spring-social.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+            <dependency>
+                <groupId>org.springframework.social</groupId>
+                <artifactId>spring-social-web</artifactId>
+                <version>${spring-social.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<repositories>
-		<repository>
-			<id>spring-snapshot</id>
-			<name>Spring Maven Snapshot Repository</name>
-			<url>http://repo.springsource.org/libs-snapshot</url>
-		</repository>
-		<repository>
-			<id>JBoss repository</id>
-			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
-		</repository>
-	</repositories>
-
+    <repositories>
+        <repository>
+            <id>spring-snapshot</id>
+            <name>Spring Maven Snapshot Repository</name>
+            <url>http://repo.springsource.org/libs-snapshot</url>
+        </repository>
+        <repository>
+            <id>JBoss repository</id>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
 
 
 </project>

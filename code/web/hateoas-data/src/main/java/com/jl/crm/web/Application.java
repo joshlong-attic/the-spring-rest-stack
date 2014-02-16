@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.hal.DefaultCurieProvider;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
@@ -26,8 +27,9 @@ public class Application {
 }
 
 @Configuration
-@Import({ServiceConfiguration.class, RepositoryRestMvcConfiguration.class})
+@Import({ServiceConfiguration.class,RepositoryRestMvcConfiguration.class})
 @EnableWebMvc
+@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 class WebMvcConfiguration {
 
     String curieNamespace = "crm";

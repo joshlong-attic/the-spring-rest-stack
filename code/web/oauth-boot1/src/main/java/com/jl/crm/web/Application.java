@@ -1,13 +1,13 @@
 package com.jl.crm.web;
 
-import javax.servlet.MultipartConfigElement;
-
+import com.jl.crm.services.CrmService;
+import com.jl.crm.services.ServiceConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SpringBootWebSecurityConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.boot.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -30,108 +30,103 @@ import org.springframework.security.oauth2.provider.token.InMemoryTokenStore;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
-import com.jl.crm.services.CrmService;
-import com.jl.crm.services.ServiceConfiguration;
+import javax.servlet.MultipartConfigElement;
 
 @ComponentScan
-@EnableAutoConfiguration(exclude = { SpringBootWebSecurityConfiguration.class })
-public class Application extends SpringBootServletInitializer {
+@EnableAutoConfiguration(exclude = {SpringBootWebSecurityConfiguration.class})
+public class Application   {
 
-	public static final String APPLICATION_NAME = "crm";
+    public static final String APPLICATION_NAME = "crm";
 
-	private static Class<Application> applicationClass = Application.class;
+    private static Class<Application> applicationClass = Application.class;
 
-	@Override
-	protected SpringApplicationBuilder configure(
-			SpringApplicationBuilder application) {
-		return application.sources(applicationClass);
-	}
 
-	public static void main(String[] args) {
-		SpringApplication.run(applicationClass);
-	}
+
+    public static void main(String[] args) {
+        SpringApplication.run(applicationClass);
+    }
 }
 
 @Configuration
-@Import({ ServiceConfiguration.class, RepositoryRestMvcConfiguration.class })
+@Import({ServiceConfiguration.class, RepositoryRestMvcConfiguration.class})
 class WebMvcConfiguration {
 
-	String curieNamespace = com.jl.crm.web.Application.APPLICATION_NAME;
+    String curieNamespace = com.jl.crm.web.Application.APPLICATION_NAME;
 
-	@Bean
-	MultipartConfigElement multipartConfigElement() {
-		return new MultipartConfigElement("");
-	}
+    @Bean
+    MultipartConfigElement multipartConfigElement() {
+        return new MultipartConfigElement("");
+    }
 
-	@Bean
-	MultipartResolver multipartResolver() {
-		return new StandardServletMultipartResolver();
-	}
+    @Bean
+    MultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
+    }
 
-	@Bean
-	DefaultCurieProvider defaultCurieProvider() {
-		org.springframework.hateoas.UriTemplate template = new org.springframework.hateoas.UriTemplate(
-				"http://localhost:8080/rels/{rel}");
-		return new DefaultCurieProvider(curieNamespace, template);
-	}
+    @Bean
+    DefaultCurieProvider defaultCurieProvider() {
+        org.springframework.hateoas.UriTemplate template = new org.springframework.hateoas.UriTemplate(
+                "http://localhost:8080/rels/{rel}");
+        return new DefaultCurieProvider(curieNamespace, template);
+    }
 }
 
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig extends OAuth2ServerConfigurerAdapter {
 
-	private final String applicationName = com.jl.crm.web.Application.APPLICATION_NAME;
+    private final String applicationName = com.jl.crm.web.Application.APPLICATION_NAME;
 
-	@Autowired
-	private CrmService crmService;
+    @Autowired
+    private CrmService crmService;
 
-	// @formatter:off 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
+    // @formatter:off
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
 
-		http.csrf().disable();
-		http.sessionManagement().sessionCreationPolicy( SessionCreationPolicy.STATELESS);
-		http.requestMatchers()
-			.and()
-				.authorizeRequests()
-					.antMatchers("/").permitAll()
-					.anyRequest().authenticated()
-			.and()
-				.apply(new OAuth2ServerConfigurer())
-				.tokenStore(new InMemoryTokenStore())
-				.resourceId(applicationName);
+        http.csrf().disable();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.requestMatchers()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .apply(new OAuth2ServerConfigurer())
+                .tokenStore(new InMemoryTokenStore())
+                .resourceId(applicationName);
 
-	}
-	// @formatter:on 
+    }
+    // @formatter:on
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder authManagerBuilder)
-			throws Exception {
-		authManagerBuilder.userDetailsService(new CrmUserDetailsService(
-				this.crmService));
-	}
+    @Override
+    protected void configure(AuthenticationManagerBuilder authManagerBuilder)
+            throws Exception {
+        authManagerBuilder.userDetailsService(new CrmUserDetailsService(
+                this.crmService));
+    }
 
-	@Bean
-	@Override
-	public UserDetailsService userDetailsServiceBean() throws Exception {
-		return super.userDetailsServiceBean();
-	}
+    @Bean
+    @Override
+    public UserDetailsService userDetailsServiceBean() throws Exception {
+        return super.userDetailsServiceBean();
+    }
 
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
-	}
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
-	@Bean
-	PasswordEncoder passwordEncoder() {
-		return NoOpPasswordEncoder.getInstance();
-	}
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
 
-	@Bean
-	TextEncryptor textEncryptor() {
-		return Encryptors.noOpText();
-	}
+    @Bean
+    TextEncryptor textEncryptor() {
+        return Encryptors.noOpText();
+    }
 }
 
 /*

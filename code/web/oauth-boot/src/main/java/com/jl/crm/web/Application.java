@@ -81,21 +81,6 @@ class WebMvcConfiguration {
 		return new DefaultCurieProvider(curieNamespace, template);
 	}
 }
-/* 
-@Configuration
-@EnableWebSecurity
-class MultiHttpSecurityConfig {
-
-	@Autowired
-	void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication().withUser("user").password("password")
-				.roles("USER").and().withUser("admin").password("password")
-				.roles("USER", "ADMIN");
-	}
-
-}
-*/
-// http://docs.spring.io/spring-security/site/docs/3.2.x-SNAPSHOT/reference/htmlsingle/#multiple-httpsecurity
 
 @Configuration
 @EnableWebMvcSecurity
@@ -129,8 +114,7 @@ class MvcSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	@Override
-	protected void configure(AuthenticationManagerBuilder auth)
-			throws Exception {
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(new CrmUserDetailsService(this.crmService));
 	}
 
@@ -182,21 +166,21 @@ class OAuth2ServerConfiguration extends OAuth2ServerConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .userDetailsService(userDetailsService)
-                .and()
+                	.and()
                 .apply(new InMemoryClientDetailsServiceConfigurer())
-                .withClient("android-crm")
-                .resourceIds(applicationName)
-                .scopes("read", "write")
-                .authorities("ROLE_USER")
-                .authorizedGrantTypes("authorization_code", "implicit", "password")
-                .secret("123456")
-                .and()
-                .withClient("ios-crm")
-                .resourceIds(applicationName)
-                .scopes("read", "write")
-                .authorities("ROLE_USER")
-                .authorizedGrantTypes("password")
-                .secret("123456");
+                	.withClient("android-crm")
+	                	.resourceIds(applicationName)
+	                	.scopes("read", "write")
+	                	.authorities("ROLE_USER")
+	                	.authorizedGrantTypes("authorization_code", "implicit", "password")
+	                	.secret("123456")
+	                	.and()
+	                .withClient("ios-crm")
+	                	.resourceIds(applicationName)
+	                	.scopes("read", "write")
+	                	.authorities("ROLE_USER")
+	                	.authorizedGrantTypes("password")
+	                	.secret("123456");
 
     }
     // @formatter:on

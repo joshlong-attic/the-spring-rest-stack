@@ -1,18 +1,17 @@
 package com.jl.crm.web;
 
-import com.jl.crm.services.CrmService;
-import com.jl.crm.services.ServiceConfiguration;
+import javax.servlet.MultipartConfigElement;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SpringBootWebSecurityConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.hal.DefaultCurieProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -24,13 +23,17 @@ import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.config.annotation.authentication.configurers.InMemoryClientDetailsServiceConfigurer;
+import org.springframework.security.oauth2.config.annotation.authentication.configurers.InMemoryClientDetailsServiceConfigurer.ClientBuilder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.OAuth2ServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.OAuth2ServerConfigurer;
 import org.springframework.security.oauth2.provider.token.InMemoryTokenStore;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import javax.servlet.MultipartConfigElement;
+import com.jl.crm.services.CrmService;
+import com.jl.crm.services.ServiceConfiguration;
 
 @ComponentScan
 @EnableAutoConfiguration(exclude = {SpringBootWebSecurityConfiguration.class})
@@ -39,9 +42,7 @@ public class Application   {
     public static final String APPLICATION_NAME = "crm";
 
     private static Class<Application> applicationClass = Application.class;
-
-
-
+ 
     public static void main(String[] args) {
         SpringApplication.run(applicationClass);
     }
@@ -49,6 +50,8 @@ public class Application   {
 
 @Configuration
 @Import({ServiceConfiguration.class, RepositoryRestMvcConfiguration.class})
+@EnableWebMvc
+@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 class WebMvcConfiguration {
 
     String curieNamespace = com.jl.crm.web.Application.APPLICATION_NAME;
@@ -80,6 +83,8 @@ class WebSecurityConfig extends OAuth2ServerConfigurerAdapter {
     @Autowired
     private CrmService crmService;
 
+     
+	
     // @formatter:off
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -98,13 +103,40 @@ class WebSecurityConfig extends OAuth2ServerConfigurerAdapter {
 
     }
     // @formatter:on
-
+ 
+    
     @Override
     protected void configure(AuthenticationManagerBuilder authManagerBuilder)
             throws Exception {
-        authManagerBuilder.userDetailsService(new CrmUserDetailsService(
-                this.crmService));
-    }
+        
+    	final String scopes[] ="read,write".split(",");
+    	final String secret = "123456" ; 
+    	final String  authorizedGrantTypes = "password"; 
+    	final String authorities  = "ROLE_USER";
+    	
+    	authManagerBuilder
+    	.userDetailsService( new CrmUserDetailsService( this.crmService))
+    		.and()
+		.apply(new InMemoryClientDetailsServiceConfigurer())
+			.withClient("android-crm")
+			.resourceIds(applicationName)
+			.scopes(scopes)
+			.authorities(authorities)
+			.authorizedGrantTypes( authorizedGrantTypes)
+			.secret(secret)
+		.and()
+			.withClient("ios-crm")
+			.resourceIds(applicationName)
+			.scopes(scopes)
+			.authorities(authorities)
+			.authorizedGrantTypes(authorizedGrantTypes)
+			.secret(secret);
+
+        }
+        // @formatter:on
+
+        
+         
 
     @Bean
     @Override

@@ -23,7 +23,7 @@
         <module>social</module>
         <module>rest</module>
         <module>hateoas-data</module>
-        <module>oauth-boot1</module>
+        <module>oauth</module>
     </modules>
     <contributors>
         <contributor>

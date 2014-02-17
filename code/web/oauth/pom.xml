@@ -8,7 +8,7 @@
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<artifactId>core</artifactId>
 	</parent>
-	<artifactId>oauth-boot1</artifactId>
+	<artifactId>oauth</artifactId>
 	<packaging>war</packaging>
 
 	<dependencies>

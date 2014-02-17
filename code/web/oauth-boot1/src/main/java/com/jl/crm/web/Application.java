@@ -73,7 +73,11 @@ class WebMvcConfiguration {
         return new DefaultCurieProvider(curieNamespace, template);
     }
 }
-
+/** 
+ * <code>
+ * curl -X POST -vu android-crm:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=cowbell&username=joshlong&grant_type=password&scope=read%2Cwrite&client_secret=123456&client_id=android-crm
+ * </code>
+ */
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig extends OAuth2ServerConfigurerAdapter {
@@ -82,8 +86,6 @@ class WebSecurityConfig extends OAuth2ServerConfigurerAdapter {
 
     @Autowired
     private CrmService crmService;
-
-     
 	
     // @formatter:off
     @Override

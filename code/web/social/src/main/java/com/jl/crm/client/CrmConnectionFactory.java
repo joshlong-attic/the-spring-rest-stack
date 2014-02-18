@@ -15,9 +15,6 @@ public class CrmConnectionFactory extends OAuth2ConnectionFactory<CrmOperations>
 		super("crm", serviceProvider, apiAdapter);
 	}
 
-	public CrmConnectionFactory(OAuth2ServiceProvider<CrmOperations> serviceProvider, ApiAdapter<CrmOperations> apiAdapter) {
-		super("crm", serviceProvider, apiAdapter);
-	}
 
 	@Override
 	public OAuth2Template getOAuthOperations() {

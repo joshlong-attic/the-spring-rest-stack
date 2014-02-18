@@ -5,7 +5,7 @@
 
     <parent>
         <groupId>com.joshlong.restfuliterations</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0.BUILD-SNAPSHOT</version>
         <artifactId>core</artifactId>
     </parent>
 
@@ -13,41 +13,52 @@
     <packaging>jar</packaging>
 
     <dependencies>
-
         <dependency>
-            <groupId>org.springframework.social</groupId>
-            <artifactId>spring-social-security</artifactId>
-            <optional>true</optional>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+         </dependency>
         <dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-core</artifactId>
-            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.social</groupId>
+            <artifactId>spring-social-security</artifactId>
+            <version>${spring-social.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
+            <version>${spring-security.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
+            <version>${spring-security.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-web</artifactId>
-            <optional>true</optional>
+            <version>${spring-social.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.social</groupId>
-            <artifactId>spring-social-facebook</artifactId>
-            <optional>true</optional>
-        </dependency>
+        <!-- <dependency>
+             <groupId>org.springframework.social</groupId>
+             <artifactId>spring-social-facebook</artifactId>
+             <version>${spring-social.version}</version>
+          </dependency>-->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -58,7 +69,12 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>services</artifactId>
             <version>${project.version}</version>
-            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-messaging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

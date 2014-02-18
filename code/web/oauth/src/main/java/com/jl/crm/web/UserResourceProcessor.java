@@ -22,7 +22,7 @@ class UserResourceProcessor implements ResourceProcessor<Resource<User>> {
     public Resource<User> process(Resource<User> ur) {
         User user = ur.getContent();
         ur.add(userLinks.getPhotoLink(user));
-        ur.add(userLinks.getCustomersLink(user));
+     //   ur.add(userLinks.getCustomersLink(user));
         return ur;
     }
 

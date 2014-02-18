@@ -1,11 +1,12 @@
 package com.jl.crm.web;
 
-import javax.servlet.MultipartConfigElement;
-
+import com.jl.crm.services.CrmService;
+import com.jl.crm.services.ServiceConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.SpringBootWebSecurityConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +25,6 @@ import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.authentication.configurers.InMemoryClientDetailsServiceConfigurer;
-import org.springframework.security.oauth2.config.annotation.authentication.configurers.InMemoryClientDetailsServiceConfigurer.ClientBuilder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.OAuth2ServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.OAuth2ServerConfigurer;
 import org.springframework.security.oauth2.provider.token.InMemoryTokenStore;
@@ -32,19 +32,23 @@ import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import com.jl.crm.services.CrmService;
-import com.jl.crm.services.ServiceConfiguration;
+import javax.servlet.MultipartConfigElement;
 
 @ComponentScan
-@EnableAutoConfiguration(exclude = {SpringBootWebSecurityConfiguration.class})
-public class Application   {
+@EnableAutoConfiguration // (exclude = {SpringBootWebSecurityConfiguration.class})
+public class Application extends SpringBootServletInitializer {
 
     public static final String APPLICATION_NAME = "crm";
 
     private static Class<Application> applicationClass = Application.class;
- 
+
     public static void main(String[] args) {
         SpringApplication.run(applicationClass);
+    }
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(applicationClass);
     }
 }
 
@@ -73,10 +77,20 @@ class WebMvcConfiguration {
         return new DefaultCurieProvider(curieNamespace, template);
     }
 }
-/** 
+
+/**
+ *
+ * Request OAuth authorization:
  * <code>
- * curl -X POST -vu android-crm:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=cowbell&username=joshlong&grant_type=password&scope=read%2Cwrite&client_secret=123456&client_id=android-crm
+ * curl -X POST -vu android-crm:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=cowbell&username=joshlong&grant_type=password&scope=read%2Cwrite&client_secret=123456&client_id=android-crm"
  * </code>
+ *
+ * Use the access_token returned in the previous request to make the authorized request to the protected endpoint:
+ * <code>
+ *     curl http://localhost:8080/greeting -H "Authorization: Bearer <INSERT TOKEN>"
+ * </code>
+ *
+ * @author Roy Clarkson
  */
 @Configuration
 @EnableWebSecurity
@@ -86,7 +100,7 @@ class WebSecurityConfig extends OAuth2ServerConfigurerAdapter {
 
     @Autowired
     private CrmService crmService;
-	
+
     // @formatter:off
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -105,40 +119,39 @@ class WebSecurityConfig extends OAuth2ServerConfigurerAdapter {
 
     }
     // @formatter:on
- 
-    
+
+    // @formatter:off
     @Override
     protected void configure(AuthenticationManagerBuilder authManagerBuilder)
             throws Exception {
-        
-    	final String scopes[] ="read,write".split(",");
-    	final String secret = "123456" ; 
-    	final String  authorizedGrantTypes = "password"; 
-    	final String authorities  = "ROLE_USER";
-    	
-    	authManagerBuilder
-    	.userDetailsService( new CrmUserDetailsService( this.crmService))
-    		.and()
-		.apply(new InMemoryClientDetailsServiceConfigurer())
-			.withClient("android-crm")
-			.resourceIds(applicationName)
-			.scopes(scopes)
-			.authorities(authorities)
-			.authorizedGrantTypes( authorizedGrantTypes)
-			.secret(secret)
-		.and()
-			.withClient("ios-crm")
-			.resourceIds(applicationName)
-			.scopes(scopes)
-			.authorities(authorities)
-			.authorizedGrantTypes(authorizedGrantTypes)
-			.secret(secret);
 
-        }
-        // @formatter:on
+        final String scopes[] = "read,write".split(",");
+        final String secret = "123456";
+        final String authorizedGrantTypes = "password";
+        final String authorities = "ROLE_USER";
 
-        
-         
+        authManagerBuilder
+                .userDetailsService(new CrmUserDetailsService(this.crmService))
+                .and()
+                .apply(
+                    new InMemoryClientDetailsServiceConfigurer())
+                        .withClient("android-crm")
+                        .resourceIds(applicationName)
+                        .scopes(scopes)
+                        .authorities(authorities)
+                        .authorizedGrantTypes(authorizedGrantTypes)
+                        .secret(secret)
+                    .and()
+                        .withClient("ios-crm")
+                        .resourceIds(applicationName)
+                        .scopes(scopes)
+                        .authorities(authorities)
+                        .authorizedGrantTypes(authorizedGrantTypes)
+                        .secret(secret);
+
+    }
+    // @formatter:on
+
 
     @Bean
     @Override
@@ -162,97 +175,3 @@ class WebSecurityConfig extends OAuth2ServerConfigurerAdapter {
         return Encryptors.noOpText();
     }
 }
-
-/*
- * 
- * @Configuration
- * 
- * @EnableWebMvcSecurity class MvcSecurityConfiguration extends
- * WebSecurityConfigurerAdapter {
- * 
- * @Autowired CrmService crmService;
- * 
- * String applicationName = "crm";
- * 
- * @Override
- * 
- * @Bean protected UserDetailsService userDetailsService() { return new
- * CrmUserDetailsService(this.crmService); }
- * 
- * @Override
- * 
- * @Bean public AuthenticationManager authenticationManagerBean() throws
- * Exception { return super.authenticationManagerBean(); }
- * 
- * @Bean PasswordEncoder passwordEncoder() { return
- * NoOpPasswordEncoder.getInstance(); }
- * 
- * @Bean TextEncryptor textEncryptor() { return Encryptors.noOpText(); }
- * 
- * @Override protected void configure(AuthenticationManagerBuilder auth) throws
- * Exception { auth.userDetailsService(new
- * CrmUserDetailsService(this.crmService)); }
- * 
- * // @formatter:off
- * 
- * @Override protected void configure(HttpSecurity http) throws Exception {
- * http.authorizeRequests() .antMatchers("/**", "/favicon.ico",
- * "/webjars/**").permitAll() .anyRequest().authenticated().and().formLogin()
- * .defaultSuccessUrl("/home").failureUrl("/login")
- * .loginPage("/login").permitAll().and()
- * 
- * .logout().permitAll().and().csrf().disable();
- * 
- * } // @formatter:on
- * 
- * }
- * 
- * @Configuration
- * 
- * @EnableWebSecurity
- * 
- * @Order(1) class OAuth2ServerConfiguration extends
- * OAuth2ServerConfigurerAdapter {
- * 
- * private final String applicationName = ServiceConfiguration.CRM_NAME;
- * 
- * @Autowired private DataSource dataSource;
- * 
- * @Autowired private UserDetailsService userDetailsService;
- * 
- * @Autowired private ContentNegotiationStrategy contentNegotiationStrategy;
- * 
- * // @formatter:off
- * 
- * @Override protected void configure(AuthenticationManagerBuilder auth) throws
- * Exception { auth.userDetailsService(userDetailsService) .and() .apply(new
- * InMemoryClientDetailsServiceConfigurer()) .withClient("android-crm")
- * .resourceIds(applicationName) .scopes("read", "write")
- * .authorities("ROLE_USER") .authorizedGrantTypes("authorization_code",
- * "implicit", "password").secret("123456").and()
- * .withClient("ios-crm").resourceIds(applicationName) .scopes("read",
- * "write").authorities("ROLE_USER")
- * .authorizedGrantTypes("password").secret("123456");
- * 
- * }
- * 
- * // @formatter:on
- * 
- * // @formatter:off
- * 
- * @Override protected void configure(HttpSecurity http) throws Exception {
- * http.apply(new OAuth2ServerConfigurer()) .tokenStore(new
- * JdbcTokenStore(this.dataSource))
- * .resourceId(applicationName).and().requestMatchers()
- * .requestMatchers(oauthRequestMatcher()).and()
- * .authorizeRequests().anyRequest().permitAll(); }
- * 
- * // @formatter:on
- * 
- * @Bean RequestMatcher oauthRequestMatcher() { MediaTypeRequestMatcher
- * mediaTypeRequestMatcher = new MediaTypeRequestMatcher(
- * this.contentNegotiationStrategy, MediaType.TEXT_HTML); return new
- * NegatedRequestMatcher(mediaTypeRequestMatcher); }
- * 
- * }
- */

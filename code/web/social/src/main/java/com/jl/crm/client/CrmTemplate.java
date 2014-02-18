@@ -1,6 +1,7 @@
 package com.jl.crm.client;
 
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.*;
@@ -11,8 +12,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
-import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
+ import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -84,7 +84,8 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
                     field.setAccessible(true);
                 }
             }
-        } catch (NoSuchFieldException e) {
+        }
+        catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
         return field;
@@ -93,7 +94,8 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
     @Override
     protected ByteArrayHttpMessageConverter getByteArrayMessageConverter() {
         ByteArrayHttpMessageConverter converter = new ByteArrayHttpMessageConverter();
-        converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.IMAGE_JPEG, MediaType.IMAGE_GIF, MediaType.IMAGE_PNG));
+        converter.setSupportedMediaTypes(Arrays.asList (
+                MediaType.APPLICATION_OCTET_STREAM, MediaType.IMAGE_JPEG, MediaType.IMAGE_GIF, MediaType.IMAGE_PNG));
         return converter;
     }
 
@@ -301,9 +303,15 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
     }
 
     public static class UserResource extends Resource<User> {
+        public UserResource(User content, Link... links) {
+            super(content, links);
+        }
     }
 
     public static class CustomerResource extends Resource<Customer> {
+        public CustomerResource(Customer content, Link... links) {
+            super(content, links);
+        }
     }
 
     /**

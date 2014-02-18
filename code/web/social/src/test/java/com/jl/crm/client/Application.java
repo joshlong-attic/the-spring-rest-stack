@@ -1,12 +1,8 @@
 package com.jl.crm.client;
 
 import com.google.common.collect.Sets;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
@@ -14,8 +10,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.social.connect.*;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
@@ -26,8 +20,6 @@ import org.springframework.social.oauth2.OAuth2Template;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.io.*;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -36,36 +28,43 @@ import java.util.Set;
  * Exercises the CRM OAuth 2 API with our Spring Social-powered client.
  */
 @ComponentScan
-@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
+@EnableAutoConfiguration (exclude = SecurityAutoConfiguration.class)
 public class Application {
+
+    public static void log(String msg, Object... parms) {
+        System.out.println(String.format(msg, parms));
+    }
 
     public static void main(String args[]) throws Throwable {
 
         CrmClient.ClientCallback<Void, CrmOperations> crmOperationsClientCallback =
                 new CrmClient.ClientCallback<Void, CrmOperations>() {
                     @Override
-                    public Void executeWithClient(Connection<CrmOperations> connection) throws Exception {
-
-                        Log logger = LogFactory.getLog(getClass());
+                    public Void executeWithClient(Connection<CrmOperations> clientConnection) throws Exception {
 
 
-                        CrmOperations customerServiceOperations = connection.getApi();
+                        CrmOperations customerServiceOperations = clientConnection.getApi();
                         // obtain the current user profile from the Spring Social API
-                        UserProfile userProfile = connection.fetchUserProfile();
-                        logger.info("obtained connection: " + userProfile.getUsername() + ".");
+                        UserProfile userProfile = clientConnection.fetchUserProfile();
+                        log("obtained connection: " + userProfile.getUsername() + ".");
 
 
                         // fetch the current (CRM-specific) user profile identity
-                        User self = customerServiceOperations.currentUser();
-                        logger.info(ToStringBuilder.reflectionToString(self)); /* obtain the current customer */
+                        User self = customerServiceOperations.user(5L);
+
+                        log(ToStringBuilder.reflectionToString(self));
 
                         // add a customer record under the user
                         Customer customer = customerServiceOperations.createCustomer("Nic", "Cage", new java.util.Date());
-                        logger.info(customer.toString()); /* loading the photo */
+                        log(customer.toString());
+                       /*
+                        log(ToStringBuilder.reflectionToString(self)); *//* obtain the current customer *//*
+
+                         *//* loading the photo *//*
 
                         // check to see what the profile photo is right now.
                         ProfilePhoto profilePhoto = customerServiceOperations.getUserProfilePhoto();
-                        logger.info("profile photo mime type: " + profilePhoto.getMediaType().toString());
+                        log("profile photo mime type: " + profilePhoto.getMediaType().toString());
 
                         // save the current profile photo to the desktop
                         File photoOutputFile = new File(new File(SystemUtils.getUserHome(), "Desktop"), "profile.jpg");
@@ -77,20 +76,20 @@ public class Application {
                         String query = "josh";
                         Collection<Customer> customerCollection = customerServiceOperations.search(query);
                         for (Customer c : customerCollection) {
-                            logger.debug("searched for '" + query + "', found: " + c.toString());
+                            log("searched for '" + query + "', found: " + c.toString());
                         }
 
                         // let's finally update the profile photo
                         ClassPathResource classPathResource = new ClassPathResource("/s2-logo.jpg");
                         InputStream readEmAll = classPathResource.getInputStream();
                         byte[] profilePhotoBytes = IOUtils.toByteArray(readEmAll);
-                        customerServiceOperations.setProfilePhoto(profilePhotoBytes, MediaType.IMAGE_JPEG);
+                        customerServiceOperations.setProfilePhoto(profilePhotoBytes, MediaType.IMAGE_JPEG);*/
                         return null;
                     }
                 };
 
-        String username = "joshlong", password = "cowbell",  clientId = "android-crm" ,clientSecret = "123456" ;
-        String [] scopes ="read,write".split(",");
+        String username = "joshlong", password = "cowbell", clientId = "android-crm", clientSecret = "123456";
+        String[] scopes = "read,write".split(",");
 
 
         Map<String, Object> properties = new HashMap<String, Object>();
@@ -106,17 +105,17 @@ public class Application {
                 .run(args);
 
         CrmClient crmClient = configurableApplicationContext.getBean(CrmClient.class);
-        crmClient.doWithClient( username,  password,  scopes, crmOperationsClientCallback);
+        crmClient.doWithClient(username, password, scopes, crmOperationsClientCallback);
 
     }
 
 }
 
- @Component
+@Component
 class CrmClient {
 
     static interface ClientCallback<RETURNVALUE, CLIENT> {
-        RETURNVALUE executeWithClient(Connection<CLIENT> CLIENT) throws Exception;
+        RETURNVALUE executeWithClient(Connection<CLIENT> clientConnection) throws Exception;
     }
 
     private CrmConnectionFactory connectionFactory;
@@ -132,7 +131,23 @@ class CrmClient {
 
     public <OUT> OUT doWithClient(String username, String pw, String[] scopes, ClientCallback<OUT, CrmOperations> callable) {
         try {
-            this.obtainAccessToken(username, pw);
+
+            OAuth2Template oAuth2Operations = connectionFactory.getOAuthOperations();
+            oAuth2Operations.setUseParametersForClientAuthentication(false);
+
+            OAuth2Parameters parameters = new OAuth2Parameters();
+            parameters.setScope(StringUtils.join(scopes));
+
+            AccessGrant accessGrant = oAuth2Operations.exchangeCredentialsForAccess(username, pw, parameters);
+            connection = connectionFactory.createConnection(accessGrant);
+            UserProfile userProfile = connection.fetchUserProfile();
+            String userId = userProfile.getUsername();
+            Set<String> userIdSet = Sets.newHashSet(userId);
+            String providerId = connectionFactory.getProviderId();
+            ConnectionRepository connectionRepository = this.usersConnectionRepository.createConnectionRepository(userId);
+            boolean firstConnection = usersConnectionRepository.findUserIdsConnectedTo(providerId, userIdSet).size() == 0; // if there are 0 connections
+            if (firstConnection)
+                connectionRepository.addConnection(this.connection);
             return callable.executeWithClient(this.connection);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -140,40 +155,10 @@ class CrmClient {
     }
 
 
-    protected void curl(String tokenUrl) {
-        log("tokenUrl: " + tokenUrl);
-    }
-
-    protected void log(String msg, Object... pa) {
-        System.out.println(String.format(msg, pa));
-    }
-
-    // curl -X POST -v -u android-crm:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=cowbell&username=joshlong&grant_type=password&scope=read%2Cwrite&client_secret=123456&client_id=android-crm"
-    protected void obtainAccessToken(String username, String password, String... scopes) throws Exception {
-
-        OAuth2Template oAuth2Operations = connectionFactory.getOAuthOperations();
-        oAuth2Operations.setUseParametersForClientAuthentication(false);
-
-        OAuth2Parameters parameters = new OAuth2Parameters();
-        parameters.setScope(StringUtils.join(scopes));
-
-        AccessGrant accessGrant = oAuth2Operations.exchangeCredentialsForAccess(username, password, parameters);
-        log(ToStringBuilder.reflectionToString(accessGrant));
-        connection = connectionFactory.createConnection(accessGrant);
-        UserProfile userProfile = connection.fetchUserProfile();
-        String userId = userProfile.getUsername();
-        Set<String> userIdSet = Sets.newHashSet(userId);
-        String providerId = connectionFactory.getProviderId();
-        ConnectionRepository connectionRepository = this.usersConnectionRepository.createConnectionRepository(userId);
-        boolean firstConnection = usersConnectionRepository.findUserIdsConnectedTo(providerId, userIdSet).size() == 0; // if there are 0 connections
-        if (firstConnection) {
-            connectionRepository.addConnection(this.connection);
-        }
-    }
 }
 
 @Configuration
-class SocialClientConfiguration {
+class CrmClientConfiguration {
 
 
     @Bean

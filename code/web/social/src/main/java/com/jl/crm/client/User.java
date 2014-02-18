@@ -1,102 +1,95 @@
 package com.jl.crm.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jl.crm.client.meta.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
 
-@JsonIgnoreProperties (ignoreUnknown = true)
-public class User {
-	private String selfLink ;
-	private String firstName, lastName, username;
-	private String profilePhotoMediaType;
-	private boolean profilePhotoImported;
-	private Date signupDate;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class User extends Resource {
 
-	User() {
-	}
+    private String firstName, lastName, username;
+    private String profilePhotoMediaType;
+    private long id;
+    private boolean profilePhotoImported;
+    private Date signupDate;
 
-	@Override
-	public String toString() {
-		return "User{" + "firstName='" + firstName + '\'' + ", username='" + username
-				+ '\'' + ", lastName='" + lastName + '\'' + '}';
-	}
+    public User(String firstName, String lastName, String username, long id, String profilePhotoMediaType, boolean profilePhotoImported, Date signupDate) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.id = id;
+        this.profilePhotoMediaType = profilePhotoMediaType;
+        this.profilePhotoImported = profilePhotoImported;
+        this.signupDate = signupDate;
+    }
 
-	public User( String firstName, String lastName, String username, String profilePhotoMediaType, boolean hasProfilePhoto, Date signupDate) {
+    public String getFirstName() {
 
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.username = username;
-		this.profilePhotoMediaType = profilePhotoMediaType;
-		this.profilePhotoImported = hasProfilePhoto;
-		this.signupDate = signupDate;
-	}
+        return firstName;
+    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-        User user = (User) o;
+    public String getLastName() {
+        return lastName;
+    }
 
-        if (profilePhotoImported != user.profilePhotoImported) return false;
-        if (!firstName.equals(user.firstName)) return false;
-        if (!lastName.equals(user.lastName)) return false;
-        if (profilePhotoMediaType != null ? !profilePhotoMediaType.equals(user.profilePhotoMediaType) : user.profilePhotoMediaType != null)
-            return false;
-        if (selfLink != null ? !selfLink.equals(user.selfLink) : user.selfLink != null) return false;
-        if (signupDate != null ? !signupDate.equals(user.signupDate) : user.signupDate != null) return false;
-        if (!username.equals(user.username)) return false;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-        return true;
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setProfilePhotoMediaType(String profilePhotoMediaType) {
+        this.profilePhotoMediaType = profilePhotoMediaType;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public boolean isProfilePhotoImported() {
+        return profilePhotoImported;
+    }
+
+    public void setProfilePhotoImported(boolean profilePhotoImported) {
+        this.profilePhotoImported = profilePhotoImported;
+    }
+
+    public Date getSignupDate() {
+        return signupDate;
+    }
+
+    public void setSignupDate(Date signupDate) {
+        this.signupDate = signupDate;
+    }
+
+    User() {
     }
 
     @Override
-    public int hashCode() {
-        int result = selfLink != null ? selfLink.hashCode() : 0;
-        result = 31 * result + firstName.hashCode();
-        result = 31 * result + lastName.hashCode();
-        result = 31 * result + username.hashCode();
-        result = 31 * result + (profilePhotoMediaType != null ? profilePhotoMediaType.hashCode() : 0);
-        result = 31 * result + (profilePhotoImported ? 1 : 0);
-        result = 31 * result + (signupDate != null ? signupDate.hashCode() : 0);
-        return result;
+    public String toString() {
+        return "User{" + "firstName='" + firstName + '\'' + ", username='" + username
+                + '\'' + ", lastName='" + lastName + '\'' + '}';
     }
 
-    public Long getDatabaseId(){
-		String href = this.selfLink ;
- 		return Long.parseLong(href.substring(href.lastIndexOf("/")+1) );
- 	}
-
-	public void setId( String  l) {
-		this.selfLink = l;
-	}
-
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public MediaType getProfilePhotoMediaType() {
-		return StringUtils.hasText(profilePhotoMediaType) ? MediaType.parseMediaType(profilePhotoMediaType) : null;
-	}
-
-	public boolean isProfilePhotoImported() {
-		return profilePhotoImported;
-	}
-
-	public Date getSignupDate() {
-		return signupDate;
-	}
-
-
+    public MediaType getProfilePhotoMediaType() {
+        return StringUtils.hasText(profilePhotoMediaType) ?
+                MediaType.parseMediaType(profilePhotoMediaType) : null;
+    }
 }

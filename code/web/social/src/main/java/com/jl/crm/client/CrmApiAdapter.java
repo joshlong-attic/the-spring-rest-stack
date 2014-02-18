@@ -25,7 +25,7 @@ public class CrmApiAdapter implements ApiAdapter<CrmOperations> {
 	@Override
 	public void setConnectionValues(CrmOperations customerServiceOperations, ConnectionValues values) {
 		User profile = customerServiceOperations.currentUser();
-		values.setProviderUserId(Long.toString(profile.getDatabaseId()));
+		values.setProviderUserId(Long.toString(profile.getId()));
 		values.setDisplayName(profile.getUsername());
 	}
 

@@ -28,13 +28,13 @@ public class Application extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources( applicationClass) ;
+        return application.sources(applicationClass);
     }
 }
 
 @Configuration
-@Import({ServiceConfiguration.class})
 @EnableWebMvc
+@Import(ServiceConfiguration.class)
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 class WebMvcConfiguration {
 

@@ -15,13 +15,13 @@ class CustomerEventHandler extends AbstractRepositoryEventListener<Customer> {
 
     @Override
     protected void onBeforeCreate(Customer customer) {
-        if (StringUtils.isEmpty(customer.getFirstName())
+      /*  if (StringUtils.isEmpty(customer.getFirstName())
                 || StringUtils.isEmpty(customer.getLastName())
                 || customer.getUser() == null) {
             throw new CustomerWriteException(customer, new RuntimeException(
                     "you must specify a 'firstName' and "
                             + "a 'lastName' and a valid user reference."));
-        }
+        }*/
         if (customer.getSignupDate() == null) {
             customer.setSignupDate(new java.util.Date());
         }

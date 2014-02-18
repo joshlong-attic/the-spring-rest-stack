@@ -55,8 +55,7 @@ public class Application extends SpringBootServletInitializer {
 @Configuration
 @Import({ServiceConfiguration.class, RepositoryRestMvcConfiguration.class})
 @EnableWebMvc
-@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
-class WebMvcConfiguration {
+ class WebMvcConfiguration {
 
     String curieNamespace = com.jl.crm.web.Application.APPLICATION_NAME;
 

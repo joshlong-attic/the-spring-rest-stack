@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,13 +44,19 @@ class UserController {
     }
 
     @RequestMapping(method = DELETE, value = "/{user}")
-    Resource<User> deleteUser(@PathVariable Long user) {
-        return userResourceAssembler.toResource(crmService.removeUser(user));
+    ResponseEntity<Resource<User>> deleteUser(@PathVariable Long user) {
+        return new ResponseEntity<Resource<User>>(
+                userResourceAssembler.toResource(crmService.removeUser(user)), HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(method = GET, value = "/{user}")
-    Resource<User> loadUser(@PathVariable Long user) {
-        return this.userResourceAssembler.toResource(crmService.findById(user));
+    ResponseEntity<Resource<User>> loadUser(@PathVariable Long user) {
+        User discoveredUser = this.crmService.findById(user);
+        if (null == discoveredUser) {
+            return new ResponseEntity<Resource<User>>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<Resource<User>>(
+                userResourceAssembler.toResource(discoveredUser), HttpStatus.OK);
     }
 
     @RequestMapping(method = GET, value = "/{user}/customers")
@@ -68,4 +74,16 @@ class UserController {
     Resource<Customer> loadSingleUserCustomer(@PathVariable Long user, @PathVariable Long customer) {
         return customerResourceAssembler.toResource(this.crmService.findCustomerById(customer));
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/{user}/customers")
+    ResponseEntity<Resource<Customer>> addCustomer(@PathVariable Long user, @RequestBody Customer c) {
+        Customer customer = crmService.addCustomer(user, c.getFirstName(), c.getLastName());
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(linkTo(methodOn(getClass()).loadSingleUserCustomer(user, c.getId())).toUri());
+
+        return new ResponseEntity<Resource<Customer>>(
+            this.customerResourceAssembler.toResource(customer), httpHeaders, HttpStatus.CREATED);
+    }
+
 }

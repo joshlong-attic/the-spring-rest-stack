@@ -31,9 +31,10 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-@Ignore
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = Application.class, loader = SpringApplicationContextLoader.class)
 @WebAppConfiguration
@@ -68,8 +69,8 @@ public class UserControllerTests {
         this.mockMvc.perform(get("/users/" + userId + "/customers"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(applicationJsonMediaType))
-                .andExpect(jsonPath("$", hasSize(5))) // how many customers are seeded in the schema.sql file? 5.
-                .andExpect(jsonPath("$[0].firstName", is("Rossen")));
+                .andExpect(jsonPath("$._embedded.customerList", hasSize(5))) // how many customers are seeded in the schema.sql file? 5.
+                .andExpect(jsonPath("$._embedded.customerList[0].firstName", is("Rossen")));
     }
 
     @Test
@@ -120,7 +121,7 @@ public class UserControllerTests {
                 .andExpect(content().contentType(applicationJsonMediaType))
                 .andExpect(jsonPath("$.id", is(userId)))
                 .andExpect(jsonPath("$.firstName", is("Josh")))
-                .andExpect(jsonPath("$.password", is("cowbell")))
+                .andExpect(jsonPath("$.password", is(nullValue())))
                 .andExpect(jsonPath("$.signupDate", is(timestampOfDate)))
                 .andExpect(jsonPath("$.lastName", is("Long")));
         Assert.assertEquals(date, dateFormat.parse("2013-06-02 15:33:51"));

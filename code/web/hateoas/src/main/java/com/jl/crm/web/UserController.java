@@ -76,14 +76,13 @@ class UserController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/{user}/customers")
-    ResponseEntity<Resource<Customer>> addCustomer(@PathVariable Long user, @RequestBody Customer c) {
+    ResponseEntity<Void> addCustomer(@PathVariable Long user, @RequestBody Customer c) {
         Customer customer = crmService.addCustomer(user, c.getFirstName(), c.getLastName());
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(linkTo(methodOn(getClass()).loadSingleUserCustomer(user, c.getId())).toUri());
+        httpHeaders.setLocation(linkTo(methodOn(getClass()).loadSingleUserCustomer(user, customer.getId())).toUri());
 
-        return new ResponseEntity<Resource<Customer>>(
-            this.customerResourceAssembler.toResource(customer), httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<Void>(httpHeaders, HttpStatus.CREATED);
     }
 
 }

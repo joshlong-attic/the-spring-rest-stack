@@ -34,7 +34,7 @@ import javax.servlet.MultipartConfigElement;
 
 
 @ComponentScan
-@EnableAutoConfiguration//(exclude = SecurityAutoConfiguration.class)
+@EnableAutoConfiguration
 public class Application extends SpringBootServletInitializer {
     private static Class<Application> applicationClass = Application.class;
 

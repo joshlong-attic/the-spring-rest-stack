@@ -1,7 +1,6 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.Customer;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceAssembler;
 import org.springframework.stereotype.Component;
@@ -21,13 +20,11 @@ class CustomerResourceAssembler implements ResourceAssembler<Customer, Resource<
 
     @Override
     public Resource<Customer> toResource(Customer customer) {
-        long userId = customer.getUser().getId();
+        Long userId = customer.getUser().getId();
         customer.setUser(null);
         Resource<Customer> customerResource = new Resource<Customer>(customer);
-        Link selfLink = linkTo(methodOn(controllerClass).loadSingleUserCustomer(userId, customer.getId())).withSelfRel();
-        Link userLink = linkTo(methodOn(controllerClass).loadUser(userId)).withRel(usersRel);
-        customerResource.add(selfLink);
-        customerResource.add(userLink);
+        customerResource.add(linkTo(methodOn(controllerClass).loadSingleUserCustomer(userId, customer.getId())).withSelfRel());
+        customerResource.add(linkTo(methodOn(controllerClass).loadUser(userId)).withRel(usersRel));
         return customerResource;
     }
 }

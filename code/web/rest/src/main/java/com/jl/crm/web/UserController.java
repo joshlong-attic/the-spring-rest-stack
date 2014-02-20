@@ -4,12 +4,15 @@ import com.jl.crm.services.CrmService;
 import com.jl.crm.services.Customer;
 import com.jl.crm.services.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handles {@link com.jl.crm.services.User} user entities.
@@ -17,7 +20,7 @@ import java.util.ArrayList;
  * @author Josh Long
  */
 @RestController
-@RequestMapping(value = ApiUrls.ROOT_URL_USERS)
+@RequestMapping(value = "/users")
 class UserController {
 
     CrmService crmService;
@@ -27,36 +30,46 @@ class UserController {
         this.crmService = crmService;
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = ApiUrls.URL_USERS_USER)
-    User deleteUser(@PathVariable Long user) {
-        return crmService.removeUser(user);
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{user}")
+    ResponseEntity<User> deleteUser(@PathVariable Long user) {
+        return new ResponseEntity<User>(crmService.removeUser(user), HttpStatus.NOT_FOUND);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = ApiUrls.URL_USERS_USER)
-    User loadUser(@PathVariable Long user) {
-        return crmService.findById(user);
+    @RequestMapping(method = RequestMethod.GET, value = "/{user}")
+    ResponseEntity<User> loadUser(@PathVariable Long user) {
+        User discoveredUser = this.crmService.findById(user);
+        if (null == discoveredUser) {
+            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<User>(discoveredUser, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = ApiUrls.URL_USERS_USER_CUSTOMERS)
-    CustomerList loadUserCustomers(@PathVariable Long user) {
-        CustomerList customerResourceCollection = new CustomerList();
-        customerResourceCollection.addAll(this.crmService
-                .loadCustomerAccounts(user));
+    @RequestMapping(method = RequestMethod.GET, value = "/{user}/customers")
+    List<Customer> loadUserCustomers(@PathVariable Long user) {
+        List<Customer> customerResourceCollection = new ArrayList<Customer>();
+        customerResourceCollection.addAll(this.crmService.loadCustomerAccounts(user));
         return customerResourceCollection;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = ApiUrls.URL_USERS_USER_CUSTOMERS_CUSTOMER)
+    @RequestMapping(method = RequestMethod.GET, value = "/{user}/customers/{customer}")
     Customer loadSingleUserCustomer(@PathVariable Long user,
                                     @PathVariable Long customer) {
         return crmService.findCustomerById(customer);
     }
 
-    /**
-     * This is superior to using an {@link ArrayList} of {@link Customer}
-     * because it bakes in the generic type information which would've otherwise
-     * been lost and helps Jackson in the conversion at runtime.
-     */
-    static class CustomerList extends ArrayList<Customer> {
-        private static final long serialVersionUID = 1L;
+    @RequestMapping(method = RequestMethod.POST, value = "/{user}/customers")
+    ResponseEntity<Customer> addCustomer(@PathVariable Long user, @RequestBody Customer c) {
+        Customer customer = crmService.addCustomer(user, c.getFirstName(), c.getLastName());
+
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/users/{user}/customers/{customer}")
+                .buildAndExpand(user, customer.getId())
+                .toUri();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(uriOfNewResource);
+
+        return new ResponseEntity<Customer>(customer, httpHeaders, HttpStatus.CREATED);
     }
 }

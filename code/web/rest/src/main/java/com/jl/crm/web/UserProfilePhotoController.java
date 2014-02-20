@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.Collections;
 
 @RestController
-@RequestMapping(value = ApiUrls.ROOT_URL_USERS_USER_PHOTO)
+@RequestMapping(value = "/users" + "/{user}" + "/photo")
 class UserProfilePhotoController {
 
     CrmService crmService;
@@ -31,7 +31,7 @@ class UserProfilePhotoController {
         this.crmService.writeUserProfilePhoto(user, MediaType.parseMediaType(file.getContentType()), bytesForProfilePhoto);
         HttpHeaders httpHeaders = new HttpHeaders();
         URI uriOfPhoto = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .pathSegment(ApiUrls.ROOT_URL_USERS_USER_PHOTO.substring(1))
+                .pathSegment(("/users" + "/{user}" + "/photo").substring(1))
                 .buildAndExpand(Collections.singletonMap("user", user))
                 .toUri();
         httpHeaders.setLocation(uriOfPhoto);

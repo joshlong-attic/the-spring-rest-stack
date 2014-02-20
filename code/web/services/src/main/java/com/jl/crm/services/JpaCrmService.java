@@ -29,6 +29,7 @@ class JpaCrmService implements CrmService {
         this.userRepository = userRepository;
     }
 
+
     @Override
     public Collection<Customer> search(long userId, String token) {
         return this.customerRepository.search(userId, "%" + token + "%");
@@ -106,7 +107,7 @@ class JpaCrmService implements CrmService {
     }
 
     @Override
-    public Customer removeAccount(long userId, long customerId) {
+    public Customer removeCustomer(long userId, long customerId) {
         User user = userRepository.findOne(userId);
         Customer customer = customerRepository.findOne(customerId);
         user.getCustomers().remove(customer);
@@ -117,7 +118,7 @@ class JpaCrmService implements CrmService {
     }
 
     @Override
-    public Customer addAccount(long userId, String firstName, String lastName) {
+    public Customer addCustomer(long userId, String firstName, String lastName) {
         Customer customer = new Customer(this.userRepository.findOne(userId), firstName, lastName, new Date());
         return this.customerRepository.save(customer);
     }

@@ -25,12 +25,12 @@ public interface CrmService {
 
 	User findUserByUsername(String username);
 
-	Customer removeAccount(long userId, long customerId);
+	Customer removeCustomer(long userId, long customerId);
 
-	Customer addAccount(long userId, String firstName, String lastName);
+	Customer addCustomer(long userId, String firstName, String lastName);
 
 	Collection<Customer> loadCustomerAccounts(long userId);
 
 	Customer findCustomerById(long customerId);
 
-}
+ }

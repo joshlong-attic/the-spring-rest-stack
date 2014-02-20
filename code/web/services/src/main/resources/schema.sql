@@ -22,7 +22,8 @@ CREATE TABLE customer
   first_name varchar(255),
   last_name varchar(255),
   signup_date timestamp  ,
-  customer_user_id_fkey bigint NOT NULL,
+--   customer_user_id_fkey bigint NOT NULL, TODO fixme
+  customer_user_id_fkey bigint  NULL,
   CONSTRAINT customer_pkey PRIMARY KEY (id ),
   CONSTRAINT fk24217fdef32da70a FOREIGN KEY (customer_user_id_fkey) REFERENCES user_account (id) ON UPDATE NO ACTION ON DELETE NO ACTION
 );

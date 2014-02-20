@@ -27,7 +27,7 @@ public class Customer implements Identifiable<Long>, Serializable {
 
 	@JsonIgnore
 	@ManyToOne (fetch = FetchType.LAZY)
-	@JoinColumn (nullable = false, name = "customer_user_id_fkey")
+	@JoinColumn (nullable = true, name = "customer_user_id_fkey") // TODO fixme
 	private User user;
 
 	@Column (name = "signup_date")

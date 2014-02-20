@@ -1,5 +1,7 @@
 # app settings
 
+debug : true
+
 spring:
   thymeleaf:
     cache: false

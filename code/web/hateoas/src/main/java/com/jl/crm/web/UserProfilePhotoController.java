@@ -10,14 +10,20 @@ import org.springframework.hateoas.Links;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.*;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.util.List;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @RestController
-@RequestMapping(value = ApiUrls.URL_USERS_USER_PHOTO)
+@RequestMapping(value = "/users/{user}/photo")
 class UserProfilePhotoController {
 
     CrmService crmService;
@@ -30,7 +36,7 @@ class UserProfilePhotoController {
         this.userResourceAssembler = userResourceAssembler;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = POST)
     HttpEntity<Void> writeUserProfilePhoto(@PathVariable Long user, @RequestParam MultipartFile file) throws Throwable {
         byte bytesForProfilePhoto[] = FileCopyUtils.copyToByteArray(file.getInputStream());
         this.crmService.writeUserProfilePhoto(user, MediaType.parseMediaType(file.getContentType()), bytesForProfilePhoto);
@@ -47,7 +53,7 @@ class UserProfilePhotoController {
         return new ResponseEntity<Void>(httpHeaders, HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = GET)
     HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long user) throws Exception {
         ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user);
         if (profilePhoto != null) {

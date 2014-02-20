@@ -10,10 +10,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
-import org.springframework.hateoas.hal.DefaultCurieProvider;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.MultipartConfigElement;
 
@@ -33,12 +31,10 @@ public class Application extends SpringBootServletInitializer {
 }
 
 @Configuration
-@EnableWebMvc
 @Import(ServiceConfiguration.class)
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 class WebMvcConfiguration {
 
-    String curieNamespace = "crm";
 
     @Bean
     MultipartConfigElement multipartConfigElement() {
@@ -50,10 +46,5 @@ class WebMvcConfiguration {
         return new StandardServletMultipartResolver();
     }
 
-    @Bean
-    DefaultCurieProvider defaultCurieProvider() {
-        org.springframework.hateoas.UriTemplate template = new org.springframework.hateoas.UriTemplate(
-                "http://localhost:8080/rels/{rel}");
-        return new DefaultCurieProvider(curieNamespace, template);
-    }
+
 }

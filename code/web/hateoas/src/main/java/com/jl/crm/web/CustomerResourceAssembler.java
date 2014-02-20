@@ -16,6 +16,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 class CustomerResourceAssembler implements ResourceAssembler<Customer, Resource<Customer>> {
 
     String usersRel = "user";
+
     Class<UserController> controllerClass = UserController.class;
 
     @Override

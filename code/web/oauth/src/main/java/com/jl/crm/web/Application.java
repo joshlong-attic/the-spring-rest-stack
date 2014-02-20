@@ -5,15 +5,14 @@ import com.jl.crm.services.ServiceConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
-import org.springframework.hateoas.hal.DefaultCurieProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,16 +29,13 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.OAu
 import org.springframework.security.oauth2.provider.token.InMemoryTokenStore;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.MultipartConfigElement;
 
+
 @ComponentScan
-@EnableAutoConfiguration // (exclude = {SpringBootWebSecurityConfiguration.class})
+@EnableAutoConfiguration//(exclude = SecurityAutoConfiguration.class)
 public class Application extends SpringBootServletInitializer {
-
-    public static final String APPLICATION_NAME = "crm";
-
     private static Class<Application> applicationClass = Application.class;
 
     public static void main(String[] args) {
@@ -53,11 +49,9 @@ public class Application extends SpringBootServletInitializer {
 }
 
 @Configuration
-@Import({ServiceConfiguration.class, RepositoryRestMvcConfiguration.class})
-@EnableWebMvc
- class WebMvcConfiguration {
-
-    String curieNamespace = com.jl.crm.web.Application.APPLICATION_NAME;
+@Import(ServiceConfiguration.class)
+@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
+class WebMvcConfiguration {
 
     @Bean
     MultipartConfigElement multipartConfigElement() {
@@ -68,34 +62,28 @@ public class Application extends SpringBootServletInitializer {
     MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
-
-    @Bean
-    DefaultCurieProvider defaultCurieProvider() {
-        org.springframework.hateoas.UriTemplate template = new org.springframework.hateoas.UriTemplate(
-                "http://localhost:8080/rels/{rel}");
-        return new DefaultCurieProvider(curieNamespace, template);
-    }
 }
 
+
 /**
- *
  * Request OAuth authorization:
  * <code>
  * curl -X POST -vu android-crm:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=cowbell&username=joshlong&grant_type=password&scope=read%2Cwrite&client_secret=123456&client_id=android-crm"
  * </code>
- *
+ * <p/>
  * Use the access_token returned in the previous request to make the authorized request to the protected endpoint:
  * <code>
- *     curl http://localhost:8080/greeting -H "Authorization: Bearer <INSERT TOKEN>"
+ * curl http://localhost:8080/users/5 -H "Authorization: Bearer <INSERT TOKEN>"
  * </code>
  *
  * @author Roy Clarkson
+ * @author Josh Long
  */
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig extends OAuth2ServerConfigurerAdapter {
+class WebSecurityConfiguration extends OAuth2ServerConfigurerAdapter {
 
-    private final String applicationName = com.jl.crm.web.Application.APPLICATION_NAME;
+    private final String applicationName = "crm";
 
     @Autowired
     private CrmService crmService;
@@ -132,21 +120,20 @@ class WebSecurityConfig extends OAuth2ServerConfigurerAdapter {
         authManagerBuilder
                 .userDetailsService(new CrmUserDetailsService(this.crmService))
                 .and()
-                .apply(
-                    new InMemoryClientDetailsServiceConfigurer())
-                        .withClient("android-crm")
-                        .resourceIds(applicationName)
-                        .scopes(scopes)
-                        .authorities(authorities)
-                        .authorizedGrantTypes(authorizedGrantTypes)
-                        .secret(secret)
-                    .and()
-                        .withClient("ios-crm")
-                        .resourceIds(applicationName)
-                        .scopes(scopes)
-                        .authorities(authorities)
-                        .authorizedGrantTypes(authorizedGrantTypes)
-                        .secret(secret);
+                .apply(new InMemoryClientDetailsServiceConfigurer())
+                .withClient("android-crm")
+                .resourceIds(applicationName)
+                .scopes(scopes)
+                .authorities(authorities)
+                .authorizedGrantTypes(authorizedGrantTypes)
+                .secret(secret)
+                .and()
+                .withClient("ios-crm")
+                .resourceIds(applicationName)
+                .scopes(scopes)
+                .authorities(authorities)
+                .authorizedGrantTypes(authorizedGrantTypes)
+                .secret(secret);
 
     }
     // @formatter:on

@@ -53,11 +53,10 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
             SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
             setRequestFactory(simpleClientHttpRequestFactory);
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(
                     "could not initialize the " +
-                        CrmTemplate.class.getName(), e);
+                            CrmTemplate.class.getName(), e);
         }
     }
 
@@ -106,22 +105,48 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 
     @Override
     public Customer createCustomer(String firstName, String lastName, Date signupDate) {
+        //Customer customer = new Customer( null, null, firstName, lastName, signupDate);
+        Map<String,Object> customerMap = new HashMap<String, Object>() ;
+        customerMap.put("firstName", firstName) ;
+        customerMap.put("lastName" ,lastName) ;
+        customerMap.put("signupDate", signupDate);
 
-        Customer customer = new Customer(
-                currentUser(), null, firstName, lastName, signupDate);
+        ResponseEntity<Object> responseEntity = getRestTemplate().postForEntity(uriFrom("/customers"), customerMap, Object.class);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        URI uriOfNewCustomer = responseEntity.getHeaders().getLocation();
 
-        // build up a representation of the domain model and transmit it
+
+
+        // HttpHeaders httpHeaders = new HttpHeaders();
+        //   httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+/*        // build up a representation of the domain model and transmit it
         // as JSON no need to use the actual objects. this is simpler and more predictable.
 
         Map<String, Object> mapOfCutomerData = customerMap(customer);
-        HttpEntity<Map<String, Object>> customerHttpEntity = new HttpEntity<Map<String, Object>>(mapOfCutomerData, httpHeaders);
+        HttpEntity<Map<String, Object>> customerHttpEntity = new HttpEntity<Map<String, Object>>(mapOfCutomerData, httpHeaders);*/
 
-        ResponseEntity<?> responseEntity = getRestTemplate().postForEntity(uriFrom("/customers"), customerHttpEntity, ResponseEntity.class);
-        URI newLocation = responseEntity.getHeaders().getLocation();
-        return customer(newLocation);
+        //  ResponseEntity<?> responseEntity = getRestTemplate().postForEntity(uriFrom("/customers"), customerHttpEntity, ResponseEntity.class);
+//        URI newLocation = responseEntity.getHeaders().getLocation();
+
+        URI uriOfUser = uriFrom("/users/" + currentUser().getId());
+
+        // now we need to  POST the URI of the user tot he customer's /customers/$X/user property
+
+        URI customerUserProperty = this.uriFrom("/customers/" + customer(uriOfNewCustomer).getId() + "/user");
+
+        System.out.println("customer USEr property. " + customerUserProperty.toString());
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType( MediaType.APPLICATION_JSON);
+
+        HttpEntity <?> updateRequest =new HttpEntity< String>( uriOfUser.toString() , httpHeaders);
+
+        ResponseEntity<Map> response = this.getRestTemplate().postForEntity(customerUserProperty, updateRequest, Map.class);
+
+
+        return null;
+        //return customer(newLocation);
     }
 
     private Customer customer(URI uri) {

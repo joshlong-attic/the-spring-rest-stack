@@ -10,6 +10,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.social.connect.*;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
@@ -18,8 +19,11 @@ import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.social.oauth2.OAuth2Template;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
+import java.net.URI;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +32,7 @@ import java.util.Set;
  * Exercises the CRM OAuth 2 API with our Spring Social-powered client.
  */
 @ComponentScan
-@EnableAutoConfiguration (exclude = SecurityAutoConfiguration.class)
+@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 public class Application {
 
     public static void log(String msg, Object... parms) {
@@ -37,8 +41,9 @@ public class Application {
 
     public static void main(String args[]) throws Throwable {
 
-        CrmClient.ClientCallback<Void, CrmOperations> crmOperationsClientCallback =
-                new CrmClient.ClientCallback<Void, CrmOperations>() {
+
+
+        CrmClient.ClientCallback<Void, CrmOperations> crmOperationsClientCallback =  new CrmClient.ClientCallback<Void, CrmOperations>() {
                     @Override
                     public Void executeWithClient(Connection<CrmOperations> clientConnection) throws Exception {
 
@@ -53,6 +58,9 @@ public class Application {
                         User self = customerServiceOperations.user(5L);
 
                         log(ToStringBuilder.reflectionToString(self));
+
+
+
 
                         // add a customer record under the user
                         Customer customer = customerServiceOperations.createCustomer("Nic", "Cage", new java.util.Date());
@@ -148,7 +156,9 @@ class CrmClient {
             boolean firstConnection = usersConnectionRepository.findUserIdsConnectedTo(providerId, userIdSet).size() == 0; // if there are 0 connections
             if (firstConnection)
                 connectionRepository.addConnection(this.connection);
+
             return callable.executeWithClient(this.connection);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

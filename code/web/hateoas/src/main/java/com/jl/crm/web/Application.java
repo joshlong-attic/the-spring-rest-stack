@@ -29,12 +29,11 @@ public class Application extends SpringBootServletInitializer {
         return application.sources(applicationClass);
     }
 }
-
+/* todo do i need any of this?? */
 @Configuration
 @Import(ServiceConfiguration.class)
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 class WebMvcConfiguration {
-
 
     @Bean
     MultipartConfigElement multipartConfigElement() {
@@ -45,6 +44,7 @@ class WebMvcConfiguration {
     MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
+
 
 
 }

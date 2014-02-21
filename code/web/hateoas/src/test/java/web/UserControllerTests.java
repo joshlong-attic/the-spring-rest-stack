@@ -65,7 +65,6 @@ public class UserControllerTests {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
-
     @Test
     public void testLoadingUserCustomers() throws Exception {
         this.mockMvc.perform(get("/users/" + userId + "/customers"))

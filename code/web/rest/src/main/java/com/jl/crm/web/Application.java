@@ -9,19 +9,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 
 import javax.servlet.MultipartConfigElement;
 
 @ComponentScan
+@Import(ServiceConfiguration.class)
+@Configuration
 @EnableAutoConfiguration
 public class Application extends SpringBootServletInitializer {
 
     private static Class<Application> applicationClass = Application.class;
 
-    public static void main(String[] args) {
+    public  static void main(String[] args) {
         SpringApplication.run(applicationClass);
     }
 
@@ -29,21 +29,10 @@ public class Application extends SpringBootServletInitializer {
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(applicationClass);
     }
-}
-
-
-@Import(ServiceConfiguration.class)
-@Configuration
-@EnableWebMvc
-class WebMvcConfiguration {
 
     @Bean
     MultipartConfigElement multipartConfigElement() {
         return new MultipartConfigElement("");
     }
 
-    @Bean
-    MultipartResolver multipartResolver() {
-        return new StandardServletMultipartResolver();
-    }
-}
+} 

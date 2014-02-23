@@ -58,11 +58,8 @@ public class ServiceConfiguration {
         }
     }
 
-/*@Bean HibernateJpaVendorAdapter hibernateJpaVendorAdapter (){
-return new HibernateJpaVendorAdapter();
-}*/
     @Bean
-      LocalContainerEntityManagerFactoryBean entityManagerFactory(  JpaVendorAdapter adapter, DataSource dataSource) {
+    LocalContainerEntityManagerFactoryBean entityManagerFactory(  JpaVendorAdapter adapter, DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
         emf.setPackagesToScan(User.class.getPackage().getName());
         emf.setDataSource(dataSource);
@@ -71,7 +68,7 @@ return new HibernateJpaVendorAdapter();
     }
 
     @Bean
-      PlatformTransactionManager transactionManager( EntityManagerFactory emf) {
+    PlatformTransactionManager transactionManager( EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
     }
 

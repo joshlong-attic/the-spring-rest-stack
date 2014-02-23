@@ -93,6 +93,7 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
 
     @Override
     public User currentUser() {
+        // /session/user
         ResponseEntity<Map<String, Object>> responseEntity =
                 getRestTemplate().exchange(uriFrom("/session"), HttpMethod.GET, null, new ParameterizedTypeReference<Map<String, Object>>() {
                 });
@@ -156,115 +157,145 @@ public class CrmTemplate extends AbstractOAuth2ApiBinding implements CrmOperatio
         return customerResponseEntity.getBody();
     }
 
+    @Override
+    public Collection<Customer> loadAllUserCustomers() {
+        return null;
+    }
+
+    @Override
+    public void removeCustomer(Long id) {
+
+    }
+
+    @Override
+    public void setProfilePhoto(byte[] bytesOfImage, MediaType mediaType) {
+
+    }
+
+    @Override
+    public Customer updateCustomer(Long id, String firstName, String lastName) {
+        return null;
+    }
+
+    @Override
+    public ProfilePhoto getUserProfilePhoto() {
+        return null;
+    }
+
+    @Override
+    public Collection<Customer> search(String token) {
+        return null;
+    }
+
     /*
-        private static Customer unwrapCustomer(Resource<Customer> tResource) {
-            Customer customer = tResource.getContent();
-            customer.setId(tResource.getId());
-            return customer;
-        }
-
-        private static User unwrapUser(Resource<User> tResource) {
-            User user = tResource.getContent();
-            user.setId(tResource.getId().getHref());
-            return user;
-        }
-
-
-        @Override
-        public Collection<Customer> search(String token) {
-            User currentUser = currentUser();
-            Long dbId = currentUser.getDatabaseId();
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("userId", (Long.toString(dbId)));
-            params.put("q", ("%" + token + "%"));
-
-
-            UriComponentsBuilder uriToSearch = UriComponentsBuilder.fromUri(this.apiBaseUri).path("/customers/search/search");
-            for (String k : params.keySet()) {
-                uriToSearch.queryParam(k, params.get(k));
+            private static Customer unwrapCustomer(Resource<Customer> tResource) {
+                Customer customer = tResource.getContent();
+                customer.setId(tResource.getId());
+                return customer;
             }
 
-            ResponseEntity<CustomerList> resources = this.getRestTemplate().getForEntity(uriToSearch.build().toUri(), CustomerList.class);
-            Resources<Resource<Customer>> customerResources = resources.getBody();
-            Collection<Customer> customerCollection = new ArrayList<Customer>();
-            for (Resource<Customer> customerResource : customerResources) {
-                customerCollection.add(unwrapCustomer(customerResource));
+            private static User unwrapUser(Resource<User> tResource) {
+                User user = tResource.getContent();
+                user.setId(tResource.getId().getHref());
+                return user;
             }
-            return customerCollection;
-        }
 
 
-
-        @Override
-        public Collection<Customer> loadAllUserCustomers() {
-            User currentUser = currentUser();
-            Long dbId = currentUser.getDatabaseId();
-            URI uri = this.uriFrom("/users/" + dbId + "/customers");
-            ResponseEntity<CustomerList> resources = this.getRestTemplate().getForEntity(uri, CustomerList.class);
-            Resources<Resource<Customer>> customerResources = resources.getBody();
-            Collection<Customer> customerCollection = new ArrayList<Customer>();
-            for (Resource<Customer> customerResource : customerResources) {
-                customerCollection.add(unwrapCustomer(customerResource));
-            }
-            return customerCollection;
-        }
-
-        @Override
-        public void removeCustomer(Long customer) {
-            URI uri = uriFrom("/customers/" + Long.toString(customer));
-            this.getRestTemplate().delete(uri);
-        }
-
-        @Override
-        public Customer updateCustomer(Long id, String firstName, String lastName) {
-            Customer customer = this.loadUserCustomer(id);
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-            // build up a representation of the domain model and transmit it
-            // as JSON no need to use the actual objects. this is simpler and more predictable.
-
-            Map<String, Object> mapOfCutomerData = customerMap(customer);
-            mapOfCutomerData.put("firstName", firstName);
-            mapOfCutomerData.put("lastName", lastName);
-            HttpEntity<Map<String, Object>> customerHttpEntity = new HttpEntity<Map<String, Object>>(mapOfCutomerData, httpHeaders);
-
-            URI uri = uriFrom("/customers/" + id);
-            this.getRestTemplate().put(uri.toString(), customerHttpEntity, ResponseEntity.class);
-
-            return customer(uri);
-        }
+            @Override
+            public Collection<Customer> search(String token) {
+                User currentUser = currentUser();
+                Long dbId = currentUser.getDatabaseId();
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("userId", (Long.toString(dbId)));
+                params.put("q", ("%" + token + "%"));
 
 
-        @Override
-        public void setProfilePhoto(byte[] bytesOfImage, final MediaType mediaType) {
-            ByteArrayResource byteArrayResource = new ByteArrayResource(bytesOfImage) {
-                @Override
-                public String getFilename() {
-                    String ext = mapOfExtensions.get(mediaType.getSubtype());
-                    return new File(rootFile, "profile-image." + ext).getAbsolutePath();
+                UriComponentsBuilder uriToSearch = UriComponentsBuilder.fromUri(this.apiBaseUri).path("/customers/search/search");
+                for (String k : params.keySet()) {
+                    uriToSearch.queryParam(k, params.get(k));
                 }
-            };
-            MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
-            parts.set("file", byteArrayResource);
-            String photoUri = uriFrom("/users/" + currentUser().getDatabaseId() + "/photo").toString();
-            ResponseEntity<?> responseEntity = this.getRestTemplate().postForEntity(photoUri, parts, ResponseEntity.class);
-            HttpStatus.Series series = responseEntity.getStatusCode().series();
-            if (!series.equals(HttpStatus.Series.SUCCESSFUL)) {
-                throw new RuntimeException("couldn't write the profile photo!");
+
+                ResponseEntity<CustomerList> resources = this.getRestTemplate().getForEntity(uriToSearch.build().toUri(), CustomerList.class);
+                Resources<Resource<Customer>> customerResources = resources.getBody();
+                Collection<Customer> customerCollection = new ArrayList<Customer>();
+                for (Resource<Customer> customerResource : customerResources) {
+                    customerCollection.add(unwrapCustomer(customerResource));
+                }
+                return customerCollection;
             }
-        }
 
 
 
-        @Override
-        public ProfilePhoto getUserProfilePhoto() {
-            ResponseEntity<byte[]> profilePhotoData = this.getRestTemplate().getForEntity(uriFrom("/users/" + currentUser().getDatabaseId() + "/photo").toString(), byte[].class);
-            MediaType mediaType = profilePhotoData.getHeaders().getContentType();
-            return new ProfilePhoto(profilePhotoData.getBody(), mediaType);
-        }
+            @Override
+            public Collection<Customer> loadAllUserCustomers() {
+                User currentUser = currentUser();
+                Long dbId = currentUser.getDatabaseId();
+                URI uri = this.uriFrom("/users/" + dbId + "/customers");
+                ResponseEntity<CustomerList> resources = this.getRestTemplate().getForEntity(uri, CustomerList.class);
+                Resources<Resource<Customer>> customerResources = resources.getBody();
+                Collection<Customer> customerCollection = new ArrayList<Customer>();
+                for (Resource<Customer> customerResource : customerResources) {
+                    customerCollection.add(unwrapCustomer(customerResource));
+                }
+                return customerCollection;
+            }
 
-    */
+            @Override
+            public void removeCustomer(Long customer) {
+                URI uri = uriFrom("/customers/" + Long.toString(customer));
+                this.getRestTemplate().delete(uri);
+            }
+
+            @Override
+            public Customer updateCustomer(Long id, String firstName, String lastName) {
+                Customer customer = this.loadUserCustomer(id);
+                HttpHeaders httpHeaders = new HttpHeaders();
+                httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+                // build up a representation of the domain model and transmit it
+                // as JSON no need to use the actual objects. this is simpler and more predictable.
+
+                Map<String, Object> mapOfCutomerData = customerMap(customer);
+                mapOfCutomerData.put("firstName", firstName);
+                mapOfCutomerData.put("lastName", lastName);
+                HttpEntity<Map<String, Object>> customerHttpEntity = new HttpEntity<Map<String, Object>>(mapOfCutomerData, httpHeaders);
+
+                URI uri = uriFrom("/customers/" + id);
+                this.getRestTemplate().put(uri.toString(), customerHttpEntity, ResponseEntity.class);
+
+                return customer(uri);
+            }
+
+
+            @Override
+            public void setProfilePhoto(byte[] bytesOfImage, final MediaType mediaType) {
+                ByteArrayResource byteArrayResource = new ByteArrayResource(bytesOfImage) {
+                    @Override
+                    public String getFilename() {
+                        String ext = mapOfExtensions.get(mediaType.getSubtype());
+                        return new File(rootFile, "profile-image." + ext).getAbsolutePath();
+                    }
+                };
+                MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
+                parts.set("file", byteArrayResource);
+                String photoUri = uriFrom("/users/" + currentUser().getDatabaseId() + "/photo").toString();
+                ResponseEntity<?> responseEntity = this.getRestTemplate().postForEntity(photoUri, parts, ResponseEntity.class);
+                HttpStatus.Series series = responseEntity.getStatusCode().series();
+                if (!series.equals(HttpStatus.Series.SUCCESSFUL)) {
+                    throw new RuntimeException("couldn't write the profile photo!");
+                }
+            }
+
+
+
+            @Override
+            public ProfilePhoto getUserProfilePhoto() {
+                ResponseEntity<byte[]> profilePhotoData = this.getRestTemplate().getForEntity(uriFrom("/users/" + currentUser().getDatabaseId() + "/photo").toString(), byte[].class);
+                MediaType mediaType = profilePhotoData.getHeaders().getContentType();
+                return new ProfilePhoto(profilePhotoData.getBody(), mediaType);
+            }
+
+        */
     @Override
     protected FormHttpMessageConverter getFormMessageConverter() {
         FormHttpMessageConverter formHttpMessageConverter = super.getFormMessageConverter();

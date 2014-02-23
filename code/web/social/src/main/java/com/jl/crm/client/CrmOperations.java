@@ -19,8 +19,6 @@ public interface CrmOperations {
 
     Customer createCustomer(String firstName, String lastName, Date signupDate);
 
-	/*
-
 	Collection<Customer> loadAllUserCustomers();
 
 	void removeCustomer(Long id);
@@ -31,5 +29,5 @@ public interface CrmOperations {
 
 	ProfilePhoto getUserProfilePhoto();
 
-	Collection<Customer> search(String token);*/
+	Collection<Customer> search(String token);
 }

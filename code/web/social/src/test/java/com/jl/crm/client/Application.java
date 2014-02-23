@@ -73,7 +73,7 @@ public class Application {
         Collection<Customer> customerCollection = customerServiceOperations.search(query);
         for (Customer c : customerCollection) {
             log("searched for '" + query + "', found: " + c.toString());
-        }
+    }
 
         // let's finally update the profile photo
         ClassPathResource classPathResource = new ClassPathResource("/s2-logo.jpg");
@@ -84,7 +84,10 @@ public class Application {
 
     public static void main(String args[]) throws Throwable {
 
-        String username = "joshlong", password = "cowbell", clientId = "android-crm", clientSecret = "123456";
+        String username = "joshlong",
+                password = "cowbell",
+                clientId = "android-crm",
+                clientSecret = "123456";
         String[] scopes = "read,write".split(",");
 
 
@@ -104,7 +107,7 @@ public class Application {
         crmClient.doWithClient(username, password, scopes, new CrmClient.ClientCallback<Void, CrmOperations>() {
             @Override
             public Void executeWithClient(Connection<CrmOperations> clientConnection) throws Exception {
-                handle( clientConnection);
+                handle(clientConnection);
                 return null;
             }
         });

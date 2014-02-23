@@ -36,13 +36,8 @@ class UserController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{user}")
-    ResponseEntity<User> loadUser(@PathVariable Long user) {
-        User discoveredUser = this.crmService.findById(user);
-        if (null == discoveredUser) {
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<User>(discoveredUser, HttpStatus.OK);
+    User loadUser(@PathVariable Long user) {
+        return this.crmService.findById(user);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{user}/customers")
@@ -72,4 +67,6 @@ class UserController {
 
         return new ResponseEntity<Customer>(customer, httpHeaders, HttpStatus.CREATED);
     }
+
+
 }

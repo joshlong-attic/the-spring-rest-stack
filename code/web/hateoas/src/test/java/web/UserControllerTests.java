@@ -51,6 +51,7 @@ public class UserControllerTests {
     private MockMvc mockMvc;
     private MediaType applicationJsonMediaType =
             new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+    private MediaType vndErrorMediaType = MediaType.parseMediaType("application/vnd.error");
 
     @Before
     public void setup() {
@@ -98,7 +99,7 @@ public class UserControllerTests {
                 .content(jsonOfJoeDoe)
                 .contentType(this.applicationJsonMediaType))
                 .andExpect(status().isCreated())
-              //  .andExpect(content().contentType(this.applicationJsonMediaType))
+                        //  .andExpect(content().contentType(this.applicationJsonMediaType))
                 .andReturn();
 
         mockServer.verify();
@@ -108,25 +109,43 @@ public class UserControllerTests {
     }
 
     @Test
+    public void testLoadingACustomerThatDoesNotExist() throws Exception {
+        this.mockMvc.perform(get("/users/" + 5 + "/customers/" + 24022)
+                .accept(this.applicationJsonMediaType))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(this.vndErrorMediaType));
+
+    }
+
+    @Test
+    public void testLoadingAUserThatDoesNotExist() throws Exception {
+        this.mockMvc.perform(get("/users/" + 400)
+                .accept(this.applicationJsonMediaType))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(this.vndErrorMediaType));
+
+    }
+
+
+    @Test
     public void testLoadingAUser() throws Exception {
 
         DateFormat dateFormat = new SimpleDateFormat(jsonDateFormatPattern);
-
-        long timestampOfDate = 1370212431000L;
-        Date date = new Date(timestampOfDate);
         int userId = 5;
+        Date date = dateFormat.parse("2013-06-02 15:33:51");
         this.mockMvc.perform(get("/users/" + userId)
                 .accept(this.applicationJsonMediaType))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(applicationJsonMediaType))
                 .andExpect(jsonPath("$.id", is(userId)))
                 .andExpect(jsonPath("$.firstName", is("Josh")))
-                .andExpect(jsonPath("$.password", is(nullValue())))
-                .andExpect(jsonPath("$.signupDate", is(timestampOfDate)))
+                .andExpect(jsonPath("$.password", isEmptyOrNullString()))
+                .andExpect(jsonPath("$.signupDate", is(date.getTime())))
                 .andExpect(jsonPath("$.lastName", is("Long")))
                 .andExpect(jsonPath("$._links.photo.href", containsString("/users/" + userId + "/photo")))
                 .andExpect(jsonPath("$._links.customers.href", containsString("/users/" + userId + "/customers")))
                 .andExpect(jsonPath("$._links.self.href", containsString("/users/" + userId)));
-        Assert.assertEquals(date, dateFormat.parse("2013-06-02 15:33:51"));
+
     }
+
 }

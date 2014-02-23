@@ -1,6 +1,8 @@
 package com.jl.crm.services;
 
 
+import com.jl.crm.services.exceptions.CustomerNotFoundException;
+import com.jl.crm.services.exceptions.UserNotFoundException;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ class JpaCrmService implements CrmService {
 
     @Autowired
     public JpaCrmService(CustomerRepository customerRepository,
-                  UserRepository userRepository) {
+                         UserRepository userRepository) {
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
     }
@@ -74,7 +76,10 @@ class JpaCrmService implements CrmService {
 
     @Override
     public User findById(long userId) {
-        return userRepository.findOne(userId);
+        User user = userRepository.findOne(userId);
+        if (null == user)
+            throw new UserNotFoundException(userId);
+        return user;
     }
 
     @Override
@@ -139,6 +144,8 @@ class JpaCrmService implements CrmService {
     @Override
     public Customer findCustomerById(long customerId) {
         Customer customer = customerRepository.findOne(customerId);
+        if (null == customer)
+            throw new CustomerNotFoundException(customerId);
         Hibernate.initialize(customer.getUser());
         return customer;
     }

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
@@ -32,13 +31,13 @@ import org.springframework.security.oauth2.config.annotation.authentication.conf
 import org.springframework.security.oauth2.config.annotation.web.configuration.OAuth2ServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.OAuth2ServerConfigurer;
 import org.springframework.security.oauth2.provider.token.InMemoryTokenStore;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import javax.servlet.MultipartConfigElement;
 
 
 @ComponentScan
+@Import(ServiceConfiguration.class)
+@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 @EnableAutoConfiguration
 public class Application extends SpringBootServletInitializer {
     private static Class<Application> applicationClass = Application.class;
@@ -51,7 +50,6 @@ public class Application extends SpringBootServletInitializer {
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(applicationClass);
     }
-
 
 
     @Profile("production")
@@ -70,9 +68,13 @@ public class Application extends SpringBootServletInitializer {
                         public void customize(Connector connector) {
                             connector.setPort(8443);
                             connector.setSecure(true);
+
                             connector.setScheme("https");
                             Http11NioProtocol proto = (Http11NioProtocol) connector.getProtocolHandler();
                             proto.setSSLEnabled(true);
+                            // proto.setClientAuth();
+                            // uncomment this to require the
+                            // client to authenticate. Then, you can use X509 support in Spring Security
                             proto.setKeystoreFile(absoluteKeystoreFile);
                             proto.setKeystorePass(keystorePass);
                             proto.setKeystoreType("PKCS12");
@@ -84,24 +86,12 @@ public class Application extends SpringBootServletInitializer {
         };
     }
 
-}
-
-@Configuration
-@Import(ServiceConfiguration.class)
-@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
-class WebMvcConfiguration {
-
     @Bean
     MultipartConfigElement multipartConfigElement() {
         return new MultipartConfigElement("");
     }
 
-    @Bean
-    MultipartResolver multipartResolver() {
-        return new StandardServletMultipartResolver();
-    }
 }
-
 
 /**
  * Request OAuth authorization:
@@ -134,13 +124,13 @@ class WebSecurityConfiguration extends OAuth2ServerConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.requestMatchers()
                 .and()
-                .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .anyRequest().authenticated()
+                    .authorizeRequests()
+                        .antMatchers("/").permitAll()
+                        .anyRequest().authenticated()
                 .and()
-                .apply(new OAuth2ServerConfigurer())
-                .tokenStore(new InMemoryTokenStore())
-                .resourceId(applicationName);
+                    .apply(new OAuth2ServerConfigurer())
+                    .tokenStore(new InMemoryTokenStore())
+                    .resourceId(applicationName);
 
     }
     // @formatter:on
@@ -160,18 +150,18 @@ class WebSecurityConfiguration extends OAuth2ServerConfigurerAdapter {
                 .and()
                 .apply(new InMemoryClientDetailsServiceConfigurer())
                 .withClient("android-crm")
-                .resourceIds(applicationName)
-                .scopes(scopes)
-                .authorities(authorities)
-                .authorizedGrantTypes(authorizedGrantTypes)
-                .secret(secret)
+                    .resourceIds(applicationName)
+                    .scopes(scopes)
+                    .authorities(authorities)
+                    .authorizedGrantTypes(authorizedGrantTypes)
+                    .secret(secret)
                 .and()
                 .withClient("ios-crm")
-                .resourceIds(applicationName)
-                .scopes(scopes)
-                .authorities(authorities)
-                .authorizedGrantTypes(authorizedGrantTypes)
-                .secret(secret);
+                    .resourceIds(applicationName)
+                    .scopes(scopes)
+                    .authorities(authorities)
+                    .authorizedGrantTypes(authorizedGrantTypes)
+                    .secret(secret);
 
     }
     // @formatter:on

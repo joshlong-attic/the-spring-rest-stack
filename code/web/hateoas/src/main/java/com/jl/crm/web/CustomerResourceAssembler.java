@@ -23,7 +23,8 @@ class CustomerResourceAssembler implements ResourceAssembler<Customer, Resource<
         Long userId = customer.getUser().getId();
         customer.setUser(null);
         Resource<Customer> customerResource = new Resource<Customer>(customer);
-        customerResource.add(linkTo(methodOn(controllerClass).loadSingleUserCustomer(userId, customer.getId())).withSelfRel());
+        customerResource.add(linkTo(methodOn(controllerClass).loadSingleUserCustomer(
+                userId, customer.getId())).withSelfRel());
         customerResource.add(linkTo(methodOn(controllerClass).loadUser(userId)).withRel(usersRel));
         return customerResource;
     }

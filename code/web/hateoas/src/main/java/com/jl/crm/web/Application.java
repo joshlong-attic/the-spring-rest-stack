@@ -10,14 +10,16 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import javax.servlet.MultipartConfigElement;
 
 @ComponentScan
+@Import(ServiceConfiguration.class)
+@Configuration
 @EnableAutoConfiguration
+@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class Application extends SpringBootServletInitializer {
+
     private static Class<Application> applicationClass = Application.class;
 
     public static void main(String[] args) {
@@ -28,23 +30,10 @@ public class Application extends SpringBootServletInitializer {
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(applicationClass);
     }
-}
-/* todo do i need any of this?? */
-@Configuration
-@Import(ServiceConfiguration.class)
-@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
-class WebMvcConfiguration {
 
     @Bean
     MultipartConfigElement multipartConfigElement() {
         return new MultipartConfigElement("");
     }
-
-    @Bean
-    MultipartResolver multipartResolver() {
-        return new StandardServletMultipartResolver();
-    }
-
-
 
 }

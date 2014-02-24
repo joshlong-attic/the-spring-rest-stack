@@ -33,6 +33,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.OAu
 import org.springframework.security.oauth2.provider.token.InMemoryTokenStore;
 
 import javax.servlet.MultipartConfigElement;
+import java.io.IOException;
 
 
 @ComponentScan
@@ -52,24 +53,45 @@ public class Application extends SpringBootServletInitializer {
     }
 
 
+    // you can run this with SSL/TLS. For example, build the application (`mvn clean install`) in the `oauth` directory, then run:    
+    //   java -Dspring.profiles.active=production -Dkeystore.file=file:///`pwd`/src/main/resources/keystore.p12 -jar target/oauth-1.0.0.BUILD-SNAPSHOT.jar
+
+
     @Profile("production")
     @Bean
-    public EmbeddedServletContainerCustomizer containerCustomizer(@Value("${keystore.file}") final Resource keystoreFile,
-                                                                  @Value("${keystore.pass}") final String keystorePass) throws Exception {
-        final String absoluteKeystoreFile = keystoreFile.getFile().getAbsolutePath();
+    public EmbeddedServletContainerCustomizer containerCustomizer(
+            @Value("${keystore.file}") final Resource keystoreFile,
+            @Value("${keystore.alias}") final String keystoreAlias,
+            @Value("${keystore.type}") final String keystoreType,
+            @Value("${keystore.pass}") final String keystorePass,
+            @Value("${tls.port}") final int tlsPort
+    ) {
         return new EmbeddedServletContainerCustomizer() {
             @Override
             public void customize(ConfigurableEmbeddedServletContainerFactory factory) {
                 if (factory instanceof TomcatEmbeddedServletContainerFactory) {
-                    TomcatEmbeddedServletContainerFactory containerFactory =
-                            (TomcatEmbeddedServletContainerFactory) factory;
+                    TomcatEmbeddedServletContainerFactory containerFactory = (TomcatEmbeddedServletContainerFactory) factory;
                     containerFactory.addConnectorCustomizers(new TomcatConnectorCustomizer() {
+
                         @Override
                         public void customize(Connector connector) {
-                            connector.setPort(8443);
-                            connector.setSecure(true);
 
+                            connector.setPort(tlsPort);
+                            connector.setSecure(true);
                             connector.setScheme("https");
+                            connector.setAttribute("keyAlias", "tomcat");
+                            connector.setAttribute("keystorePass", "password");
+                            String absoluteKeystoreFile;
+                            try {
+                                absoluteKeystoreFile = keystoreFile.getFile().getAbsolutePath();
+                                connector.setAttribute("keystoreFile", absoluteKeystoreFile);
+                            } catch (IOException e) {
+                                throw new IllegalStateException("Cannot load keystore", e);
+                            }
+                            connector.setAttribute("clientAuth", "false");
+                            connector.setAttribute("sslProtocol", "TLS");
+                            connector.setAttribute("SSLEnabled", true);
+
                             Http11NioProtocol proto = (Http11NioProtocol) connector.getProtocolHandler();
                             proto.setSSLEnabled(true);
                             // proto.setClientAuth();
@@ -77,10 +99,11 @@ public class Application extends SpringBootServletInitializer {
                             // client to authenticate. Then, you can use X509 support in Spring Security
                             proto.setKeystoreFile(absoluteKeystoreFile);
                             proto.setKeystorePass(keystorePass);
-                            proto.setKeystoreType("PKCS12");
-                            proto.setKeyAlias("tomcat");
+                            proto.setKeystoreType(keystoreType);
+                            proto.setKeyAlias(keystoreAlias);
                         }
                     });
+
                 }
             }
         };
@@ -124,13 +147,13 @@ class WebSecurityConfiguration extends OAuth2ServerConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.requestMatchers()
                 .and()
-                    .authorizeRequests()
-                        .antMatchers("/").permitAll()
-                        .anyRequest().authenticated()
+                .authorizeRequests()
+                .antMatchers("/").permitAll()
+                .anyRequest().authenticated()
                 .and()
-                    .apply(new OAuth2ServerConfigurer())
-                    .tokenStore(new InMemoryTokenStore())
-                    .resourceId(applicationName);
+                .apply(new OAuth2ServerConfigurer())
+                .tokenStore(new InMemoryTokenStore())
+                .resourceId(applicationName);
 
     }
     // @formatter:on
@@ -150,18 +173,18 @@ class WebSecurityConfiguration extends OAuth2ServerConfigurerAdapter {
                 .and()
                 .apply(new InMemoryClientDetailsServiceConfigurer())
                 .withClient("android-crm")
-                    .resourceIds(applicationName)
-                    .scopes(scopes)
-                    .authorities(authorities)
-                    .authorizedGrantTypes(authorizedGrantTypes)
-                    .secret(secret)
+                .resourceIds(applicationName)
+                .scopes(scopes)
+                .authorities(authorities)
+                .authorizedGrantTypes(authorizedGrantTypes)
+                .secret(secret)
                 .and()
                 .withClient("ios-crm")
-                    .resourceIds(applicationName)
-                    .scopes(scopes)
-                    .authorities(authorities)
-                    .authorizedGrantTypes(authorizedGrantTypes)
-                    .secret(secret);
+                .resourceIds(applicationName)
+                .scopes(scopes)
+                .authorities(authorities)
+                .authorizedGrantTypes(authorizedGrantTypes)
+                .secret(secret);
 
     }
     // @formatter:on

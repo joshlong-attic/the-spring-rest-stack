@@ -1,13 +1,15 @@
 package com.jl.crm.services;
 
 
+import com.jl.crm.services.exceptions.CustomerNotFoundException;
+import com.jl.crm.services.exceptions.UserNotFoundException;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.io.*;
 import java.util.*;
 
@@ -18,16 +20,17 @@ import java.util.*;
  */
 @Service
 @Transactional
-public class JpaCrmService implements CrmService {
+class JpaCrmService implements CrmService {
     private CustomerRepository customerRepository;
     private UserRepository userRepository;
 
-    @Inject
+    @Autowired
     public JpaCrmService(CustomerRepository customerRepository,
                          UserRepository userRepository) {
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
     }
+
 
     @Override
     public Collection<Customer> search(long userId, String token) {
@@ -73,7 +76,10 @@ public class JpaCrmService implements CrmService {
 
     @Override
     public User findById(long userId) {
-        return userRepository.findOne(userId);
+        User user = userRepository.findOne(userId);
+        if (null == user)
+            throw new UserNotFoundException(userId);
+        return user;
     }
 
     @Override
@@ -106,7 +112,7 @@ public class JpaCrmService implements CrmService {
     }
 
     @Override
-    public Customer removeAccount(long userId, long customerId) {
+    public Customer removeCustomer(long userId, long customerId) {
         User user = userRepository.findOne(userId);
         Customer customer = customerRepository.findOne(customerId);
         user.getCustomers().remove(customer);
@@ -117,7 +123,7 @@ public class JpaCrmService implements CrmService {
     }
 
     @Override
-    public Customer addAccount(long userId, String firstName, String lastName) {
+    public Customer addCustomer(long userId, String firstName, String lastName) {
         Customer customer = new Customer(this.userRepository.findOne(userId), firstName, lastName, new Date());
         return this.customerRepository.save(customer);
     }
@@ -138,6 +144,8 @@ public class JpaCrmService implements CrmService {
     @Override
     public Customer findCustomerById(long customerId) {
         Customer customer = customerRepository.findOne(customerId);
+        if (null == customer)
+            throw new CustomerNotFoundException(customerId);
         Hibernate.initialize(customer.getUser());
         return customer;
     }

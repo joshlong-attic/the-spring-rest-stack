@@ -16,17 +16,4 @@ public class CustomerWriteException extends CustomerException {
 	public CustomerWriteException(Customer customer, Throwable cause) {
 		super(customer, cause);
 	}
-
-	public CustomerWriteException(long id, Throwable cause) {
-		super(id, cause);
-	}
-
-	public CustomerWriteException(Customer user) {
-		super(user);
-	}
-
-	public CustomerWriteException(long id) {
-		super(id);
-	}
-
 }

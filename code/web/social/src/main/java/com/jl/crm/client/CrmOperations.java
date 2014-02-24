@@ -13,9 +13,11 @@ public interface CrmOperations {
 
 	User currentUser();
 
-	Customer loadUserCustomer(Long id);
+    Customer loadUserCustomer(Long id);
 
-	Customer createCustomer(String firstName, String lastName, Date signupDate);
+    User user ( Long id ) ;
+
+    Customer createCustomer(String firstName, String lastName, Date signupDate);
 
 	Collection<Customer> loadAllUserCustomers();
 

@@ -1,0 +1,24 @@
+# app settings
+
+spring:
+  thymeleaf:
+    cache: false
+
+---
+spring:
+  profiles: cloud
+
+---
+spring:
+  profiles: default
+  dataSource:
+    driverClassName : org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/rest_crm
+    password :
+    username : sa
+
+  jpa:
+    database : H2
+    hibernate:
+      ddl-auto : none
+

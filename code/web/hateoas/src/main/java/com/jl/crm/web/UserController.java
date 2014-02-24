@@ -3,77 +3,86 @@ package com.jl.crm.web;
 import com.jl.crm.services.CrmService;
 import com.jl.crm.services.Customer;
 import com.jl.crm.services.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
-import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
  * Handles {@link com.jl.crm.services.User} user entities.
  *
  * @author Josh Long
  */
-@Controller
+@RestController
 @ExposesResourceFor(User.class)
-@RequestMapping(value = ApiUrls.ROOT_URL_USERS, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/users")
 class UserController {
 
-    private CrmService crmService;
-    private UserResourceAssembler userResourceAssembler;
-    private CustomerResourceAssembler customerResourceAssembler;
+    CrmService crmService;
+    UserResourceAssembler userResourceAssembler;
+    CustomerResourceAssembler customerResourceAssembler;
 
-
-    public UserController() {}
-
-    @Inject
-    public UserController(CrmService crmService,
-                          UserResourceAssembler userResourceAssembler,
-                          CustomerResourceAssembler customerResourceAssembler) {
+    @Autowired
+    UserController(CrmService crmService,
+                   UserResourceAssembler userResourceAssembler,
+                   CustomerResourceAssembler customerResourceAssembler) {
         this.crmService = crmService;
         this.userResourceAssembler = userResourceAssembler;
         this.customerResourceAssembler = customerResourceAssembler;
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = ApiUrls.URL_USERS_USER)
-    HttpEntity<Resource<User>> deleteUser(@PathVariable Long user) {
-        Resource<User> userResource = userResourceAssembler.toResource(crmService.removeUser(user));
-        return new ResponseEntity<Resource<User>>(userResource, HttpStatus.OK);
+    @RequestMapping(method = DELETE, value = "/{user}")
+    ResponseEntity<Resource<User>> deleteUser(@PathVariable Long user) {
+        return new ResponseEntity<Resource<User>>(
+                userResourceAssembler.toResource(crmService.removeUser(user)), HttpStatus.NOT_FOUND);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = ApiUrls.URL_USERS_USER)
-    HttpEntity<Resource<User>> loadUser(@PathVariable Long user) {
-        Resource<User> resource = this.userResourceAssembler.toResource(crmService.findById(user));
-        return new ResponseEntity<Resource<User>>(resource, HttpStatus.OK);
+    @RequestMapping(method = GET, value = "/{user}")
+    ResponseEntity<Resource<User>> loadUser(@PathVariable Long user) {
+        User discoveredUser = this.crmService.findById(user);
+        if (null == discoveredUser) {
+            return new ResponseEntity<Resource<User>>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<Resource<User>>(
+                userResourceAssembler.toResource(discoveredUser), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = ApiUrls.URL_USERS_USER_CUSTOMERS)
-    HttpEntity<Resources<Resource<Customer>>> loadUserCustomers(@PathVariable Long user) {
+    @RequestMapping(method = GET, value = "/{user}/customers")
+    Resources<Resource<Customer>> loadUserCustomers(@PathVariable Long user) {
         Collection<Resource<Customer>> customerResourceCollection = new ArrayList<Resource<Customer>>();
         for (Customer c : this.crmService.loadCustomerAccounts(user)) {
             customerResourceCollection.add(customerResourceAssembler.toResource(c));
         }
         Resources<Resource<Customer>> customerResources = new Resources<Resource<Customer>>(customerResourceCollection);
         customerResources.add(linkTo(methodOn(UserController.class).loadUserCustomers(user)).withSelfRel());
-        return new ResponseEntity<Resources<Resource<Customer>>>(customerResources, HttpStatus.OK);
+        return customerResources;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = ApiUrls.URL_USERS_USER_CUSTOMERS_CUSTOMER)
-    HttpEntity<Resource<Customer>> loadSingleUserCustomer(@PathVariable Long user, @PathVariable Long customer) {
-        Resource<Customer> customerResource = customerResourceAssembler.toResource(this.crmService.findCustomerById(customer));
-        return new ResponseEntity<Resource<Customer>>(customerResource, HttpStatus.OK);
+    @RequestMapping(method = RequestMethod.GET, value = "/{user}/customers/{customer}")
+    Resource<Customer> loadSingleUserCustomer(@PathVariable Long user, @PathVariable Long customer) {
+        return customerResourceAssembler.toResource(this.crmService.findCustomerById(customer));
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/{user}/customers")
+    ResponseEntity<Void> addCustomer(@PathVariable Long user, @RequestBody Customer c) {
+        Customer customer = crmService.addCustomer(user, c.getFirstName(), c.getLastName());
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(linkTo(methodOn(getClass()).loadSingleUserCustomer(user, customer.getId())).toUri());
+
+        return new ResponseEntity<Void>(httpHeaders, HttpStatus.CREATED);
+    }
+
 }

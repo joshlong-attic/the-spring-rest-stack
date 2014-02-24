@@ -1,71 +1,68 @@
 package com.jl.crm.web;
 
-import com.jl.crm.services.*;
-
-import org.springframework.hateoas.*;
+import com.jl.crm.services.CrmService;
+import com.jl.crm.services.ProfilePhoto;
+import com.jl.crm.services.User;
+import com.jl.crm.services.UserProfilePhotoReadException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Links;
+import org.springframework.hateoas.Resource;
 import org.springframework.http.*;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.inject.Inject;
-
 import java.net.URI;
+import java.util.List;
 
-@Controller
-@RequestMapping (value = "/users/{userId}/photo")
-public class UserProfilePhotoController {
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-	private CrmService crmService;
-	private UserLinks userLinks;
+@RestController
+@RequestMapping(value = "/users/{user}/photo")
+class UserProfilePhotoController {
 
-	@Inject
-	void setCrmService(CrmService crmService) {
-		this.crmService = crmService;
-	}
+    CrmService crmService;
+    UserResourceAssembler userResourceAssembler;
 
-	@Inject
-	void setUserLinks(UserLinks userLinks) {
-		this.userLinks = userLinks;
-	}
+    @Autowired
+    UserProfilePhotoController(CrmService crmService,
+                               UserResourceAssembler userResourceAssembler) {
+        this.crmService = crmService;
+        this.userResourceAssembler = userResourceAssembler;
+    }
 
-	@RequestMapping (method = RequestMethod.POST)
-	public HttpEntity<Void> writeUserProfilePhoto(@PathVariable Long userId, @RequestParam MultipartFile file) throws Throwable {
-		if (userId == null){
-			throw new UserProfilePhotoWriteException(null, new RuntimeException("you need to specify a valid user ID#"));
-		}
-		User user = this.crmService.findById(userId);
-		byte[] bytesForProfilePhoto = FileCopyUtils.copyToByteArray(file.getInputStream());
-		this.crmService.writeUserProfilePhoto(user.getId(), MediaType.parseMediaType(file.getContentType()), bytesForProfilePhoto);
+    @RequestMapping(method = POST)
+    HttpEntity<Void> writeUserProfilePhoto(@PathVariable Long user, @RequestParam MultipartFile file) throws Throwable {
+        byte bytesForProfilePhoto[] = FileCopyUtils.copyToByteArray(file.getInputStream());
+        this.crmService.writeUserProfilePhoto(user, MediaType.parseMediaType(file.getContentType()), bytesForProfilePhoto);
 
-		Link photoLink = this.userLinks.getPhotoLink(user);
-		Link userLink = this.userLinks.getSelfLink(user);
-		Links wrapperOfLinks = new Links(photoLink, userLink);
 
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add("Link", wrapperOfLinks.toString());  // we can't encode the links in the body of the response, so we put them in the "Links:" header.
-		httpHeaders.setLocation(URI.create(photoLink.getHref())); // "Location: /users/{userId}/photo"
+        Resource<User> userResource = this.userResourceAssembler.toResource(crmService.findById(user));
+        List<Link> linkCollection = userResource.getLinks();
+        Links wrapperOfLinks = new Links(linkCollection);
 
-		return new ResponseEntity<Void>(httpHeaders, HttpStatus.ACCEPTED);
-	}
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Link", wrapperOfLinks.toString());  // we can't encode the links in the body of the response, so we put them in the "Links:" header.
+        httpHeaders.setLocation(URI.create(userResource.getLink("photo").getHref())); // "Location: /users/{userId}/photo"
 
-	@RequestMapping (method = RequestMethod.GET)
-	public HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long userId) throws Throwable {
+        return new ResponseEntity<Void>(httpHeaders, HttpStatus.ACCEPTED);
+    }
 
-		User user = this.crmService.findById(userId);
-		if(user == null) {
-			throw new UserProfilePhotoReadException(-1, new RuntimeException("couldn't find the user"));
-		}
+    @RequestMapping(method = GET)
+    HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long user) throws Exception {
+        ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user);
+        if (profilePhoto != null) {
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(profilePhoto.getMediaType());
+            return new ResponseEntity<byte[]>(profilePhoto.getPhoto(), httpHeaders, HttpStatus.OK);
+        }
+        throw new UserProfilePhotoReadException(user);
 
-		ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user.getId());
-		if(profilePhoto == null) {
-			throw new UserProfilePhotoReadException(-1, new RuntimeException("couldn't find the user photo"));
-		}
-
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(profilePhoto.getMediaType());
-		return new ResponseEntity<byte[]>(profilePhoto.getPhoto(), httpHeaders,HttpStatus.OK);
-	}
+    }
 
 }

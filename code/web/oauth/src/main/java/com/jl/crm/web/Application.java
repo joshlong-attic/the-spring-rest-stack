@@ -71,8 +71,10 @@ public class Application extends SpringBootServletInitializer {
     //   java -Dspring.profiles.active=production -Dkeystore.file=file:///`pwd`/src/main/resources/keystore.p12 -jar target/oauth-1.0.0.BUILD-SNAPSHOT.jar
     @Profile("production")
     @Bean
-    EmbeddedServletContainerCustomizer containerCustomizer( @Value("${keystore.file}") final Resource keystoreFile, @Value("${keystore.alias}") final String keystoreAlias,
-                                                            @Value("${keystore.type}") final String keystoreType, @Value("${keystore.pass}") final String keystorePass,
+    EmbeddedServletContainerCustomizer containerCustomizer( @Value("${keystore.file}") final Resource keystoreFile,
+                                                            @Value("${keystore.alias}") final String keystoreAlias,
+                                                            @Value("${keystore.type}") final String keystoreType,
+                                                            @Value("${keystore.pass}") final String keystorePass,
                                                             @Value("${tls.port}") final int tlsPort ) {
         return new EmbeddedServletContainerCustomizer() {
             @Override
@@ -167,7 +169,6 @@ public class Application extends SpringBootServletInitializer {
         @Override
         public void configure(HttpSecurity http) throws Exception {
             http.antMatcher("/**").authorizeRequests().anyRequest().authenticated();
-            http.userDetailsService(new CrmUserDetailsService(this.crmService));
         }
 
         @Override

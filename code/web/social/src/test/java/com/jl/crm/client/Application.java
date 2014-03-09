@@ -3,11 +3,12 @@ package com.jl.crm.client;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -31,28 +32,67 @@ import java.util.Set;
 @EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 public class Application {
 
-    public static void log(String msg, Object... parms) {
-        System.out.println(String.format(msg, parms));
+
+    public static void main(String args[]) throws Throwable {
+        String clientId = "android-crm", clientSecret = "123456";
+
+
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put("sscrm.base-url", "http://localhost:8080/"); // NB: this must end with '/'.
+        properties.put("sscrm.client-id", clientId);
+        properties.put("sscrm.client-secret", clientSecret);
+        properties.put("sscrm.authorize-url", "oauth/authorize");    // NB: these two paths are relative.
+        properties.put("sscrm.access-token-url", "oauth/token");     //
+
+        new SpringApplicationBuilder()
+                .properties(properties)
+                .sources(Application.class)
+                .run(args);
+
+
     }
 
-    public static void handle(Connection<CrmOperations> clientConnection) {
+}
+
+@Component
+class ClientCommandLineRunner implements CommandLineRunner {
+
+    private void log(String msg, Object... parms) {
+        LogFactory.getLog(getClass()).debug(String.format(msg, parms));
+    }
 
 
-        CrmOperations customerServiceOperations = clientConnection.getApi();
-        // obtain the current user profile from the Spring Social API
-        UserProfile userProfile = clientConnection.fetchUserProfile();
-        log("obtained connection: " + userProfile.getUsername() + ".");
+    @Autowired
+    private CrmClient crmClient;
+
+    private String[] scopes = {"write"};
+    private String username = "joshlong",
+            password = "cowbell";
+
+    @Override
+    public void run(String... args) throws Exception {
 
 
-        // fetch the current (CRM-specific) user profile identity
-        User self = customerServiceOperations.user(5L);
+        crmClient.doWithClient(username, password, scopes, new CrmClient.ClientCallback<Void, CrmOperations>() {
+            @Override
+            public Void executeWithClient(Connection<CrmOperations> clientConnection) throws Exception {
 
-        log(ToStringBuilder.reflectionToString(self));
+
+                CrmOperations customerServiceOperations = clientConnection.getApi();
+                // obtain the current user profile from the Spring Social API
+                UserProfile userProfile = clientConnection.fetchUserProfile();
+                log("obtained connection: " + userProfile.getUsername() + ".");
 
 
-        // add a customer record under the user
-        Customer customer = customerServiceOperations.createCustomer("Nic", "Cage", new java.util.Date());
-        log(customer.toString());
+                // fetch the current (CRM-specific) user profile identity
+                User self = customerServiceOperations.user(5L);
+
+                log(ToStringBuilder.reflectionToString(self));
+
+
+                // add a customer record under the user
+                Customer customer = customerServiceOperations.createCustomer("Nic", "Cage", new java.util.Date());
+                log(customer.toString());
        /*
         log(ToStringBuilder.reflectionToString(self)); *//* obtain the current customer *//*
 
@@ -80,40 +120,10 @@ public class Application {
         InputStream readEmAll = classPathResource.getInputStream();
         byte[] profilePhotoBytes = IOUtils.toByteArray(readEmAll);
         customerServiceOperations.setProfilePhoto(profilePhotoBytes, MediaType.IMAGE_JPEG);*/
-    }
-
-    public static void main(String args[]) throws Throwable {
-
-        String username = "joshlong",
-                password = "cowbell",
-                clientId = "android-crm",
-                clientSecret = "123456";
-        String[] scopes = "read,write".split(",");
-
-
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put("sscrm.base-url", "http://localhost:8080/"); // NB: this must end with '/'.
-        properties.put("sscrm.client-id", clientId);
-        properties.put("sscrm.client-secret", clientSecret);
-        properties.put("sscrm.authorize-url", "oauth/authorize");    // NB: these two paths are relative.
-        properties.put("sscrm.access-token-url", "oauth/token");     //
-
-        ApplicationContext configurableApplicationContext = new SpringApplicationBuilder()
-                .properties(properties)
-                .sources(Application.class)
-                .run(args);
-
-        CrmClient crmClient = configurableApplicationContext.getBean(CrmClient.class);
-        crmClient.doWithClient(username, password, scopes, new CrmClient.ClientCallback<Void, CrmOperations>() {
-            @Override
-            public Void executeWithClient(Connection<CrmOperations> clientConnection) throws Exception {
-                handle(clientConnection);
                 return null;
             }
         });
-
     }
-
 }
 
 @Component
@@ -138,7 +148,7 @@ class CrmClient {
         try {
 
             OAuth2Template oAuth2Operations = connectionFactory.getOAuthOperations();
-            oAuth2Operations.setUseParametersForClientAuthentication(false);
+            //  oAuth2Operations.setUseParametersForClientAuthentication(false);
 
             OAuth2Parameters parameters = new OAuth2Parameters();
             parameters.setScope(StringUtils.join(scopes));

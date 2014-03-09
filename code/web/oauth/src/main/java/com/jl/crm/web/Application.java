@@ -1,8 +1,10 @@
 package com.jl.crm.web;
 
+import com.jl.crm.services.CrmService;
 import com.jl.crm.services.ServiceConfiguration;
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.Http11NioProtocol;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -13,9 +15,15 @@ import org.springframework.boot.context.embedded.tomcat.TomcatConnectorCustomize
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.*;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -27,11 +35,27 @@ import javax.servlet.MultipartConfigElement;
 import java.io.IOException;
 
 
+/**
+ * <p/>
+ * Request OAuth authorization:
+ * {@literal curl -X POST -vu android-resourceId:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=cowbell&username=joshlong&grant_type=client_credentials&scope=read write&client_secret=123456&client_id=android-resourceId"}.
+ * <p/>
+ * Use the {@code access_token} returned in the previous request to make the authorized
+ * request to the protected endpoint: {@literal curl http://localhost:8080/users/5 -H "Authorization: Bearer <INSERT TOKEN>"}
+ */
+@Configuration
 @ComponentScan
 @Import(ServiceConfiguration.class)
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 @EnableAutoConfiguration
 public class Application extends SpringBootServletInitializer {
+
+    private final static String[] AUTHORITIES = {"ROLE_USER"};
+    private final static String[] SCOPES = {"write"};
+    private final static String[] AUTHORIZED_GRANT_TYPES = {"password", "client_credentials"};
+    private final static String RESOURCE_ID = "crm";
+    private final static String SECRET = "123456";
+
     private static Class<Application> applicationClass = Application.class;
 
     public static void main(String[] args) {
@@ -47,16 +71,10 @@ public class Application extends SpringBootServletInitializer {
     //   java -Dspring.profiles.active=production -Dkeystore.file=file:///`pwd`/src/main/resources/keystore.p12 -jar target/oauth-1.0.0.BUILD-SNAPSHOT.jar
     @Profile("production")
     @Bean
-    public EmbeddedServletContainerCustomizer containerCustomizer(
-            @Value("${keystore.file}") final Resource keystoreFile,
-            @Value("${keystore.alias}") final String keystoreAlias,
-            @Value("${keystore.type}") final String keystoreType,
-            @Value("${keystore.pass}") final String keystorePass,
-            @Value("${tls.port}") final int tlsPort
-    ) {
+    EmbeddedServletContainerCustomizer containerCustomizer( @Value("${keystore.file}") final Resource keystoreFile, @Value("${keystore.alias}") final String keystoreAlias,
+                                                            @Value("${keystore.type}") final String keystoreType, @Value("${keystore.pass}") final String keystorePass,
+                                                            @Value("${tls.port}") final int tlsPort ) {
         return new EmbeddedServletContainerCustomizer() {
-
-
             @Override
             public void customize(ConfigurableEmbeddedServletContainer factory) {
                 if (factory instanceof TomcatEmbeddedServletContainerFactory) {
@@ -104,63 +122,92 @@ public class Application extends SpringBootServletInitializer {
         return new MultipartConfigElement("");
     }
 
-}
-
-/**
- * <p/>
- * Request OAuth authorization:
- * {@literal curl -X POST -vu android-crm:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=cowbell&username=joshlong&grant_type=client_credentials&scope=read write&client_secret=123456&client_id=android-crm"}.
- *
- * Use the {@code access_token} returned in the previous request to make the authorized
- * request to the protected endpoint: {@literal curl http://localhost:8080/users/5 -H "Authorization: Bearer <INSERT TOKEN>"}
- *
- */
-
-
-@Configuration
-@EnableResourceServer
-class ResourceServer extends ResourceServerConfigurerAdapter {
-
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.antMatcher("/**").authorizeRequests().anyRequest().authenticated();
+    @Bean
+    CrmUserDetailsService crmUserDetailsService(CrmService crmService) {
+        return new CrmUserDetailsService(crmService);
     }
 
-    @Override
-    public void configure(OAuth2ResourceServerConfigurer resources) throws Exception {
-        resources.resourceId("crm");
-    }
+    @Order(2)
+    @Configuration
+    @EnableWebMvcSecurity
+    static class DefaultSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-}
+        @Autowired
+        private CrmService crmService;
 
-@Configuration
-@EnableAuthorizationServer
-class OAuth2Config extends AuthorizationServerConfigurerAdapter {
+        @Bean
+        @Override
+        public AuthenticationManager authenticationManagerBean() throws Exception {
+            return super.authenticationManagerBean();
+        }
 
-    // config information
-    final String[] scopes = "read,write".split(",");
-    final String secret = "123456";
-    final String authorizedGrantTypes = "password";
-    final String[] authorities = {"ROLE_USER"};
+        @Bean
+        @Override
+        public UserDetailsService userDetailsServiceBean() throws Exception {
+            return super.userDetailsServiceBean();
+        }
 
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         // @formatter:off
-
-        clients.inMemory()
-                .withClient( "android-crm")
-                .authorities(authorities)
-                .scopes(scopes)
-                .secret(secret)
-                .authorizedGrantTypes( "password","client_credentials")
-                .resourceIds("crm")
-        ;
-
-
-
-
-        // @formatter:on
+        @Override
+        protected void configure(AuthenticationManagerBuilder authManagerBuilder)
+                throws Exception {
+            authManagerBuilder
+                    .userDetailsService(new CrmUserDetailsService(this.crmService));
+        }
     }
 
-}
+    @Order(3)
+    @Configuration
+    @EnableResourceServer
+    static class OAuth2ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
+        @Autowired
+        CrmService crmService;
+
+        @Override
+        public void configure(HttpSecurity http) throws Exception {
+            http.antMatcher("/**").authorizeRequests().anyRequest().authenticated();
+            http.userDetailsService(new CrmUserDetailsService(this.crmService));
+        }
+
+        @Override
+        public void configure(OAuth2ResourceServerConfigurer resources) throws Exception {
+            resources.resourceId(RESOURCE_ID);
+        }
+
+    }
+
+    @Order(4)
+    @Configuration
+    @EnableAuthorizationServer
+    static class OAuth2AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
+
+
+        @Override
+        public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+            // @formatter:off
+
+
+            clients.inMemory()
+                        .withClient("android-" + RESOURCE_ID)
+                            .authorities(AUTHORITIES)
+                            .scopes(SCOPES)
+                            .secret(SECRET)
+                            .authorizedGrantTypes(AUTHORIZED_GRANT_TYPES)
+                            .resourceIds(RESOURCE_ID)
+                    .and()
+                        .withClient("ios-" + RESOURCE_ID)
+                            .authorities(AUTHORITIES)
+                            .scopes(SCOPES)
+                            .secret(SECRET)
+                            .authorizedGrantTypes(AUTHORIZED_GRANT_TYPES)
+                            .resourceIds(RESOURCE_ID);
+
+
+            // @formatter:on
+        }
+
+    }
+
+
+}

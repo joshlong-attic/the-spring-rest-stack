@@ -33,7 +33,13 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.security.oauth</groupId>
-            <artifactId>spring-security-oauth2-javaconfig</artifactId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jackson-mapper-asl</artifactId>
+                    <groupId>org.codehaus.jackson</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

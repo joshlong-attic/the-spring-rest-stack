@@ -132,7 +132,8 @@ public class Application extends SpringBootServletInitializer {
         protected UserDetailsService userDetailsService() {
             return (username) -> {
                 User u = crmService.findUserByUsername(username);
-                return new CrmUser(u.getId(), u.getUsername(), u.getPassword(), u.isEnabled(), u.isEnabled(), u.isEnabled(), u.isEnabled(), AuthorityUtils.createAuthorityList("USER", "write"));
+                return new org.springframework.security.core.userdetails.User (
+                        u.getUsername(), u.getPassword(), u.isEnabled(), u.isEnabled(), u.isEnabled(), u.isEnabled(), AuthorityUtils.createAuthorityList("USER", "write"));
             };
         }
 
@@ -185,20 +186,5 @@ public class Application extends SpringBootServletInitializer {
                     .resourceIds(applicationName)
                     .secret("123456");
         }
-    }
-}
-
-
-class CrmUser extends org.springframework.security.core.userdetails.User {
-
-    private long userId;
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public CrmUser(long userId, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-        this.userId = userId;
     }
 }

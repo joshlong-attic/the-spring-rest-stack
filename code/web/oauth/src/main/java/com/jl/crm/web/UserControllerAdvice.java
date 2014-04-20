@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @ControllerAdvice(annotations = RestController.class)
 class UserControllerAdvice {
 
-    private MediaType vndErrorMediaType = MediaType.parseMediaType("application/vnd.error");
+      MediaType vndErrorMediaType = MediaType.parseMediaType("application/vnd.error");
 
     @ExceptionHandler(CustomerNotFoundException.class)
     public ResponseEntity<VndErrors> userNotFoundException(CustomerNotFoundException e) {

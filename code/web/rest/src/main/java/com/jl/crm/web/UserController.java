@@ -30,9 +30,12 @@ class UserController {
         this.crmService = crmService;
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/{user}")
-    ResponseEntity<User> deleteUser(@PathVariable Long user) {
-        return new ResponseEntity<User>(crmService.removeUser(user), HttpStatus.NOT_FOUND);
+    // /users/{user}
+    @RequestMapping( method = RequestMethod.DELETE, value = "/{user}")
+    ResponseEntity<User> deleteUser(
+            //@RequestParam Long customerId,  // ?customerId=x
+            @PathVariable Long user) {
+        return new ResponseEntity<User>( crmService.removeUser(user),  HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{user}")

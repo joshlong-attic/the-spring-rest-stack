@@ -29,6 +29,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @ExposesResourceFor(User.class)
 @RequestMapping(value = "/users")
 class UserController {
+
     CrmService crmService;
     UserResourceAssembler userResourceAssembler;
     CustomerResourceAssembler customerResourceAssembler;

@@ -68,7 +68,7 @@ public class UserControllerTests {
 
     @Test
     public void testLoadingUserCustomers() throws Exception {
-        this.mockMvc.perform(get("/users/" + userId + "/customers"))
+        this.mockMvc.perform( get("/users/" + userId + "/customers"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(applicationJsonMediaType))
                 .andExpect(jsonPath("$._embedded.customerList", hasSize(5))) // how many customers are seeded in the schema.sql file? 5.

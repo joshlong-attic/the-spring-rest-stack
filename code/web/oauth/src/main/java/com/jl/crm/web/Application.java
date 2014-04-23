@@ -1,6 +1,7 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.CrmService;
+import com.jl.crm.services.Customer;
 import com.jl.crm.services.ServiceConfiguration;
 import com.jl.crm.services.User;
 import org.apache.coyote.http11.Http11NioProtocol;
@@ -8,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.*;
 import org.springframework.core.io.Resource;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.ResourceAssembler;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -22,7 +23,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -37,11 +37,17 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.MultipartConfigElement;
+import java.util.ArrayList;
 import java.util.Collection;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Request OAuth authorization:
- * <code>curl -X POST -vu android-crm:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=cowbell&username=joshlong&grant_type=password&scope=write&client_secret=123456&client_id=android-crm </code>
+ * <code>
+ *     curl -X POST -vu android-crm:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=cowbell&username=joshlong&grant_type=password&scope=write&client_secret=123456&client_id=android-crm
+ * </code>
  * <p/>
  * Use the access_token returned in the previous request to make the authorized request to the protected endpoint:
  * <p/>
@@ -54,17 +60,10 @@ import java.util.Collection;
 @Import(ServiceConfiguration.class)
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 @EnableAutoConfiguration
-public class Application extends SpringBootServletInitializer {
-
-    private static Class<Application> applicationClass = Application.class;
+public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(applicationClass);
-    }
-
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(applicationClass);
+        SpringApplication.run(Application.class);
     }
 
 
@@ -79,30 +78,62 @@ public class Application extends SpringBootServletInitializer {
         String absoluteKeystoreFile = keystoreFile.getFile().getAbsolutePath();
 
         return (ConfigurableEmbeddedServletContainer container) -> {
+            TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) container;
+            tomcat.addConnectorCustomizers(
+                    (connector) -> {
+                        connector.setPort(8443);
+                        connector.setSecure(true);
+                        connector.setScheme("https");
 
-            if (container instanceof TomcatEmbeddedServletContainerFactory) {
+                        Http11NioProtocol proto = (Http11NioProtocol) connector.getProtocolHandler();
+                        proto.setSSLEnabled(true);
+                        proto.setKeystoreFile(absoluteKeystoreFile);
+                        proto.setKeystorePass(keystorePass);
+                        proto.setKeystoreType("PKCS12");
+                        proto.setKeyAlias("tomcat");
+                    }
+            );
 
-                TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) container;
-                tomcat.addConnectorCustomizers(
-                        (connector) -> {
-                            connector.setPort(8443);
-                            connector.setSecure(true);
-                            connector.setScheme("https");
-                            Http11NioProtocol proto = (Http11NioProtocol) connector.getProtocolHandler();
-                            proto.setSSLEnabled(true);
-                            proto.setKeystoreFile(absoluteKeystoreFile);
-                            proto.setKeystorePass(keystorePass);
-                            proto.setKeystoreType("PKCS12");
-                            proto.setKeyAlias("tomcat");
-                        }
-                );
-            }
         };
     }
 
     @Bean
     MultipartConfigElement multipartConfigElement() {
         return new MultipartConfigElement("");
+    }
+
+    @Bean
+    ResourceAssembler<User, org.springframework.hateoas.Resource<User>> userResourceAssembler() {
+        return (u) -> {
+            try {
+                String customersRel = "customers", photoRel = "photo";
+                User user = new User(u);
+                user.setPassword(null);
+                long userId = user.getId();
+                Collection<Link> links = new ArrayList<>();
+                links.add(linkTo(methodOn(UserController.class).loadUser(userId)).withSelfRel());
+                links.add(linkTo(methodOn(UserController.class).loadUserCustomers(userId)).withRel(customersRel));
+                links.add(linkTo(methodOn(UserProfilePhotoController.class).loadUserProfilePhoto(user.getId())).withRel(photoRel));
+                return new org.springframework.hateoas.Resource<>(user, links);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    @Bean
+    ResourceAssembler<Customer, org.springframework.hateoas.Resource<Customer>> customerResourceResourceAssembler() {
+        return (customer) -> {
+            String usersRel = "user";
+            Class<UserController> controllerClass = UserController.class;
+            Long userId = customer.getUser().getId();
+            customer.setUser(null);
+            org.springframework.hateoas.Resource<Customer> customerResource = new org.springframework.hateoas.Resource<>(customer);
+            customerResource.add(linkTo(methodOn(controllerClass).loadSingleUserCustomer(
+                    userId, customer.getId())).withSelfRel());
+            customerResource.add(linkTo(methodOn(controllerClass).loadUser(userId)).withRel(usersRel));
+            return customerResource;
+        };
     }
 
     @Bean
@@ -125,14 +156,14 @@ public class Application extends SpringBootServletInitializer {
 
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-            auth.userDetailsService( userDetailsService() );
+            auth.userDetailsService(userDetailsService());
         }
 
         @Override
         protected UserDetailsService userDetailsService() {
             return (username) -> {
                 User u = crmService.findUserByUsername(username);
-                return new org.springframework.security.core.userdetails.User (
+                return new org.springframework.security.core.userdetails.User(
                         u.getUsername(), u.getPassword(), u.isEnabled(), u.isEnabled(), u.isEnabled(), u.isEnabled(), AuthorityUtils.createAuthorityList("USER", "write"));
             };
         }
@@ -151,7 +182,7 @@ public class Application extends SpringBootServletInitializer {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.csrf().requireCsrfProtectionMatcher (new AntPathRequestMatcher("/oauth/authorize")).disable() ;
+            http.csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("/oauth/authorize")).disable();
             http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
             http.requestMatchers()
                     .and()

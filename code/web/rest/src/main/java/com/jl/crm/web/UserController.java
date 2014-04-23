@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Optional;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
  * Handles {@link com.jl.crm.services.User} user entities.
@@ -23,31 +25,28 @@ import java.util.List;
 @RequestMapping(value = "/users")
 class UserController {
 
-    CrmService crmService;
+    private final CrmService crmService;
 
     @Autowired
     UserController(CrmService crmService) {
         this.crmService = crmService;
     }
 
-    // /users/{user}
-    @RequestMapping( method = RequestMethod.DELETE, value = "/{user}")
-    ResponseEntity<User> deleteUser(
-            //@RequestParam Long customerId,  // ?customerId=x
-            @PathVariable Long user) {
-        return new ResponseEntity<User>( crmService.removeUser(user),  HttpStatus.NOT_FOUND);
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{user}")
+    ResponseEntity<User> deleteUser(@PathVariable Long user) {
+        return new ResponseEntity<>(crmService.removeUser(user), HttpStatus.NOT_FOUND);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{user}")
-    User loadUser(@PathVariable Long user) {
-        return this.crmService.findById(user);
+    @RequestMapping(method = GET, value = "/{user}")
+    ResponseEntity<User> loadUser(@PathVariable Long user) {
+        return Optional.of(this.crmService.findById(user))
+                .map(u -> new ResponseEntity<>(u, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{user}/customers")
-    List<Customer> loadUserCustomers(@PathVariable Long user) {
-        List<Customer> customerResourceCollection = new ArrayList<Customer>();
-        customerResourceCollection.addAll(this.crmService.loadCustomerAccounts(user));
-        return customerResourceCollection;
+    Collection<Customer> loadUserCustomers(@PathVariable Long user) {
+        return this.crmService.loadCustomerAccounts(user);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{user}/customers/{customer}")
@@ -68,7 +67,7 @@ class UserController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(uriOfNewResource);
 
-        return new ResponseEntity<Customer>(customer, httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(customer, httpHeaders, HttpStatus.CREATED);
     }
 
 

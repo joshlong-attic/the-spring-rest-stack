@@ -1,8 +1,6 @@
 package com.jl.crm.web;
 
 import com.jl.crm.services.CrmService;
-import com.jl.crm.services.ProfilePhoto;
-import com.jl.crm.services.UserProfilePhotoReadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.util.FileCopyUtils;
@@ -12,12 +10,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/users" + "/{user}" + "/photo")
+@RequestMapping(value = "/users/{user}/photo")
 class UserProfilePhotoController {
 
-    CrmService crmService;
+    private final CrmService crmService;
 
     @Autowired
     UserProfilePhotoController(CrmService crmService) {
@@ -35,19 +34,17 @@ class UserProfilePhotoController {
                 .buildAndExpand(Collections.singletonMap("user", user))
                 .toUri();
         httpHeaders.setLocation(uriOfPhoto);
-
-        return new ResponseEntity<Void>(httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long user) throws Throwable {
-        ProfilePhoto profilePhoto = this.crmService.readUserProfilePhoto(user);
-        if (profilePhoto != null) {
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setContentType(profilePhoto.getMediaType());
-            return new ResponseEntity<byte[]>(profilePhoto.getPhoto(), httpHeaders, HttpStatus.OK);
-        }
-        throw new UserProfilePhotoReadException(user);
+    HttpEntity<byte[]> loadUserProfilePhoto(@PathVariable Long user) throws Exception {
+        return Optional.of(this.crmService.readUserProfilePhoto(user))
+                .map(profilePhoto -> {
+                    HttpHeaders httpHeaders = new HttpHeaders();
+                    httpHeaders.setContentType(profilePhoto.getMediaType());
+                    return new ResponseEntity<>(profilePhoto.getPhoto(), httpHeaders, HttpStatus.OK);
+                })
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
 }

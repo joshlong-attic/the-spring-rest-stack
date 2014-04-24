@@ -37,7 +37,6 @@ public class Application {
 
     public static void handle(Connection<CrmOperations> clientConnection) {
 
-
         CrmOperations customerServiceOperations = clientConnection.getApi();
         // obtain the current user profile from the Spring Social API
         UserProfile userProfile = clientConnection.fetchUserProfile();
@@ -49,11 +48,11 @@ public class Application {
 
         log(ToStringBuilder.reflectionToString(self));
 
-
+/*
         // add a customer record under the user
         Customer customer = customerServiceOperations.createCustomer("Nic", "Cage", new java.util.Date());
         log(customer.toString());
-       /*
+
         log(ToStringBuilder.reflectionToString(self)); *//* obtain the current customer *//*
 
          *//* loading the photo *//*
@@ -88,7 +87,7 @@ public class Application {
                 password = "cowbell",
                 clientId = "android-crm",
                 clientSecret = "123456";
-        String[] scopes = "read,write".split(",");
+        String[] scopes = "write".split(",");
 
 
         Map<String, Object> properties = new HashMap<String, Object>();

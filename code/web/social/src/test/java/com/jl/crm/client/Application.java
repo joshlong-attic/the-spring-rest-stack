@@ -36,50 +36,15 @@ public class Application {
     }
 
     public static void handle(Connection<CrmOperations> clientConnection) {
-
-
         CrmOperations customerServiceOperations = clientConnection.getApi();
+
         // obtain the current user profile from the Spring Social API
         UserProfile userProfile = clientConnection.fetchUserProfile();
         log("obtained connection: " + userProfile.getUsername() + ".");
 
-
         // fetch the current (CRM-specific) user profile identity
         User self = customerServiceOperations.user(5L);
-
         log(ToStringBuilder.reflectionToString(self));
-
-
-        // add a customer record under the user
-        Customer customer = customerServiceOperations.createCustomer("Nic", "Cage", new java.util.Date());
-        log(customer.toString());
-       /*
-        log(ToStringBuilder.reflectionToString(self)); *//* obtain the current customer *//*
-
-         *//* loading the photo *//*
-
-        // check to see what the profile photo is right now.
-        ProfilePhoto profilePhoto = customerServiceOperations.getUserProfilePhoto();
-        log("profile photo mime type: " + profilePhoto.getMediaType().toString());
-
-        // save the current profile photo to the desktop
-        File photoOutputFile = new File(new File(SystemUtils.getUserHome(), "Desktop"), "profile.jpg");
-        InputStream byteArrayInputStream = new ByteArrayInputStream(profilePhoto.getBytes());
-        OutputStream outputStream = new FileOutputStream(photoOutputFile);
-        IOUtils.copy(byteArrayInputStream, outputStream);
-
-        // run a query against the current customer records
-        String query = "josh";
-        Collection<Customer> customerCollection = customerServiceOperations.search(query);
-        for (Customer c : customerCollection) {
-            log("searched for '" + query + "', found: " + c.toString());
-    }
-
-        // let's finally update the profile photo
-        ClassPathResource classPathResource = new ClassPathResource("/s2-logo.jpg");
-        InputStream readEmAll = classPathResource.getInputStream();
-        byte[] profilePhotoBytes = IOUtils.toByteArray(readEmAll);
-        customerServiceOperations.setProfilePhoto(profilePhotoBytes, MediaType.IMAGE_JPEG);*/
     }
 
     public static void main(String args[]) throws Throwable {

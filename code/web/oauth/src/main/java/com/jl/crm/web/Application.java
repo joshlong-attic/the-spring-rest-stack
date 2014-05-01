@@ -19,11 +19,7 @@ import org.springframework.hateoas.ResourceAssembler;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -35,7 +31,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.MultipartConfigElement;
 import java.util.ArrayList;
@@ -47,7 +42,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * Request OAuth authorization:
  * <code>
- *     curl -X POST -vu android-crm:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=cowbell&username=joshlong&grant_type=password&scope=write&client_secret=123456&client_id=android-crm
+ * curl -X POST -vu android-crm:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=cowbell&username=joshlong&grant_type=password&scope=write&client_secret=123456&client_id=android-crm"
  * </code>
  * <p/>
  * Use the access_token returned in the previous request to make the authorized request to the protected endpoint:
@@ -56,7 +51,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  *
  * @author Josh Long
  */
-
 @ComponentScan
 @Import(ServiceConfiguration.class)
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
@@ -136,51 +130,29 @@ public class Application {
         };
     }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
-
-    @Bean
-    TextEncryptor textEncryptor() {
-        return Encryptors.noOpText();
-    }
-
-
     @Configuration
-   // @EnableWebMvcSecurity
-   // @EnableWebSecurity
-    static class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+    static class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
         @Autowired
         private CrmService crmService;
 
         @Override
-        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        public void init(AuthenticationManagerBuilder auth) throws Exception {
             auth.userDetailsService(userDetailsService());
         }
 
-        @Override
         protected UserDetailsService userDetailsService() {
             return (username) -> {
                 User u = crmService.findUserByUsername(username);
                 return new org.springframework.security.core.userdetails.User(
-                        u.getUsername(), u.getPassword(), u.isEnabled(), u.isEnabled(), u.isEnabled(), u.isEnabled(), AuthorityUtils.createAuthorityList("USER", "write"));
+                        u.getUsername(), u.getPassword(), u.isEnabled(),
+                        u.isEnabled(), u.isEnabled(), u.isEnabled(),
+                        AuthorityUtils.createAuthorityList("USER", "write"));
             };
         }
 
-
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("/oauth/authorize")).disable();
-            http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-            http.requestMatchers()
-                    .and()
-                    .authorizeRequests()
-                    .antMatchers("/").permitAll()
-                    .anyRequest().authenticated();
-        }
     }
+
 
     @Configuration
     @EnableResourceServer
@@ -189,6 +161,9 @@ public class Application {
 
         private final String applicationName = "crm";
 
+        /**
+         * This is required for password grants, which we specify below as one of the  {@literal authorizedGrantTypes()}.
+         */
         @Autowired
         private AuthenticationManager authenticationManager;
 

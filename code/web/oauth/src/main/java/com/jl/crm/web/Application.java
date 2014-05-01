@@ -22,6 +22,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -129,8 +130,7 @@ public class Application {
             Long userId = customer.getUser().getId();
             customer.setUser(null);
             org.springframework.hateoas.Resource<Customer> customerResource = new org.springframework.hateoas.Resource<>(customer);
-            customerResource.add(linkTo(methodOn(controllerClass).loadSingleUserCustomer(
-                    userId, customer.getId())).withSelfRel());
+            customerResource.add(linkTo(methodOn(controllerClass).loadSingleUserCustomer(userId, customer.getId())).withSelfRel());
             customerResource.add(linkTo(methodOn(controllerClass).loadUser(userId)).withRel(usersRel));
             return customerResource;
         };
@@ -148,7 +148,8 @@ public class Application {
 
 
     @Configuration
-    @EnableWebSecurity
+   // @EnableWebMvcSecurity
+   // @EnableWebSecurity
     static class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         @Autowired
@@ -168,17 +169,6 @@ public class Application {
             };
         }
 
-        @Bean
-        @Override
-        public UserDetailsService userDetailsServiceBean() throws Exception {
-            return super.userDetailsServiceBean();
-        }
-
-        @Bean
-        @Override
-        public AuthenticationManager authenticationManagerBean() throws Exception {
-            return super.authenticationManagerBean();
-        }
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {

@@ -8,11 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.*;
 import org.springframework.core.io.Resource;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
@@ -22,7 +20,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -37,7 +34,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.MultipartConfigElement;
-import java.util.Collection;
 
 /**
  * Request OAuth authorization:
@@ -54,17 +50,11 @@ import java.util.Collection;
 @Import(ServiceConfiguration.class)
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 @EnableAutoConfiguration
-public class Application extends SpringBootServletInitializer {
+public class Application {
 
-    private static Class<Application> applicationClass = Application.class;
 
     public static void main(String[] args) {
-        SpringApplication.run(applicationClass);
-    }
-
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(applicationClass);
+        SpringApplication.run(Application.class);
     }
 
 
@@ -125,14 +115,14 @@ public class Application extends SpringBootServletInitializer {
 
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-            auth.userDetailsService( userDetailsService() );
+            auth.userDetailsService(userDetailsService());
         }
 
         @Override
         protected UserDetailsService userDetailsService() {
             return (username) -> {
                 User u = crmService.findUserByUsername(username);
-                return new org.springframework.security.core.userdetails.User (
+                return new org.springframework.security.core.userdetails.User(
                         u.getUsername(), u.getPassword(), u.isEnabled(), u.isEnabled(), u.isEnabled(), u.isEnabled(), AuthorityUtils.createAuthorityList("USER", "write"));
             };
         }
@@ -151,7 +141,7 @@ public class Application extends SpringBootServletInitializer {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.csrf().requireCsrfProtectionMatcher (new AntPathRequestMatcher("/oauth/authorize")).disable() ;
+            http.csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("/oauth/authorize")).disable();
             http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
             http.requestMatchers()
                     .and()

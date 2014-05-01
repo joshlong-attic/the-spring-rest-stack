@@ -1,10 +1,10 @@
 package com.jl.crm.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +13,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.web.FilterChainProxy;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -28,7 +33,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,13 +59,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @TransactionConfiguration(defaultRollback = true)
 @Transactional
-@Ignore
+
 public class OAuthSecuredUserControllerTests {
 
     private String jsonDateFormatPattern = "yyyy-MM-dd HH:mm:ss";
 
-    private MediaType applicationJsonMediaType = MediaType.APPLICATION_JSON;
-//            new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+    private MediaType applicationJsonMediaType =
+            new MediaType(MediaType.APPLICATION_JSON.getType(),
+                    MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
     private MediaType vndErrorMediaType = MediaType.parseMediaType("application/vnd.error");
 
@@ -68,7 +77,7 @@ public class OAuthSecuredUserControllerTests {
     @Autowired
     private WebApplicationContext context;
 
-    @Autowired(required = false)
+    @Autowired
     private FilterChainProxy springSecurityFilterChain;
 
     private MockMvc mockMvc;
@@ -80,9 +89,26 @@ public class OAuthSecuredUserControllerTests {
 
     @Before
     public void setup() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        ServletRequestAttributes requestAttributes = new ServletRequestAttributes(request);
+        RequestContextHolder.setRequestAttributes(requestAttributes);
+
+
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .addFilters(springSecurityFilterChain).build();
 
+        String clientId = "android-crm",
+                clientSecret = "123456",
+                username = "joshlong",
+                password = "cowbell";
+
+        //
+        SecurityContext securityContext = new SecurityContextImpl();
+        securityContext.setAuthentication(new UsernamePasswordAuthenticationToken(clientId, clientSecret));
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+        //
 
         List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
         converters.add(new StringHttpMessageConverter());
@@ -94,38 +120,34 @@ public class OAuthSecuredUserControllerTests {
 
 
         // setup
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        MockHttpSession session = new MockHttpSession() {
-            // avoid session fixation protection issues
-            public void invalidate() {
-            }
-        };
 
-        String clientId = "android-crm",
-                clientSecret = "123456",
-                username = "joshlong",
-                password = "cowbell";
 
+        String basicDigestHeaderValue = "Basic " + new String(Base64.encodeBase64((username + ":" + password).getBytes()));
 
         // get a token
         RequestBuilder tokenRequest =
-                get("/oauth/token")
+                post("/oauth/token")
                         .accept(applicationJsonMediaType)
+                                //.principal(() -> username)
                         .param("client_id", clientId)
+                                //  .header("Authorization", basicDigestHeaderValue)
                         .param("password", password)
 //                        .param("response_type", "token")
                         .param("client_secret", clientSecret)
                         .param("username", username)
                         .param("grant_type", "password")
                         .param("scope", "write")
-                        .session(session);
+                        .session(session)
+
+                       /* .session(new MockHttpSession() {
+                            // avoid session fixation protection issues
+                            public void invalidate() {
+                            }
+                        })*/;
 
 
-        /*
-        *
-        * curl -X POST -vu android-crm:123456 http://localhost:8080/oauth/token -H "Accept: application/json"
-         *     -d "password=cowbell&username=joshlong&grant_type=password&scope=write&client_secret=123456&client_id=android-crm
-        */
+        // curl -X POST -vu android-crm:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=cowbell&username=joshlong&grant_type=password&scope=write&client_secret=123456&client_id=android-crm
+
         MockHttpServletResponse response = mockMvc.perform(tokenRequest)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(applicationJsonMediaType)).andReturn().getResponse();

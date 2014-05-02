@@ -32,6 +32,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -110,6 +111,7 @@ public class OAuthSecuredUserControllerTests {
         // get a token
         RequestBuilder tokenRequest =
                 get("/oauth/token")
+                        .header("Authorization", "Basic "+Base64.getEncoder().encodeToString("android-crm:123456".getBytes("UTF-8")))
                         .accept(applicationJsonMediaType)
                         .param("client_id", clientId)
                         .param("password", password)
@@ -128,7 +130,7 @@ public class OAuthSecuredUserControllerTests {
         */
         MockHttpServletResponse response = mockMvc.perform(tokenRequest)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(applicationJsonMediaType)).andReturn().getResponse();
+                .andExpect(content().contentTypeCompatibleWith(applicationJsonMediaType)).andReturn().getResponse();
 
         String bodyContent = response.getContentAsString();
 
@@ -189,7 +191,7 @@ public class OAuthSecuredUserControllerTests {
         this.mockMvc.perform(encodeAuthorizationAccessToken(get("/users/" + userId)
                 .accept(this.applicationJsonMediaType)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(applicationJsonMediaType))
+                .andExpect(content().contentTypeCompatibleWith(applicationJsonMediaType))
                 .andExpect(jsonPath("$.id", is(userId)))
                 .andExpect(jsonPath("$.firstName", is("Josh")))
                 .andExpect(jsonPath("$.password", isEmptyOrNullString()))

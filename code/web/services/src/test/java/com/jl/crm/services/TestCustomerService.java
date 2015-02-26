@@ -5,87 +5,79 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestCustomerService.TestCustomerServiceConfiguration.class)
+@SpringApplicationConfiguration(classes = Application.class)
 @Transactional
-@TransactionConfiguration
+
 public class TestCustomerService {
 
 
-    @Configuration
-    @EnableAutoConfiguration
-    @Import(ServiceConfiguration.class)
-    static class TestCustomerServiceConfiguration {
-    }
+	User joshlong;
+
+	@Autowired
+	CrmService crmService;
+
+	@Autowired
+	CustomerRepository customerRepository;
+
+	@Before
+	public void begin() throws Throwable {
+		String joshlongUserName = "joshlong";
+
+		joshlong = Optional.ofNullable(crmService.findUserByUsername(joshlongUserName))
+				.orElseGet(() -> crmService.createUser(joshlongUserName, "cowbell", "josh", "Long"));
 
 
-    User joshlong;
+		Assert.assertNotNull(joshlong);
 
-    @Autowired
-    CrmService crmService;
+		Collection<Customer> customersSet = crmService.loadCustomerAccounts(this.joshlong.getId());
+		int sizeOfCustomersForUser = customersSet.size();
+		Assert.assertTrue(sizeOfCustomersForUser > 0);
+		for (Customer customer : customersSet) {
+			crmService.removeCustomer(this.joshlong.getId(), customer.getId());
+			sizeOfCustomersForUser = sizeOfCustomersForUser - 1;
+			Assert.assertEquals(crmService.loadCustomerAccounts(this.joshlong.getId()).size(), sizeOfCustomersForUser);
+		}
+	}
 
-    @Autowired
-    CustomerRepository customerRepository;
+	@Test
+	public void testCreateUser() throws Throwable {
+		Assert.assertNotNull(this.joshlong);
+	}
 
-    @Before
-    public void begin() throws Throwable {
-        String joshlongUserName = "joshlong";
-        joshlong = crmService.findUserByUsername(joshlongUserName);
-        if (null == joshlong) {
-            joshlong = crmService.createUser(joshlongUserName, "cowbell", "josh", "Long");
-        }
-        Assert.assertNotNull(joshlong);
+	@Test
+	public void testCustomerSearch() throws Throwable {
+		long joshlongUserId = this.joshlong.getId();
 
-        Collection<Customer> customersSet = crmService.loadCustomerAccounts(this.joshlong.getId());
-        int sizeOfCustomersForUser = customersSet.size();
-        Assert.assertTrue(sizeOfCustomersForUser > 0);
-        for (Customer customer : customersSet) {
-            crmService.removeCustomer(this.joshlong.getId(), customer.getId());
-            sizeOfCustomersForUser = sizeOfCustomersForUser - 1;
-            Assert.assertEquals(crmService.loadCustomerAccounts(this.joshlong.getId()).size(), sizeOfCustomersForUser);
-        }
-    }
+		crmService.addCustomer(joshlongUserId, "josh", "long");
 
-    @Test
-    public void testCreateUser() throws Throwable {
-        Assert.assertNotNull(this.joshlong);
-    }
+		Collection<Customer> customerCollection = crmService.search(joshlongUserId, "josh");
+		Assert.assertTrue("there should be at least", customerCollection.size() > 0);
+	}
 
-    @Test
-    public void testCustomerSearch() throws Throwable {
-        long joshlongUserId = this.joshlong.getId();
+	@Test
+	public void testCreatingCustomer() throws Throwable {
 
-        crmService.addCustomer(joshlongUserId, "josh", "long");
+		long joshlongUserId = this.joshlong.getId();
 
-        Collection<Customer> customerCollection = crmService.search(joshlongUserId, "josh");
-        Assert.assertTrue("there should be at least", customerCollection.size() > 0);
-    }
+		Collection<Customer> customerCollection;
 
-    @Test
-    public void testCreatingCustomer() throws Throwable {
+		Customer janeDoe = this.crmService.addCustomer(joshlongUserId, "Jane", "Doe");
+		Assert.assertNotNull(janeDoe);
 
-        long joshlongUserId = this.joshlong.getId();
+		Customer johnDoe = this.crmService.addCustomer(joshlongUserId, "John", "Doe");
+		Assert.assertNotNull(johnDoe);
 
-        Collection<Customer> customerCollection;
+		customerCollection = crmService.loadCustomerAccounts(this.joshlong.getId());
+		Assert.assertTrue(customerCollection.size() >= 2);
 
-        Customer janeDoe = this.crmService.addCustomer(joshlongUserId, "Jane", "Doe");
-        Assert.assertNotNull(janeDoe);
-
-        Customer johnDoe = this.crmService.addCustomer(joshlongUserId, "John", "Doe");
-        Assert.assertNotNull(johnDoe);
-
-        customerCollection = crmService.loadCustomerAccounts(this.joshlong.getId());
-        Assert.assertTrue(customerCollection.size() >= 2);
-
-    }
+	}
 }

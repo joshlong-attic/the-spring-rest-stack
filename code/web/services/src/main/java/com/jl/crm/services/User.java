@@ -2,8 +2,6 @@ package com.jl.crm.services;
 
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.springframework.hateoas.Identifiable;
 
 import javax.persistence.*;
@@ -18,43 +16,43 @@ import java.util.Set;
  *
  * @author Josh Long
  */
-@JsonAutoDetect (fieldVisibility = JsonAutoDetect.Visibility.ANY, isGetterVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, isGetterVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.ANY)
 @Entity
-@Table (name = "user_account")
-public class User implements Identifiable<Long>, Serializable    {
+@Table(name = "user_account")
+public class User implements Identifiable<Long>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue (strategy = GenerationType.SEQUENCE)
-	@Column (name = "id", unique = true, nullable = false)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "id", unique = true, nullable = false)
 	private Long id;
 
-	@OneToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	private Set<Customer> customers = new HashSet<Customer>();
 
-	@Column (name = "first_name")
+	@Column(name = "first_name")
 	private String firstName;
 
-	@Column (name = "profile_photo_media_type")
+	@Column(name = "profile_photo_media_type")
 	private String profilePhotoMediaType;
 
-	@Column (name = "last_name")
+	@Column(name = "last_name")
 	private String lastName;
 
-	@Column (name = "user_name")
+	@Column(name = "user_name")
 	private String username;
 
-	@Column (name = "pass_word")
+	@Column(name = "pass_word")
 	private String password;
 
-	@Column (name = "profile_photo_imported")
+	@Column(name = "profile_photo_imported")
 	private boolean profilePhotoImported;
 
-	@Column (name = "enabled")
+	@Column(name = "enabled")
 	private boolean enabled;
 
-	@Column (name = "signup_date")
+	@Column(name = "signup_date")
 	private Date signupDate;
 
 	public User() {
@@ -100,8 +98,7 @@ public class User implements Identifiable<Long>, Serializable    {
 	public Long getId() {
 		return this.id;
 	}
-
-	@Override
+/*	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(55, 113).append(this.id).append(this.firstName).append(
 				this.lastName).append(this.password).append(this.username).toHashCode();
@@ -113,6 +110,32 @@ public class User implements Identifiable<Long>, Serializable    {
 		return new EqualsBuilder().append(other.firstName, this.firstName).append(
 				other.lastName, this.lastName).append(other.password, this.password).append(
 				other.username, this.username).append(other.id, this.id).isEquals();
+	}*/
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		User user = (User) o;
+
+		return !(firstName != null ? !firstName.equals(user.firstName) :
+				user.firstName != null) && !(id != null ? !id.equals(user.id) :
+				user.id != null) && !(lastName != null ? !lastName.equals(user.lastName) :
+				user.lastName != null) && !(password != null ? !password.equals(user.password) :
+				user.password != null) && !(username != null ? !username.equals(user.username) :
+				user.username != null);
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = id != null ? id.hashCode() : 0;
+		result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
+		result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+		result = 31 * result + (username != null ? username.hashCode() : 0);
+		result = 31 * result + (password != null ? password.hashCode() : 0);
+		return result;
 	}
 
 	public String getFirstName() {

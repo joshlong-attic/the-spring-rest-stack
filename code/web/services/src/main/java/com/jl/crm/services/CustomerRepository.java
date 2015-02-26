@@ -1,6 +1,5 @@
 package com.jl.crm.services;
 
-import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +13,6 @@ import java.util.List;
  */
  public interface CustomerRepository extends PagingAndSortingRepository<Customer, Long> {
 
-//	Page<Customer> findByUserId(@Param("userId") Long userId, Pageable pageable);
 
 	List<Customer> findByUserId(@Param("userId") Long userId);
 

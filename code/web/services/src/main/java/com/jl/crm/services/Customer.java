@@ -1,8 +1,7 @@
 package com.jl.crm.services;
 
 import com.fasterxml.jackson.annotation.*;
-import org.apache.commons.lang.builder.*;
-import org.springframework.hateoas.Identifiable;
+ import org.springframework.hateoas.Identifiable;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -66,17 +65,27 @@ public class Customer implements Identifiable<Long>, Serializable {
 		this.user = user;
 	}
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(55, 113).append(this.id).append(this.firstName).append(
-				this.lastName).toHashCode();
-	}
 
 	@Override
 	public boolean equals(Object o) {
-		Customer other = (Customer) o;
-		return new EqualsBuilder().append(other.firstName, this.firstName).append(
-				other.lastName, this.lastName).append(other.id, this.id).isEquals();
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Customer customer = (Customer) o;
+
+		if (firstName != null ? !firstName.equals(customer.firstName) : customer.firstName != null) return false;
+		if (id != null ? !id.equals(customer.id) : customer.id != null) return false;
+		if (lastName != null ? !lastName.equals(customer.lastName) : customer.lastName != null) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = id != null ? id.hashCode() : 0;
+		result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
+		result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+		return result;
 	}
 
 	@Override

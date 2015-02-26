@@ -5,11 +5,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-/**
- *
- * Base services for persisting {@link User} users
- *
- */
  public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 
 	User findByUsername(@Param("username") String username);

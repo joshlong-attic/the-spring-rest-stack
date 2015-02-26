@@ -1,5 +1,7 @@
-
+drop sequence hibernate_sequence if exists ;
 create sequence  hibernate_sequence ;
+
+drop table user_account if EXISTS ;
 
 CREATE TABLE user_account
 (
@@ -13,9 +15,9 @@ CREATE TABLE user_account
   profile_photo_imported boolean NOT NULL DEFAULT false,
   profile_photo_media_type varchar(255),
   CONSTRAINT user_account_pkey PRIMARY KEY (id )
-)
-;
+);
 
+drop table customer if exists;
 CREATE TABLE customer
 (
   id bigint NOT NULL,
@@ -52,6 +54,7 @@ INSERT INTO customer (id, first_name, last_name, signup_date, customer_user_id_f
 
 
 -- insert into oauth_access_token (token_id, token, authentication_id, user_name, client_id, authentication, refresh_token) values (?, ?, ?, ?, ?, ?, ?)
+drop TABLE oauth_access_token if EXISTS ;
 create table oauth_access_token (
   token_id varchar ,
   token bytea ,
